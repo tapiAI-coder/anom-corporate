@@ -1,0 +1,50 @@
+---
+// フォーム送信完了ページ
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="送信完了"
+  description="お問い合わせありがとうございます。24時間以内にご返信いたします。"
+  headerTheme="light"
+>
+  <!-- 送信完了メッセージ -->
+  <section class="flex min-h-[80vh] items-center justify-center px-4">
+    <div class="mx-auto max-w-lg text-center">
+      <!-- チェックアイコン -->
+      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-navy/10">
+        <svg
+          class="h-8 w-8 text-navy"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+
+      <!-- 見出し -->
+      <h1 class="mt-6 text-2xl font-bold text-dark md:text-3xl">
+        お問い合わせありがとうございます
+      </h1>
+
+      <!-- 説明 -->
+      <p class="mt-4 text-base leading-relaxed text-sub">
+        内容を確認のうえ、24時間以内にご返信いたします。<br />
+        しばらくお待ちください。
+      </p>
+
+      <!-- トップへ戻るボタン -->
+      <a
+        href="/"
+        class="mt-10 inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-navy to-dark px-8 py-3 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+      >
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        トップページへ戻る
+      </a>
+    </div>
+  </section>
+</BaseLayout>

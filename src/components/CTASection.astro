@@ -1,0 +1,47 @@
+---
+// 問い合わせ誘導セクション（全ページ共通で使用）
+interface Props {
+  /** 見出しテキスト */
+  heading?: string;
+  /** 説明テキスト */
+  description?: string;
+}
+
+const {
+  heading = "まずは無料でご相談ください",
+  description = "DX・AI導入に関するお悩み、業務効率化のご相談など、お気軽にお問い合わせください。",
+} = Astro.props;
+---
+
+<section class="bg-gradient-to-br from-navy to-dark px-4 py-20 md:py-28">
+  <div class="mx-auto max-w-2xl text-center">
+    <!-- 見出し -->
+    <h2 class="text-2xl font-bold tracking-tight text-white md:text-3xl">
+      {heading}
+    </h2>
+
+    <!-- 説明 -->
+    <p class="mt-4 text-base text-white/70 md:text-lg">
+      {description}
+    </p>
+
+    <!-- CTAボタン群 -->
+    <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+      <!-- お問い合わせフォームボタン -->
+      <a
+        href="/contact"
+        class="inline-flex items-center rounded-md bg-white px-8 py-3 text-sm font-semibold text-navy shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/90 hover:shadow-xl"
+      >
+        お問い合わせ
+      </a>
+
+      <!-- LINE友だち追加ボタン（URLは後で設定） -->
+      <a
+        href="#"
+        class="inline-flex items-center rounded-md border border-white/30 px-8 py-3 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-white/60 hover:bg-white/10"
+      >
+        LINEで相談する
+      </a>
+    </div>
+  </div>
+</section>

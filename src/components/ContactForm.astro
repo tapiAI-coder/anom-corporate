@@ -1,0 +1,126 @@
+---
+// お問い合わせフォーム — Web3Forms連携
+// APIキーは後で .env または直接差し替え
+---
+
+<form
+  action="https://api.web3forms.com/submit"
+  method="POST"
+  class="space-y-6"
+>
+  <!-- Web3Forms APIキー（TODO: 本番用キーに差し替え） -->
+  <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE" />
+
+  <!-- 送信完了後のリダイレクト先 -->
+  <input type="hidden" name="redirect" value="https://anom-ai.com/thanks" />
+
+  <!-- スパム対策（ボットチェック用ハニーポット） -->
+  <input type="checkbox" name="botcheck" class="hidden" />
+
+  <!-- 件名（メール通知用） -->
+  <input type="hidden" name="subject" value="【ANOM】Webサイトからのお問い合わせ" />
+
+  <!-- 送信元ページ -->
+  <input type="hidden" name="from_name" value="ANOM コーポレートサイト" />
+
+  <!-- 会社名（任意） -->
+  <div>
+    <label for="company" class="block text-sm font-medium text-dark">
+      会社名 <span class="text-sub">（任意）</span>
+    </label>
+    <input
+      type="text"
+      id="company"
+      name="company"
+      placeholder="株式会社〇〇"
+      class="mt-2 block w-full rounded-md border border-border bg-white px-4 py-3 text-sm text-dark transition-colors placeholder:text-sub/50 focus:border-navy focus:ring-1 focus:ring-navy focus:outline-none"
+    />
+  </div>
+
+  <!-- 氏名（必須） -->
+  <div>
+    <label for="name" class="block text-sm font-medium text-dark">
+      お名前 <span class="text-red-500">*</span>
+    </label>
+    <input
+      type="text"
+      id="name"
+      name="name"
+      required
+      placeholder="山田 太郎"
+      class="mt-2 block w-full rounded-md border border-border bg-white px-4 py-3 text-sm text-dark transition-colors placeholder:text-sub/50 focus:border-navy focus:ring-1 focus:ring-navy focus:outline-none"
+    />
+  </div>
+
+  <!-- メールアドレス（必須） -->
+  <div>
+    <label for="email" class="block text-sm font-medium text-dark">
+      メールアドレス <span class="text-red-500">*</span>
+    </label>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      required
+      placeholder="example@company.co.jp"
+      class="mt-2 block w-full rounded-md border border-border bg-white px-4 py-3 text-sm text-dark transition-colors placeholder:text-sub/50 focus:border-navy focus:ring-1 focus:ring-navy focus:outline-none"
+    />
+  </div>
+
+  <!-- 電話番号（任意） -->
+  <div>
+    <label for="phone" class="block text-sm font-medium text-dark">
+      電話番号 <span class="text-sub">（任意）</span>
+    </label>
+    <input
+      type="tel"
+      id="phone"
+      name="phone"
+      placeholder="018-000-0000"
+      class="mt-2 block w-full rounded-md border border-border bg-white px-4 py-3 text-sm text-dark transition-colors placeholder:text-sub/50 focus:border-navy focus:ring-1 focus:ring-navy focus:outline-none"
+    />
+  </div>
+
+  <!-- 相談内容カテゴリ（必須） -->
+  <div>
+    <label for="category" class="block text-sm font-medium text-dark">
+      ご相談内容 <span class="text-red-500">*</span>
+    </label>
+    <select
+      id="category"
+      name="category"
+      required
+      class="mt-2 block w-full rounded-md border border-border bg-white px-4 py-3 text-sm text-dark transition-colors focus:border-navy focus:ring-1 focus:ring-navy focus:outline-none"
+    >
+      <option value="" disabled selected>選択してください</option>
+      <option value="DX・AI診断">DX・AI診断について</option>
+      <option value="業務フロー改善">業務フロー改善について</option>
+      <option value="AI導入支援">AI導入支援について</option>
+      <option value="アドバイザリー">アドバイザリー・顧問契約について</option>
+      <option value="その他">その他のご相談</option>
+    </select>
+  </div>
+
+  <!-- 詳細（必須） -->
+  <div>
+    <label for="message" class="block text-sm font-medium text-dark">
+      詳細 <span class="text-red-500">*</span>
+    </label>
+    <textarea
+      id="message"
+      name="message"
+      required
+      rows="5"
+      placeholder="ご相談内容の詳細をお書きください"
+      class="mt-2 block w-full resize-y rounded-md border border-border bg-white px-4 py-3 text-sm text-dark transition-colors placeholder:text-sub/50 focus:border-navy focus:ring-1 focus:ring-navy focus:outline-none"
+    ></textarea>
+  </div>
+
+  <!-- 送信ボタン -->
+  <button
+    type="submit"
+    class="w-full rounded-md bg-gradient-to-r from-navy to-dark px-8 py-3.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl sm:w-auto"
+  >
+    送信する
+  </button>
+</form>

@@ -1,0 +1,36 @@
+---
+// サービスカード — ホバーで浮き上がるインタラクション付き
+interface Props {
+  title: string;
+  summary: string;
+  /** SVGアイコンのパスデータ（d属性の値） */
+  icon: string;
+}
+
+const { title, summary, icon } = Astro.props;
+---
+
+<div class="group rounded-lg border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-navy/20 hover:shadow-lg md:p-8">
+  <!-- アイコン -->
+  <div class="flex h-12 w-12 items-center justify-center rounded-md bg-navy/5 transition-colors duration-300 group-hover:bg-navy/10">
+    <svg
+      class="h-6 w-6 text-navy"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="1.5"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d={icon} />
+    </svg>
+  </div>
+
+  <!-- タイトル -->
+  <h3 class="mt-4 text-lg font-bold text-dark">
+    {title}
+  </h3>
+
+  <!-- 説明 -->
+  <p class="mt-2 text-sm leading-relaxed text-sub">
+    {summary}
+  </p>
+</div>

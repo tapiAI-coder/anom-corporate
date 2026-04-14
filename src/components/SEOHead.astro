@@ -1,0 +1,57 @@
+---
+// SEO・OGP メタ情報を一括管理するコンポーネント
+import { siteConfig } from "../data/navigation";
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  canonical?: string;
+}
+
+const {
+  title = siteConfig.name,
+  description = siteConfig.description,
+  ogImage = siteConfig.ogImage,
+  canonical,
+} = Astro.props;
+
+// ページタイトル（トップページ以外は「ページ名 | ANOM」形式）
+const pageTitle =
+  title === siteConfig.name
+    ? `${siteConfig.name} — DX・AIコンサルティング`
+    : `${title} | ${siteConfig.name}`;
+
+// OGP画像の絶対URL
+const ogImageUrl = new URL(ogImage, siteConfig.url).href;
+
+// canonical URL
+const canonicalUrl = canonical
+  ? new URL(canonical, siteConfig.url).href
+  : new URL(Astro.url.pathname, siteConfig.url).href;
+---
+
+<!-- 基本メタ情報 -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{pageTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+
+<!-- ファビコン -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+<!-- OGP -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImageUrl} />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:site_name" content={siteConfig.name} />
+<meta property="og:locale" content="ja_JP" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageUrl} />

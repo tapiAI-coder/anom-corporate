@@ -1,0 +1,81 @@
+---
+// トップページ — ヒーロー / ミッション / サービス概要 / CTA
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import ServiceCard from "../components/ServiceCard.astro";
+import CTASection from "../components/CTASection.astro";
+import { services } from "../data/services";
+---
+
+<BaseLayout>
+  <!-- ヒーローセクション -->
+  <Hero />
+
+  <!-- ミッションセクション -->
+  <section class="px-4 py-20 md:py-28">
+    <div class="mx-auto max-w-3xl text-center">
+      <!-- セクションラベル -->
+      <p class="text-xs tracking-[0.2em] font-semibold text-navy uppercase">
+        Our Mission
+      </p>
+
+      <!-- 見出し -->
+      <h2 class="mt-4 text-2xl font-bold leading-snug text-dark md:text-3xl">
+        無駄をなくし、人を活かす。<br />
+        それがANOMの使命です。
+      </h2>
+
+      <!-- 本文 -->
+      <p class="mt-6 text-base leading-relaxed text-sub md:text-lg">
+        秋田の中小企業が抱える「属人化」「手作業の非効率」「情報の分断」。<br class="hidden md:inline" />
+        AIとDXの力で定型業務を削減し、生まれた時間と人材を適材適所に配置する。<br class="hidden md:inline" />
+        それが売上向上への最短ルートであり、秋田と関東の差をなくす道です。
+      </p>
+    </div>
+  </section>
+
+  <!-- サービス概要セクション -->
+  <section class="bg-bg-alt px-4 py-20 md:py-28">
+    <div class="mx-auto max-w-6xl">
+      <!-- セクションヘッダー -->
+      <div class="text-center">
+        <p class="text-xs tracking-[0.2em] font-semibold text-navy uppercase">
+          Services
+        </p>
+        <h2 class="mt-4 text-2xl font-bold text-dark md:text-3xl">
+          ANOMのサービス
+        </h2>
+        <p class="mt-4 text-base text-sub">
+          戦略立案から導入・定着まで、一気通貫で支援します。
+        </p>
+      </div>
+
+      <!-- サービスカードグリッド -->
+      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {services.map((service) => (
+          <ServiceCard
+            title={service.title}
+            summary={service.summary}
+            icon={service.icon}
+          />
+        ))}
+      </div>
+
+      <!-- 詳しく見るリンク -->
+      <div class="mt-12 text-center">
+        <a
+          href="/services"
+          class="inline-flex items-center gap-2 text-sm font-medium text-navy transition-colors hover:text-navy-light"
+        >
+          サービス詳細を見る
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTAセクション -->
+  <CTASection />
+</BaseLayout>

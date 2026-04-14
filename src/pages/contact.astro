@@ -1,0 +1,78 @@
+---
+// お問い合わせページ — フォーム + LINE友だち追加
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactForm from "../components/ContactForm.astro";
+import LineButton from "../components/LineButton.astro";
+---
+
+<BaseLayout
+  title="お問い合わせ"
+  description="ANOMへのDX・AI導入に関するご相談、お問い合わせはこちらから。フォームまたはLINEでお気軽にご連絡ください。"
+>
+  <!-- ページヘッダー -->
+  <section class="bg-gradient-to-br from-navy to-dark px-4 pt-32 pb-16 md:pt-40 md:pb-20">
+    <div class="mx-auto max-w-3xl text-center">
+      <p class="text-xs tracking-[0.2em] font-semibold text-white/50 uppercase">
+        Contact
+      </p>
+      <h1 class="mt-4 text-3xl font-bold text-white md:text-4xl">
+        お問い合わせ
+      </h1>
+      <p class="mt-4 text-base text-white/70">
+        DX・AI導入に関するお悩み、業務効率化のご相談など、<br class="hidden md:inline" />
+        お気軽にお問い合わせください。
+      </p>
+    </div>
+  </section>
+
+  <!-- フォーム + LINE セクション -->
+  <section class="px-4 py-16 md:py-24">
+    <div class="mx-auto max-w-5xl">
+      <div class="grid gap-10 lg:grid-cols-5 lg:gap-16">
+        <!-- 左: フォーム（3/5幅） -->
+        <div class="lg:col-span-3">
+          <h2 class="text-lg font-bold text-dark">
+            フォームでのお問い合わせ
+          </h2>
+          <p class="mt-2 text-sm text-sub">
+            24時間以内にご返信いたします。
+          </p>
+          <div class="mt-8">
+            <ContactForm />
+          </div>
+        </div>
+
+        <!-- 右: LINE + 補足情報（2/5幅） -->
+        <div class="space-y-8 lg:col-span-2">
+          <!-- LINE友だち追加 -->
+          <LineButton />
+
+          <!-- 補足情報 -->
+          <div class="rounded-lg border border-border bg-white p-6 md:p-8">
+            <h3 class="text-base font-bold text-dark">
+              よくあるご相談
+            </h3>
+            <ul class="mt-4 space-y-3 text-sm text-sub">
+              <li class="flex items-start gap-2">
+                <span class="mt-0.5 text-navy">-</span>
+                DXを始めたいが何から手をつけていいかわからない
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="mt-0.5 text-navy">-</span>
+                業務の属人化を解消したい
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="mt-0.5 text-navy">-</span>
+                AIツールを導入したが活用できていない
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="mt-0.5 text-navy">-</span>
+                IT人材がいない中でDXを進めたい
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

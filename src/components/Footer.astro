@@ -1,0 +1,41 @@
+---
+// フッター — ダークネイビー背景 + 白文字
+import { navLinks, siteConfig } from "../data/navigation";
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="bg-gradient-to-b from-navy to-navy-dark">
+  <div class="mx-auto max-w-6xl px-4 py-16 md:px-8">
+    <!-- 上部: ロゴ + ナビ -->
+    <div class="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+      <!-- ロゴ・タグライン -->
+      <div>
+        <span class="text-2xl font-bold tracking-tight text-white">ANOM</span>
+        <p class="mt-2 text-xs tracking-[0.25em] font-light text-white/50">
+          {siteConfig.tagline}
+        </p>
+      </div>
+
+      <!-- ナビゲーションリンク -->
+      <nav class="flex flex-col gap-3 md:flex-row md:flex-wrap md:gap-x-8 md:gap-y-3">
+        {navLinks.map((link) => (
+          <a
+            href={link.href}
+            class="text-sm text-white/70 transition-colors hover:text-white"
+          >
+            {link.label}
+          </a>
+        ))}
+      </nav>
+    </div>
+
+    <!-- 区切り線 -->
+    <div class="my-10 h-px bg-white/10"></div>
+
+    <!-- 下部: コピーライト -->
+    <div class="text-center text-xs text-white/40">
+      <p>&copy; {currentYear} {siteConfig.name}. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

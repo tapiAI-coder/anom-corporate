@@ -1,0 +1,162 @@
+---
+// グラスモーフィズムヘッダー（スクロール連動で背景変化）
+// theme: "dark" = 白テキスト（ダーク背景ヒーロー上）、"light" = 黒テキスト（白背景上）
+import { navLinks } from "../data/navigation";
+
+interface Props {
+  theme?: "dark" | "light";
+}
+
+const { theme = "dark" } = Astro.props;
+
+// テーマに応じたテキストカラークラス
+const textColor = theme === "dark" ? "text-white" : "text-dark";
+const textColorMuted = theme === "dark" ? "text-white/80" : "text-sub";
+const textColorHover = theme === "dark" ? "hover:text-white" : "hover:text-navy";
+const barColor = theme === "dark" ? "bg-white" : "bg-dark";
+---
+
+<header
+  id="site-header"
+  class="fixed top-0 left-0 z-50 w-full transition-all duration-300"
+  data-theme={theme}
+>
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:px-8">
+    <!-- ロゴ -->
+    <a href="/" class="flex items-center gap-2">
+      <span
+        class:list={["text-xl font-bold tracking-tight transition-colors duration-300 md:text-2xl", textColor]}
+        id="logo-text"
+      >
+        ANOM
+      </span>
+    </a>
+
+    <!-- PC ナビゲーション -->
+    <nav class="hidden items-center gap-8 md:flex" id="desktop-nav">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={["text-sm font-medium transition-colors duration-200", textColorMuted, textColorHover]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- モバイルメニューボタン -->
+    <button
+      id="menu-toggle"
+      class="flex flex-col items-center justify-center gap-1.5 md:hidden"
+      aria-label="メニューを開く"
+    >
+      <span class:list={["block h-0.5 w-6 transition-all duration-300", barColor]} id="bar1"></span>
+      <span class:list={["block h-0.5 w-6 transition-all duration-300", barColor]} id="bar2"></span>
+      <span class:list={["block h-0.5 w-6 transition-all duration-300", barColor]} id="bar3"></span>
+    </button>
+  </div>
+
+  <!-- モバイルメニュー -->
+  <nav
+    id="mobile-menu"
+    class="hidden flex-col gap-4 bg-navy-dark/95 px-4 py-6 backdrop-blur-lg md:hidden"
+  >
+    {navLinks.map((link) => (
+      <a
+        href={link.href}
+        class="text-base font-medium text-white/90 transition-colors hover:text-white"
+      >
+        {link.label}
+      </a>
+    ))}
+  </nav>
+</header>
+
+<script>
+  // ヘッダーのスクロール連動処理
+  const header = document.getElementById("site-header");
+  const theme = header?.dataset.theme;
+
+  // スクロール量に応じてヘッダー背景を変化させる
+  function updateHeader() {
+    if (!header) return;
+
+    if (window.scrollY > 50) {
+      // スクロール後: 背景付き（テーマに関わらず統一）
+      header.classList.add("bg-white/90", "backdrop-blur-lg", "shadow-sm");
+      header.classList.remove("bg-navy-dark/80");
+
+      // スクロール時はテキストをダーク色に統一
+      const logoText = document.getElementById("logo-text");
+      const navLinks = document.querySelectorAll("#desktop-nav a");
+      const bars = document.querySelectorAll("#bar1, #bar2, #bar3");
+
+      if (logoText) {
+        logoText.classList.remove("text-white");
+        logoText.classList.add("text-dark");
+      }
+      navLinks.forEach((link) => {
+        link.classList.remove("text-white/80");
+        link.classList.add("text-sub");
+      });
+      bars.forEach((bar) => {
+        bar.classList.remove("bg-white");
+        bar.classList.add("bg-dark");
+      });
+    } else {
+      // トップ: 透明背景（テーマに応じた色に戻す）
+      header.classList.remove("bg-white/90", "backdrop-blur-lg", "shadow-sm");
+
+      const logoText = document.getElementById("logo-text");
+      const navLinks = document.querySelectorAll("#desktop-nav a");
+      const bars = document.querySelectorAll("#bar1, #bar2, #bar3");
+
+      if (theme === "dark") {
+        if (logoText) {
+          logoText.classList.add("text-white");
+          logoText.classList.remove("text-dark");
+        }
+        navLinks.forEach((link) => {
+          link.classList.add("text-white/80");
+          link.classList.remove("text-sub");
+        });
+        bars.forEach((bar) => {
+          bar.classList.add("bg-white");
+          bar.classList.remove("bg-dark");
+        });
+      }
+    }
+  }
+
+  window.addEventListener("scroll", updateHeader, { passive: true });
+  updateHeader();
+
+  // モバイルメニューの開閉
+  const menuToggle = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const bar1 = document.getElementById("bar1");
+  const bar2 = document.getElementById("bar2");
+  const bar3 = document.getElementById("bar3");
+  let isOpen = false;
+
+  menuToggle?.addEventListener("click", () => {
+    isOpen = !isOpen;
+    if (mobileMenu) {
+      mobileMenu.classList.toggle("hidden", !isOpen);
+      mobileMenu.classList.toggle("flex", isOpen);
+    }
+
+    // ハンバーガーアイコンのアニメーション
+    if (bar1 && bar2 && bar3) {
+      if (isOpen) {
+        bar1.classList.add("translate-y-2", "rotate-45");
+        bar2.classList.add("opacity-0");
+        bar3.classList.add("-translate-y-2", "-rotate-45");
+      } else {
+        bar1.classList.remove("translate-y-2", "rotate-45");
+        bar2.classList.remove("opacity-0");
+        bar3.classList.remove("-translate-y-2", "-rotate-45");
+      }
+    }
+  });
+</script>

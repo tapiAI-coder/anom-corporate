@@ -1,0 +1,23 @@
+# 依存関係
+node_modules/
+
+# ビルド出力
+dist/
+
+# Astro
+.astro/
+
+# 環境変数
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# スクリーンショット（確認用。リポジトリには含めない）
+screenshots/

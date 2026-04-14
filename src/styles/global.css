@@ -1,0 +1,44 @@
+/* グローバルスタイル — Tailwind CSS v4 */
+
+/* Google Fonts 読み込み（@import は最上部に配置） */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap");
+
+@import "tailwindcss";
+
+/* ========================================
+   ブランドカラー・デザイントークン定義
+   参照: 事業計画/ブランドアセット/
+   ======================================== */
+@theme {
+  /* ブランドカラー（ロゴ準拠） */
+  --color-navy: #1B2A4A;
+  --color-navy-light: #3B5998;
+  --color-navy-dark: #0F1A2E;
+  --color-dark: #111111;
+
+  /* 背景色 */
+  --color-bg: #FAFAFA;
+  --color-bg-alt: #F3F4F6;
+
+  /* ボーダー・サブテキスト */
+  --color-border: #E5E7EB;
+  --color-sub: #6B7280;
+
+  /* フォント */
+  --font-sans: "Inter", "Noto Sans JP", system-ui, sans-serif;
+}
+
+/* ========================================
+   ベーススタイル
+   ======================================== */
+
+/* HTML/Body の基本設定 */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-dark);
+  background-color: var(--color-bg);
+}
