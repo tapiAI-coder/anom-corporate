@@ -5,6 +5,7 @@ import Hero from "../components/Hero.astro";
 import ServiceCard from "../components/ServiceCard.astro";
 import CTASection from "../components/CTASection.astro";
 import { services } from "../data/services";
+import { withBase } from "../data/navigation";
 ---
 
 <BaseLayout>
@@ -64,7 +65,7 @@ import { services } from "../data/services";
       <!-- 詳しく見るリンク -->
       <div class="mt-12 text-center">
         <a
-          href="/services"
+          href={withBase("/services")}
           class="inline-flex items-center gap-2 text-sm font-medium text-navy transition-colors hover:text-navy-light"
         >
           サービス詳細を見る

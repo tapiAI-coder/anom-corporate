@@ -6,7 +6,9 @@ import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
   // 本番サイトのURL（sitemap生成・OGPで使用）
-  site: "https://anom-ai.com",
+  site: "https://tapiai-coder.github.io",
+  // GitHub Pages のサブパス（カスタムドメイン設定時に "/" に戻す）
+  base: "/anom-corporate",
 
   // インテグレーション
   integrations: [

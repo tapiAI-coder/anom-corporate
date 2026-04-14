@@ -1,7 +1,7 @@
 ---
 // グラスモーフィズムヘッダー（スクロール連動で背景変化）
 // theme: "dark" = 白テキスト（ダーク背景ヒーロー上）、"light" = 黒テキスト（白背景上）
-import { navLinks } from "../data/navigation";
+import { navLinks, withBase } from "../data/navigation";
 
 interface Props {
   theme?: "dark" | "light";
@@ -23,7 +23,7 @@ const barColor = theme === "dark" ? "bg-white" : "bg-dark";
 >
   <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:px-8">
     <!-- ロゴ -->
-    <a href="/" class="flex items-center gap-2">
+    <a href={withBase("/")} class="flex items-center gap-2">
       <span
         class:list={["text-xl font-bold tracking-tight transition-colors duration-300 md:text-2xl", textColor]}
         id="logo-text"

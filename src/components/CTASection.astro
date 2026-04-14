@@ -1,5 +1,7 @@
 ---
 // 問い合わせ誘導セクション（全ページ共通で使用）
+import { withBase } from "../data/navigation";
+
 interface Props {
   /** 見出しテキスト */
   heading?: string;
@@ -29,7 +31,7 @@ const {
     <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
       <!-- お問い合わせフォームボタン -->
       <a
-        href="/contact"
+        href={withBase("/contact")}
         class="inline-flex items-center rounded-md bg-white px-8 py-3 text-sm font-semibold text-navy shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/90 hover:shadow-xl"
       >
         お問い合わせ
