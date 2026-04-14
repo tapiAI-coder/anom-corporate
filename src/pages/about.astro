@@ -1,0 +1,198 @@
+---
+// 代表紹介ページ — プロフィール + ストーリー
+import BaseLayout from "../layouts/BaseLayout.astro";
+import CTASection from "../components/CTASection.astro";
+import { withBase } from "../data/navigation";
+---
+
+<BaseLayout
+  title="代表紹介"
+  description="ANOM代表・菊地隆雅のプロフィール。秋田の中小企業のDX・AI導入を支援する想いと経歴をご紹介します。"
+>
+  <!-- ページヘッダー -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-navy via-navy-dark to-dark px-4 pt-32 pb-16 md:pt-40 md:pb-24">
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div class="absolute -top-20 -right-20 h-80 w-80 rounded-full border border-white/5"></div>
+      <div class="absolute -bottom-10 -left-10 h-60 w-60 rotate-45 border border-white/5"></div>
+      <div class="absolute top-1/3 right-1/4 h-2 w-2 rounded-full bg-white/20"></div>
+      <div class="absolute bottom-1/4 left-1/3 h-1.5 w-1.5 rounded-full bg-white/15"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-dark/30 via-transparent to-transparent"></div>
+    </div>
+
+    <div class="relative mx-auto max-w-3xl text-center">
+      <p class="text-xs tracking-[0.3em] font-semibold text-white/40 uppercase">
+        About
+      </p>
+      <h1 class="mt-4 text-3xl font-bold tracking-tight text-white md:text-5xl">
+        代表紹介
+      </h1>
+      <p class="mt-6 text-base leading-relaxed text-white/60 md:text-lg">
+        ANOMを立ち上げた想いと、これからのこと。
+      </p>
+    </div>
+  </section>
+
+  <!-- プロフィールセクション -->
+  <section class="px-4 py-20 md:py-28">
+    <div class="mx-auto max-w-4xl">
+      <div class="flex flex-col items-center gap-10 md:flex-row md:items-start md:gap-16">
+        <!-- アイコン（写真の代わり） -->
+        <div class="shrink-0">
+          <div class="flex h-40 w-40 items-center justify-center rounded-2xl bg-gradient-to-br from-navy to-navy-dark shadow-xl shadow-navy/20 md:h-48 md:w-48">
+            <svg class="h-20 w-20 text-white/80 md:h-24 md:w-24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- プロフィール情報 -->
+        <div class="flex-1 text-center md:text-left">
+          <p class="text-xs tracking-[0.2em] font-semibold text-navy/50 uppercase">
+            Founder & CEO
+          </p>
+          <h2 class="mt-2 text-2xl font-bold text-dark md:text-3xl">
+            菊地 隆雅
+          </h2>
+          <p class="mt-1 text-sm text-sub">Kikuchi Takamasa</p>
+
+          <div class="mt-6 h-px w-16 bg-gradient-to-r from-navy to-navy-light mx-auto md:mx-0"></div>
+
+          <p class="mt-6 text-sm font-bold text-navy">ANOM（アノム）代表</p>
+          <p class="mt-1 text-sm text-sub">DX・AIコンサルタント / 秋田県</p>
+
+          <!-- キーワードバッジ -->
+          <div class="mt-6 flex flex-wrap justify-center gap-2 md:justify-start">
+            {["DX推進", "AI導入支援", "業務改善", "中小企業支援", "秋田"].map((tag) => (
+              <span class="rounded-full border border-navy/15 bg-navy/5 px-3 py-1 text-xs font-medium text-navy">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ストーリーセクション -->
+  <section class="bg-bg-alt px-4 py-20 md:py-28">
+    <div class="mx-auto max-w-3xl">
+      <div class="text-center">
+        <p class="text-xs tracking-[0.3em] font-semibold text-navy/60 uppercase">
+          Story
+        </p>
+        <h2 class="mt-4 text-2xl font-bold text-dark md:text-3xl">
+          なぜANOMを立ち上げたのか
+        </h2>
+        <div class="mx-auto mt-6 h-px w-16 bg-gradient-to-r from-transparent via-navy/30 to-transparent"></div>
+      </div>
+
+      <div class="mt-14 space-y-8">
+        <!-- ストーリー1 -->
+        <div class="group rounded-2xl border border-border bg-white p-8 shadow-sm transition-all duration-300 hover:shadow-md md:p-10">
+          <div class="flex items-start gap-4">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-navy to-navy-dark text-sm font-bold text-white shadow-md shadow-navy/15">
+              01
+            </span>
+            <div>
+              <h3 class="text-lg font-bold text-dark">秋田で感じた「もったいない」</h3>
+              <p class="mt-4 text-sm leading-loose text-sub">
+                秋田には真面目で優秀な人材がたくさんいる。でも、紙の管理や手作業の繰り返しに時間を取られ、本来の力を発揮できていない会社を数多く見てきました。「この作業、AIなら一瞬なのに」。そう感じる場面が日常に溢れていました。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ストーリー2 -->
+        <div class="group rounded-2xl border border-border bg-white p-8 shadow-sm transition-all duration-300 hover:shadow-md md:p-10">
+          <div class="flex items-start gap-4">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-navy to-navy-dark text-sm font-bold text-white shadow-md shadow-navy/15">
+              02
+            </span>
+            <div>
+              <h3 class="text-lg font-bold text-dark">ツールを入れるだけでは変わらない</h3>
+              <p class="mt-4 text-sm leading-loose text-sub">
+                「DXしましょう」と言ってツールを導入しても、現場に合わなければ使われないまま終わる。大手コンサルの提案は立派だけど、秋田の中小企業の現場感覚とはズレていることも少なくない。必要なのは、現場を知り、技術を知り、経営者の言葉で話せる人間だと思いました。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ストーリー3 -->
+        <div class="group rounded-2xl border border-border bg-white p-8 shadow-sm transition-all duration-300 hover:shadow-md md:p-10">
+          <div class="flex items-start gap-4">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-navy to-navy-dark text-sm font-bold text-white shadow-md shadow-navy/15">
+              03
+            </span>
+            <div>
+              <h3 class="text-lg font-bold text-dark">無駄を削ぎ落とし、人を活かす</h3>
+              <p class="mt-4 text-sm leading-loose text-sub">
+                ANOMの名前は「Autonomous（自走）+ Minimalism（最小限）」。無駄な作業を削ぎ落とし、人がやるべき仕事に集中できる環境をつくる。それがANOMの使命です。AIの力で定型業務を減らし、生まれた時間と人材を適材適所に配置する。その結果として売上が上がり、秋田と関東の差がなくなっていく。そんな未来を本気で目指しています。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 大切にしていること -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-navy via-navy-dark to-dark px-4 py-20 md:py-28">
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div class="absolute top-1/4 -right-20 h-96 w-96 rounded-full border border-white/5"></div>
+      <div class="absolute -bottom-20 left-1/4 h-64 w-64 rotate-12 border border-white/5"></div>
+    </div>
+
+    <div class="relative mx-auto max-w-4xl">
+      <div class="text-center">
+        <p class="text-xs tracking-[0.3em] font-semibold text-white/40 uppercase">
+          Values
+        </p>
+        <h2 class="mt-4 text-2xl font-bold tracking-tight text-white md:text-3xl">
+          大切にしていること
+        </h2>
+        <div class="mx-auto mt-6 h-px w-16 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+      </div>
+
+      <div class="mt-14 grid gap-6 sm:grid-cols-3">
+        <div class="rounded-xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/10">
+          <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-white/10">
+            <svg class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+            </svg>
+          </div>
+          <h3 class="mt-5 text-base font-bold text-white">正直に話す</h3>
+          <p class="mt-3 text-xs leading-relaxed text-white/50">
+            無理なものは無理と言う。効果が薄い施策にはブレーキをかける。誠実さが信頼の土台。
+          </p>
+        </div>
+
+        <div class="rounded-xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/10">
+          <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-white/10">
+            <svg class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085" />
+            </svg>
+          </div>
+          <h3 class="mt-5 text-base font-bold text-white">現場に寄り添う</h3>
+          <p class="mt-3 text-xs leading-relaxed text-white/50">
+            机上の理論ではなく、実際に使う人の目線で考える。定着するまでが支援。
+          </p>
+        </div>
+
+        <div class="rounded-xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:bg-white/10">
+          <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-white/10">
+            <svg class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+            </svg>
+          </div>
+          <h3 class="mt-5 text-base font-bold text-white">シンプルに、速く</h3>
+          <p class="mt-3 text-xs leading-relaxed text-white/50">
+            複雑な仕組みは続かない。最小限の手間で最大の効果を。ANOMの名前そのもの。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTAセクション -->
+  <CTASection />
+</BaseLayout>
