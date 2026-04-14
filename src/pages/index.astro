@@ -6,6 +6,12 @@ import ServiceCard from "../components/ServiceCard.astro";
 import CTASection from "../components/CTASection.astro";
 import { services } from "../data/services";
 import { withBase } from "../data/navigation";
+
+// 画像パス
+const imgStrategy = withBase("/images/strategy.jpg");
+const imgAnalytics = withBase("/images/analytics.jpg");
+const imgMeeting = withBase("/images/meeting.jpg");
+const imgConsulting = withBase("/images/consulting.jpg");
 ---
 
 <BaseLayout>
@@ -13,63 +19,203 @@ import { withBase } from "../data/navigation";
   <Hero />
 
   <!-- ミッションセクション -->
-  <section class="px-4 py-20 md:py-28">
-    <div class="mx-auto max-w-3xl text-center">
+  <section class="relative overflow-hidden px-4 py-24 md:py-32">
+    <!-- 背景装飾 -->
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div class="absolute -top-32 -left-32 h-64 w-64 rounded-full bg-navy/[0.03] blur-3xl"></div>
+      <div class="absolute -bottom-32 -right-32 h-80 w-80 rounded-full bg-navy/[0.02] blur-3xl"></div>
+    </div>
+
+    <div class="relative mx-auto max-w-4xl text-center">
       <!-- セクションラベル -->
-      <p class="text-xs tracking-[0.2em] font-semibold text-navy uppercase">
+      <p class="text-xs tracking-[0.3em] font-semibold text-navy/60 uppercase">
         Our Mission
       </p>
 
       <!-- 見出し -->
-      <h2 class="mt-4 text-2xl font-bold leading-snug text-dark md:text-3xl">
+      <h2 class="mt-6 text-3xl font-bold leading-snug text-dark md:text-4xl">
         無駄をなくし、人を活かす。<br />
         それがANOMの使命です。
       </h2>
 
+      <!-- 区切り線 -->
+      <div class="mx-auto mt-8 h-px w-16 bg-gradient-to-r from-transparent via-navy/30 to-transparent"></div>
+
       <!-- 本文 -->
-      <p class="mt-6 text-base leading-relaxed text-sub md:text-lg">
+      <p class="mt-8 text-base leading-loose text-sub md:text-lg md:leading-loose">
         秋田の中小企業が抱える「属人化」「手作業の非効率」「情報の分断」。<br class="hidden md:inline" />
         AIとDXの力で定型業務を削減し、生まれた時間と人材を適材適所に配置する。<br class="hidden md:inline" />
         それが売上向上への最短ルートであり、秋田と関東の差をなくす道です。
       </p>
+
+      <!-- 3つのキーワードカード -->
+      <div class="mt-14 grid gap-6 sm:grid-cols-3">
+        <div class="group rounded-xl border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-navy to-navy-dark shadow-md shadow-navy/15">
+            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </div>
+          <p class="mt-4 text-sm font-bold text-dark">無駄の削減</p>
+          <p class="mt-2 text-xs leading-relaxed text-sub">定型業務をAIで自動化し、人がやるべき仕事に集中できる環境をつくる</p>
+        </div>
+
+        <div class="group rounded-xl border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-navy to-navy-dark shadow-md shadow-navy/15">
+            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <p class="mt-4 text-sm font-bold text-dark">適材適所</p>
+          <p class="mt-2 text-xs leading-relaxed text-sub">削減で生まれた能力・人・時間を、最も価値ある仕事に振り向ける</p>
+        </div>
+
+        <div class="group rounded-xl border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-navy to-navy-dark shadow-md shadow-navy/15">
+            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+          </div>
+          <p class="mt-4 text-sm font-bold text-dark">売上向上</p>
+          <p class="mt-2 text-xs leading-relaxed text-sub">効率化と人材の最適配置が、確実に売上と利益の成長につながる</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ビジュアルセクション — 業務イメージ -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-navy via-navy-dark to-dark px-4 py-20 md:py-28">
+    <!-- 背景装飾 -->
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div class="absolute -top-20 -right-20 h-80 w-80 rounded-full border border-white/5"></div>
+      <div class="absolute -bottom-16 -left-16 h-60 w-60 rotate-45 border border-white/5"></div>
+    </div>
+
+    <div class="relative mx-auto max-w-6xl">
+      <div class="flex flex-col items-center gap-12 md:flex-row md:gap-16">
+        <!-- 画像グリッド -->
+        <div class="grid w-full grid-cols-2 gap-4 md:w-1/2">
+          <div class="overflow-hidden rounded-xl">
+            <img
+              src={imgStrategy}
+              alt="戦略ミーティング"
+              class="h-40 w-full object-cover transition-transform duration-500 hover:scale-105 md:h-48"
+            />
+          </div>
+          <div class="overflow-hidden rounded-xl mt-6">
+            <img
+              src={imgAnalytics}
+              alt="データ分析ダッシュボード"
+              class="h-40 w-full object-cover transition-transform duration-500 hover:scale-105 md:h-48"
+            />
+          </div>
+          <div class="overflow-hidden rounded-xl">
+            <img
+              src={imgMeeting}
+              alt="技術コンサルティング"
+              class="h-40 w-full object-cover transition-transform duration-500 hover:scale-105 md:h-48"
+            />
+          </div>
+          <div class="overflow-hidden rounded-xl mt-6">
+            <img
+              src={imgConsulting}
+              alt="ビジネスコンサルティング"
+              class="h-40 w-full object-cover transition-transform duration-500 hover:scale-105 md:h-48"
+            />
+          </div>
+        </div>
+
+        <!-- テキスト -->
+        <div class="md:w-1/2">
+          <p class="text-xs tracking-[0.3em] font-semibold text-white/40 uppercase">
+            Why ANOM
+          </p>
+          <h2 class="mt-4 text-2xl font-bold tracking-tight text-white md:text-3xl">
+            現場を知り、技術を知る。<br />
+            だから「使えるDX」になる。
+          </h2>
+          <div class="mt-6 h-px w-16 bg-gradient-to-r from-white/30 to-transparent"></div>
+          <p class="mt-6 text-sm leading-loose text-white/60 md:text-base md:leading-loose">
+            ANOMは「ツールを入れる」だけのDXはしません。
+            経営者の視点で課題を理解し、現場に合った解決策を設計する。
+            AIもDXも、使いこなせてこそ意味がある。
+            だからこそ、導入後の「定着」まで徹底的に伴走します。
+          </p>
+
+          <!-- ポイント -->
+          <div class="mt-8 space-y-4">
+            <div class="flex items-start gap-3">
+              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10">
+                <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <p class="text-sm text-white/70">経営戦略から現場オペレーションまで一気通貫</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10">
+                <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <p class="text-sm text-white/70">秋田の中小企業に特化した実践的な支援</p>
+            </div>
+            <div class="flex items-start gap-3">
+              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10">
+                <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <p class="text-sm text-white/70">「入れて終わり」ではなく「使いこなす」まで伴走</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- サービス概要セクション -->
-  <section class="bg-bg-alt px-4 py-20 md:py-28">
-    <div class="mx-auto max-w-6xl">
+  <section class="relative overflow-hidden bg-bg-alt px-4 py-24 md:py-32">
+    <!-- 背景装飾 -->
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 h-px w-2/3 bg-gradient-to-r from-transparent via-border to-transparent"></div>
+    </div>
+
+    <div class="relative mx-auto max-w-6xl">
       <!-- セクションヘッダー -->
       <div class="text-center">
-        <p class="text-xs tracking-[0.2em] font-semibold text-navy uppercase">
+        <p class="text-xs tracking-[0.3em] font-semibold text-navy/60 uppercase">
           Services
         </p>
-        <h2 class="mt-4 text-2xl font-bold text-dark md:text-3xl">
+        <h2 class="mt-4 text-3xl font-bold text-dark md:text-4xl">
           ANOMのサービス
         </h2>
-        <p class="mt-4 text-base text-sub">
+        <div class="mx-auto mt-6 h-px w-16 bg-gradient-to-r from-transparent via-navy/30 to-transparent"></div>
+        <p class="mt-6 text-base text-sub md:text-lg">
           戦略立案から導入・定着まで、一気通貫で支援します。
         </p>
       </div>
 
       <!-- サービスカードグリッド -->
-      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {services.map((service) => (
+      <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {services.map((service, index) => (
           <ServiceCard
             title={service.title}
             summary={service.summary}
             icon={service.icon}
+            index={index}
           />
         ))}
       </div>
 
       <!-- 詳しく見るリンク -->
-      <div class="mt-12 text-center">
+      <div class="mt-14 text-center">
         <a
           href={withBase("/services")}
-          class="inline-flex items-center gap-2 text-sm font-medium text-navy transition-colors hover:text-navy-light"
+          class="group inline-flex items-center gap-2 rounded-lg border border-navy/20 px-6 py-3 text-sm font-medium text-navy transition-all duration-300 hover:-translate-y-0.5 hover:border-navy/40 hover:bg-navy hover:text-white hover:shadow-lg hover:shadow-navy/20"
         >
           サービス詳細を見る
-          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
           </svg>
         </a>

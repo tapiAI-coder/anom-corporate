@@ -1,71 +1,121 @@
 ---
-// ヒーローセクション — グラデーション背景 + 幾何学パターンアニメーション
+// ヒーローセクション — グラデーション背景 + 幾何学パターン + グリッドライン
 import { withBase } from "../data/navigation";
+// ロゴ画像パス
+const logoSymbol = withBase("/images/logo-symbol.png");
 ---
 
 <section class="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-navy via-navy-dark to-dark">
-  <!-- 背景の幾何学パターンアニメーション -->
+  <!-- 背景レイヤー -->
   <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <!-- グリッドライン（技術感を演出） -->
+    <div class="hero-grid absolute inset-0 opacity-[0.03]"></div>
+
     <!-- 浮遊する幾何学図形 -->
     <div class="geo geo-1"></div>
     <div class="geo geo-2"></div>
     <div class="geo geo-3"></div>
     <div class="geo geo-4"></div>
     <div class="geo geo-5"></div>
+
+    <!-- グロウ（光の演出） -->
+    <div class="absolute top-1/4 left-1/4 h-96 w-96 rounded-full bg-navy-light/10 blur-[120px]"></div>
+    <div class="absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full bg-white/5 blur-[100px]"></div>
+
+    <!-- 微小な光の粒 -->
+    <div class="particle particle-1"></div>
+    <div class="particle particle-2"></div>
+    <div class="particle particle-3"></div>
+    <div class="particle particle-4"></div>
+    <div class="particle particle-5"></div>
+    <div class="particle particle-6"></div>
+
     <!-- グラデーションオーバーレイ -->
-    <div class="absolute inset-0 bg-gradient-to-t from-dark/40 via-transparent to-navy/20"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-dark/50 via-transparent to-navy/10"></div>
   </div>
 
   <!-- コンテンツ -->
   <div class="relative z-10 mx-auto max-w-4xl px-4 text-center">
-    <!-- メインタイトル -->
-    <h1 class="text-5xl font-bold tracking-tight text-white md:text-7xl lg:text-8xl">
-      ANOM
-    </h1>
+    <!-- シンボルマーク + テキストロゴ -->
+    <div class="flex flex-col items-center">
+      <!-- シンボルマーク（invert+screenで白背景を透過し白抜きロゴに） -->
+      <img
+        src={logoSymbol}
+        alt=""
+        class="hero-logo h-20 w-20 md:h-28 md:w-28 lg:h-32 lg:w-32"
+      />
+      <!-- テキストロゴ -->
+      <h1 class="mt-4 text-5xl font-bold tracking-[0.15em] text-white md:text-7xl lg:text-8xl">
+        ANOM
+      </h1>
+      <!-- タグライン -->
+      <p class="mt-3 text-xs tracking-[0.3em] font-light text-white/40 md:text-sm md:tracking-[0.4em]">
+        AUTONOMOUS + MINIMALISM
+      </p>
+    </div>
 
-    <!-- タグライン -->
-    <p class="mt-4 text-xs tracking-[0.3em] font-light text-white/50 md:text-sm md:tracking-[0.4em]">
-      AUTONOMOUS + MINIMALISM
-    </p>
+    <!-- 区切り線 -->
+    <div class="mx-auto mt-10 h-px w-16 bg-gradient-to-r from-transparent via-white/40 to-transparent md:w-24"></div>
 
     <!-- キャッチコピー -->
-    <p class="mt-10 text-lg leading-relaxed font-medium text-white/90 md:text-2xl md:leading-relaxed">
+    <p class="mt-10 text-xl leading-relaxed font-medium text-white/90 md:text-3xl md:leading-relaxed">
       無駄を削ぎ落とし、<br class="md:hidden" />AIで自走する組織へ。
     </p>
 
     <!-- サブコピー -->
-    <p class="mt-4 text-sm text-white/60 md:text-base">
+    <p class="mt-5 text-sm leading-relaxed text-white/50 md:text-base">
       秋田の中小企業のDX・AI導入を、戦略から定着まで伴走支援。
     </p>
 
     <!-- CTAボタン -->
-    <div class="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+    <div class="mt-14 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
       <a
         href={withBase("/contact")}
-        class="group relative inline-flex items-center rounded-md bg-white px-8 py-3.5 text-sm font-semibold text-navy shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,255,255,0.15)]"
+        class="group relative inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 text-sm font-semibold text-navy shadow-lg shadow-white/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(255,255,255,0.2)]"
       >
         無料相談する
+        <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
         <!-- ホバー時のglow -->
-        <span class="absolute inset-0 -z-10 rounded-md bg-white opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-30"></span>
+        <span class="absolute inset-0 -z-10 rounded-lg bg-white opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-30"></span>
       </a>
       <a
         href={withBase("/services")}
-        class="inline-flex items-center rounded-md border border-white/25 px-8 py-3.5 text-sm font-medium text-white/80 transition-all duration-300 hover:-translate-y-0.5 hover:border-white/50 hover:text-white"
+        class="group inline-flex items-center gap-2 rounded-lg border border-white/20 px-8 py-4 text-sm font-medium text-white/70 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/40 hover:text-white hover:bg-white/5"
       >
         サービスを見る
+        <svg class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
       </a>
     </div>
   </div>
 
   <!-- スクロールインジケーター -->
-  <div class="absolute bottom-8 left-1/2 -translate-x-1/2">
-    <div class="flex h-8 w-5 items-start justify-center rounded-full border border-white/30 p-1">
-      <div class="h-2 w-1 animate-bounce rounded-full bg-white/60"></div>
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-fade-in-up" style="animation-delay: 1s;">
+    <div class="flex h-10 w-6 items-start justify-center rounded-full border border-white/20 p-1.5">
+      <div class="h-2.5 w-1 animate-bounce rounded-full bg-white/50"></div>
     </div>
   </div>
 </section>
 
 <style>
+  /* ロゴ白抜き: invert で色反転 → screen で黒(元白)部分を透過 */
+  .hero-logo {
+    filter: invert(1);
+    mix-blend-mode: screen;
+    filter: invert(1) drop-shadow(0 4px 30px rgba(255, 255, 255, 0.15));
+  }
+
+  /* グリッドライン背景 */
+  .hero-grid {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
   /* 幾何学図形の共通スタイル */
   .geo {
     position: absolute;
@@ -75,73 +125,96 @@ import { withBase } from "../data/navigation";
   }
 
   .geo-1 {
-    width: 200px;
-    height: 200px;
-    top: 10%;
-    left: 5%;
+    width: 220px;
+    height: 220px;
+    top: 8%;
+    left: 3%;
     transform: rotate(15deg);
     animation-duration: 25s;
+    border-color: rgba(255, 255, 255, 0.04);
   }
 
   .geo-2 {
-    width: 120px;
-    height: 120px;
-    top: 60%;
-    right: 10%;
+    width: 140px;
+    height: 140px;
+    top: 55%;
+    right: 8%;
     transform: rotate(-30deg);
     animation-duration: 20s;
     animation-delay: -5s;
   }
 
   .geo-3 {
-    width: 80px;
-    height: 80px;
-    top: 30%;
-    right: 25%;
+    width: 90px;
+    height: 90px;
+    top: 25%;
+    right: 22%;
     border-radius: 50%;
     animation-duration: 30s;
     animation-delay: -10s;
   }
 
   .geo-4 {
-    width: 150px;
-    height: 150px;
-    bottom: 20%;
-    left: 15%;
+    width: 170px;
+    height: 170px;
+    bottom: 15%;
+    left: 12%;
     transform: rotate(45deg);
     animation-duration: 22s;
     animation-delay: -8s;
+    border-color: rgba(255, 255, 255, 0.04);
   }
 
   .geo-5 {
-    width: 60px;
-    height: 60px;
-    top: 15%;
-    right: 15%;
+    width: 70px;
+    height: 70px;
+    top: 12%;
+    right: 12%;
     border-radius: 50%;
     animation-duration: 18s;
     animation-delay: -3s;
   }
 
+  /* 微小な光の粒 */
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle ease-in-out infinite;
+  }
+
+  .particle-1 { top: 20%; left: 30%; animation-duration: 4s; }
+  .particle-2 { top: 40%; right: 20%; animation-duration: 5s; animation-delay: -1s; }
+  .particle-3 { bottom: 30%; left: 20%; animation-duration: 3.5s; animation-delay: -2s; }
+  .particle-4 { top: 60%; left: 50%; animation-duration: 4.5s; animation-delay: -0.5s; }
+  .particle-5 { top: 15%; right: 35%; animation-duration: 3s; animation-delay: -1.5s; }
+  .particle-6 { bottom: 40%; right: 30%; animation-duration: 5.5s; animation-delay: -3s; }
+
   /* 浮遊アニメーション */
   @keyframes float {
-    0% {
-      transform: translateY(0) rotate(0deg);
-      opacity: 0.3;
-    }
-    25% {
-      opacity: 0.6;
-    }
-    50% {
-      transform: translateY(-30px) rotate(180deg);
-      opacity: 0.3;
-    }
-    75% {
-      opacity: 0.6;
-    }
-    100% {
-      transform: translateY(0) rotate(360deg);
-      opacity: 0.3;
-    }
+    0% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+    25% { opacity: 0.6; }
+    50% { transform: translateY(-30px) rotate(180deg); opacity: 0.3; }
+    75% { opacity: 0.6; }
+    100% { transform: translateY(0) rotate(360deg); opacity: 0.3; }
+  }
+
+  /* 光の粒の点滅 */
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 0.8; transform: scale(1.2); }
+  }
+
+  /* フェードインアニメーション */
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translate(-50%, 20px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+
+  .animate-fade-in-up {
+    opacity: 0;
+    animation: fade-in-up 0.6s ease-out forwards;
   }
 </style>

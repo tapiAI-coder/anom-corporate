@@ -2,6 +2,8 @@
 // グラスモーフィズムヘッダー（スクロール連動で背景変化）
 // theme: "dark" = 白テキスト（ダーク背景ヒーロー上）、"light" = 黒テキスト（白背景上）
 import { navLinks, withBase } from "../data/navigation";
+// ロゴ画像パス
+const logoSymbol = withBase("/images/logo-symbol.png");
 
 interface Props {
   theme?: "dark" | "light";
@@ -24,6 +26,13 @@ const barColor = theme === "dark" ? "bg-white" : "bg-dark";
   <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:px-8">
     <!-- ロゴ -->
     <a href={withBase("/")} class="flex items-center gap-2">
+      <!-- シンボルマーク -->
+      <img
+        src={logoSymbol}
+        alt="ANOM"
+        class:list={["h-8 w-8 transition-all duration-300 md:h-9 md:w-9", theme === "dark" ? "logo-white" : ""]}
+        id="logo-img"
+      />
       <span
         class:list={["text-xl font-bold tracking-tight transition-colors duration-300 md:text-2xl", textColor]}
         id="logo-text"
@@ -88,12 +97,17 @@ const barColor = theme === "dark" ? "bg-white" : "bg-dark";
 
       // スクロール時はテキストをダーク色に統一
       const logoText = document.getElementById("logo-text");
+      const logoImg = document.getElementById("logo-img") as HTMLImageElement;
       const navLinks = document.querySelectorAll("#desktop-nav a");
       const bars = document.querySelectorAll("#bar1, #bar2, #bar3");
 
       if (logoText) {
         logoText.classList.remove("text-white");
         logoText.classList.add("text-dark");
+      }
+      // ロゴ画像をオリジナル色に（白抜き解除）
+      if (logoImg) {
+        logoImg.classList.remove("logo-white");
       }
       navLinks.forEach((link) => {
         link.classList.remove("text-white/80");
@@ -108,6 +122,7 @@ const barColor = theme === "dark" ? "bg-white" : "bg-dark";
       header.classList.remove("bg-white/90", "backdrop-blur-lg", "shadow-sm");
 
       const logoText = document.getElementById("logo-text");
+      const logoImg = document.getElementById("logo-img") as HTMLImageElement;
       const navLinks = document.querySelectorAll("#desktop-nav a");
       const bars = document.querySelectorAll("#bar1, #bar2, #bar3");
 
@@ -115,6 +130,10 @@ const barColor = theme === "dark" ? "bg-white" : "bg-dark";
         if (logoText) {
           logoText.classList.add("text-white");
           logoText.classList.remove("text-dark");
+        }
+        // ロゴ画像を白抜きに戻す
+        if (logoImg) {
+          logoImg.classList.add("logo-white");
         }
         navLinks.forEach((link) => {
           link.classList.add("text-white/80");

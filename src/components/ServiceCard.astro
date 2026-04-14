@@ -1,36 +1,52 @@
 ---
-// サービスカード — ホバーで浮き上がるインタラクション付き
+// サービスカード — ホバーで浮き上がり + グラデーション装飾
 interface Props {
   title: string;
   summary: string;
   /** SVGアイコンのパスデータ（d属性の値） */
   icon: string;
+  /** カード番号（01〜05表示用） */
+  index?: number;
 }
 
-const { title, summary, icon } = Astro.props;
+const { title, summary, icon, index = 0 } = Astro.props;
 ---
 
-<div class="group rounded-lg border border-border bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-navy/20 hover:shadow-lg md:p-8">
-  <!-- アイコン -->
-  <div class="flex h-12 w-12 items-center justify-center rounded-md bg-navy/5 transition-colors duration-300 group-hover:bg-navy/10">
-    <svg
-      class="h-6 w-6 text-navy"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      stroke-width="1.5"
-    >
-      <path stroke-linecap="round" stroke-linejoin="round" d={icon} />
-    </svg>
+<div class="group relative overflow-hidden rounded-xl border border-border bg-white p-6 transition-all duration-500 hover:-translate-y-2 hover:border-navy/20 hover:shadow-2xl md:p-8">
+  <!-- 背景のアクセント装飾 -->
+  <div class="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br from-navy/5 to-transparent transition-all duration-500 group-hover:scale-[2] group-hover:from-navy/8"></div>
+
+  <!-- 上部: 番号 + アイコン -->
+  <div class="relative flex items-start justify-between">
+    <!-- アイコン — グラデーション背景 -->
+    <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-navy to-navy-dark shadow-lg shadow-navy/15 transition-all duration-300 group-hover:scale-110 group-hover:shadow-navy/25">
+      <svg
+        class="h-7 w-7 text-white"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="1.5"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d={icon} />
+      </svg>
+    </div>
+
+    <!-- 番号 -->
+    <span class="text-3xl font-bold text-navy/[0.07] transition-colors duration-300 group-hover:text-navy/[0.12]">
+      {String(index + 1).padStart(2, "0")}
+    </span>
   </div>
 
   <!-- タイトル -->
-  <h3 class="mt-4 text-lg font-bold text-dark">
+  <h3 class="relative mt-5 text-lg font-bold text-dark">
     {title}
   </h3>
 
+  <!-- 区切り線（グラデーション） -->
+  <div class="mt-3 h-px w-10 bg-gradient-to-r from-navy to-navy-light transition-all duration-500 group-hover:w-16"></div>
+
   <!-- 説明 -->
-  <p class="mt-2 text-sm leading-relaxed text-sub">
+  <p class="relative mt-4 text-sm leading-relaxed text-sub">
     {summary}
   </p>
 </div>

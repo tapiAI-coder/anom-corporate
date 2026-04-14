@@ -1,8 +1,9 @@
 ---
 // フッター — ダークネイビー背景 + 白文字
-import { navLinks, siteConfig } from "../data/navigation";
+import { navLinks, siteConfig, withBase } from "../data/navigation";
 
 const currentYear = new Date().getFullYear();
+const logoSymbol = withBase("/images/logo-symbol.png");
 ---
 
 <footer class="bg-gradient-to-b from-navy to-navy-dark">
@@ -10,11 +11,18 @@ const currentYear = new Date().getFullYear();
     <!-- 上部: ロゴ + ナビ -->
     <div class="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
       <!-- ロゴ・タグライン -->
-      <div>
-        <span class="text-2xl font-bold tracking-tight text-white">ANOM</span>
-        <p class="mt-2 text-xs tracking-[0.25em] font-light text-white/50">
-          {siteConfig.tagline}
-        </p>
+      <div class="flex items-center gap-3">
+        <img
+          src={logoSymbol}
+          alt=""
+          class="h-10 w-10 logo-white"
+        />
+        <div>
+          <span class="text-xl font-bold tracking-[0.1em] text-white">ANOM</span>
+          <p class="mt-0.5 text-[10px] tracking-[0.2em] font-light text-white/40">
+            {siteConfig.tagline}
+          </p>
+        </div>
       </div>
 
       <!-- ナビゲーションリンク -->
