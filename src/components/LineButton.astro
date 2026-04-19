@@ -9,12 +9,12 @@ interface Props {
 const { url = "#" } = Astro.props;
 ---
 
-<div class="rounded-lg border border-border bg-bg-alt p-6 text-center md:p-8">
+<div class="rounded-lg border border-border bg-surface p-6 text-center md:p-8">
   <!-- 見出し -->
-  <p class="text-base font-bold text-dark">
+  <p class="text-base font-bold text-text">
     LINEでもお気軽にご相談ください
   </p>
-  <p class="mt-2 text-sm text-sub">
+  <p class="mt-2 text-sm text-muted">
     お友だち追加後、メッセージをお送りください。
   </p>
 
@@ -23,7 +23,7 @@ const { url = "#" } = Astro.props;
     href={url}
     target="_blank"
     rel="noopener noreferrer"
-    class="mt-6 inline-flex items-center gap-2 rounded-md bg-[#06C755] px-8 py-3 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#05b34d] hover:shadow-lg"
+    class="mt-6 inline-flex items-center gap-2 rounded-md bg-[#06C755] px-8 py-3 text-sm font-semibold text-white transition-all duration-300 hover:brightness-110 hover:shadow-[0_0_20px_rgba(6,199,85,0.2)]"
   >
     <!-- LINEアイコン -->
     <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">

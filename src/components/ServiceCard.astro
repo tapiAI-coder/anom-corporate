@@ -1,5 +1,5 @@
 ---
-// サービスカード — ホバーで浮き上がり + グラデーション装飾
+// サービスカード — グラスモーフィズム + glow hover
 interface Props {
   title: string;
   summary: string;
@@ -7,21 +7,30 @@ interface Props {
   icon: string;
   /** カード番号（01〜05表示用） */
   index?: number;
+  /** カードサイズ（Bento Grid用） */
+  size?: "default" | "featured";
 }
 
-const { title, summary, icon, index = 0 } = Astro.props;
+const { title, summary, icon, index = 0, size = "default" } = Astro.props;
+const isFeatured = size === "featured";
 ---
 
-<div class="group relative overflow-hidden rounded-xl border border-border bg-white p-6 transition-all duration-500 hover:-translate-y-2 hover:border-navy/20 hover:shadow-2xl md:p-8">
-  <!-- 背景のアクセント装飾 -->
-  <div class="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br from-navy/5 to-transparent transition-all duration-500 group-hover:scale-[2] group-hover:from-navy/8"></div>
-
+<div class:list={[
+  "glass-card glow-hover group overflow-hidden h-full",
+  isFeatured ? "p-8 md:p-10 flex flex-col justify-between" : "p-6 md:p-8",
+]}>
   <!-- 上部: 番号 + アイコン -->
   <div class="relative flex items-start justify-between">
-    <!-- アイコン — グラデーション背景 -->
-    <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-navy to-navy-dark shadow-lg shadow-navy/15 transition-all duration-300 group-hover:scale-110 group-hover:shadow-navy/25">
+    <!-- アイコン — モノトーン -->
+    <div class:list={[
+      "flex items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.06]",
+      isFeatured ? "h-16 w-16" : "h-14 w-14",
+    ]}>
       <svg
-        class="h-7 w-7 text-white"
+        class:list={[
+          "text-white/70",
+          isFeatured ? "h-8 w-8" : "h-7 w-7",
+        ]}
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -32,21 +41,30 @@ const { title, summary, icon, index = 0 } = Astro.props;
     </div>
 
     <!-- 番号 -->
-    <span class="text-3xl font-bold text-navy/[0.07] transition-colors duration-300 group-hover:text-navy/[0.12]">
+    <span class:list={[
+      "font-bold text-white/[0.05] transition-colors duration-300 group-hover:text-white/[0.10]",
+      isFeatured ? "text-5xl" : "text-3xl",
+    ]}>
       {String(index + 1).padStart(2, "0")}
     </span>
   </div>
 
   <!-- タイトル -->
-  <h3 class="relative mt-5 text-lg font-bold text-dark">
+  <h3 class:list={[
+    "relative font-bold text-white",
+    isFeatured ? "mt-6 text-xl md:text-2xl" : "mt-5 text-lg",
+  ]}>
     {title}
   </h3>
 
-  <!-- 区切り線（グラデーション） -->
-  <div class="mt-3 h-px w-10 bg-gradient-to-r from-navy to-navy-light transition-all duration-500 group-hover:w-16"></div>
+  <!-- 区切り線 -->
+  <div class="mt-3 h-px w-10 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
   <!-- 説明 -->
-  <p class="relative mt-4 text-sm leading-relaxed text-sub">
+  <p class:list={[
+    "relative leading-relaxed text-white/60",
+    isFeatured ? "mt-5 text-base" : "mt-4 text-sm",
+  ]}>
     {summary}
   </p>
 </div>

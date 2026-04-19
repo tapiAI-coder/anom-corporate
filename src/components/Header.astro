@@ -12,10 +12,10 @@ interface Props {
 const { theme = "dark" } = Astro.props;
 
 // テーマに応じたテキストカラークラス
-const textColor = theme === "dark" ? "text-white" : "text-dark";
-const textColorMuted = theme === "dark" ? "text-white/80" : "text-sub";
-const textColorHover = theme === "dark" ? "hover:text-white" : "hover:text-navy";
-const barColor = theme === "dark" ? "bg-white" : "bg-dark";
+const textColor = theme === "dark" ? "text-white" : "text-text";
+const textColorMuted = theme === "dark" ? "text-white/80" : "text-muted";
+const textColorHover = theme === "dark" ? "hover:text-white" : "hover:text-accent-on-light";
+const barColor = theme === "dark" ? "bg-white" : "bg-text";
 ---
 
 <header
@@ -68,7 +68,7 @@ const barColor = theme === "dark" ? "bg-white" : "bg-dark";
   <!-- モバイルメニュー -->
   <nav
     id="mobile-menu"
-    class="hidden flex-col gap-4 bg-navy-dark/95 px-4 py-6 backdrop-blur-lg md:hidden"
+    class="hidden flex-col gap-4 bg-dark-bg/95 px-4 py-6 backdrop-blur-lg md:hidden"
   >
     {navLinks.map((link) => (
       <a
@@ -93,7 +93,7 @@ const barColor = theme === "dark" ? "bg-white" : "bg-dark";
     if (window.scrollY > 50) {
       // スクロール後: 背景付き（テーマに関わらず統一）
       header.classList.add("bg-white/90", "backdrop-blur-lg", "shadow-sm");
-      header.classList.remove("bg-navy-dark/80");
+      header.classList.remove("bg-dark-bg/80");
 
       // スクロール時はテキストをダーク色に統一
       const logoText = document.getElementById("logo-text");
@@ -103,7 +103,7 @@ const barColor = theme === "dark" ? "bg-white" : "bg-dark";
 
       if (logoText) {
         logoText.classList.remove("text-white");
-        logoText.classList.add("text-dark");
+        logoText.classList.add("text-text");
       }
       // ロゴ画像をオリジナル色に（白抜き解除）
       if (logoImg) {
@@ -111,11 +111,11 @@ const barColor = theme === "dark" ? "bg-white" : "bg-dark";
       }
       navLinks.forEach((link) => {
         link.classList.remove("text-white/80");
-        link.classList.add("text-sub");
+        link.classList.add("text-muted");
       });
       bars.forEach((bar) => {
         bar.classList.remove("bg-white");
-        bar.classList.add("bg-dark");
+        bar.classList.add("bg-text");
       });
     } else {
       // トップ: 透明背景（テーマに応じた色に戻す）
@@ -129,7 +129,7 @@ const barColor = theme === "dark" ? "bg-white" : "bg-dark";
       if (theme === "dark") {
         if (logoText) {
           logoText.classList.add("text-white");
-          logoText.classList.remove("text-dark");
+          logoText.classList.remove("text-text");
         }
         // ロゴ画像を白抜きに戻す
         if (logoImg) {
@@ -137,11 +137,11 @@ const barColor = theme === "dark" ? "bg-white" : "bg-dark";
         }
         navLinks.forEach((link) => {
           link.classList.add("text-white/80");
-          link.classList.remove("text-sub");
+          link.classList.remove("text-muted");
         });
         bars.forEach((bar) => {
           bar.classList.add("bg-white");
-          bar.classList.remove("bg-dark");
+          bar.classList.remove("bg-text");
         });
       }
     }
