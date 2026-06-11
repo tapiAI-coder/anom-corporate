@@ -85,10 +85,31 @@ const barColor = theme === "dark" ? "bg-white" : "bg-text";
   // ヘッダーのスクロール連動処理
   const header = document.getElementById("site-header");
   const theme = header?.dataset.theme;
+  // ヒーロー scrolltelling 中はヘッダーをダーク・透明のまま維持する
+  const heroSection = document.getElementById("hero-section");
+  function isInHero() {
+    if (!heroSection) return false;
+    const rect = heroSection.getBoundingClientRect();
+    return rect.bottom > 80; // ヘッダー高さを超えるまではヒーロー領域
+  }
 
   // スクロール量に応じてヘッダー背景を変化させる
   function updateHeader() {
     if (!header) return;
+
+    // ヒーロー中（dark theme）は透明 + 白テキストを維持
+    if (theme === "dark" && isInHero()) {
+      header.classList.remove("bg-white/90", "backdrop-blur-lg", "shadow-sm");
+      const logoText = document.getElementById("logo-text");
+      const logoImg = document.getElementById("logo-img") as HTMLImageElement;
+      const navLinks = document.querySelectorAll("#desktop-nav a");
+      const bars = document.querySelectorAll("#bar1, #bar2, #bar3");
+      if (logoText) { logoText.classList.add("text-white"); logoText.classList.remove("text-text"); }
+      if (logoImg) logoImg.classList.add("logo-white");
+      navLinks.forEach((link) => { link.classList.add("text-white/80"); link.classList.remove("text-muted"); });
+      bars.forEach((bar) => { bar.classList.add("bg-white"); bar.classList.remove("bg-text"); });
+      return;
+    }
 
     if (window.scrollY > 50) {
       // スクロール後: 背景付き（テーマに関わらず統一）

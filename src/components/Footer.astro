@@ -6,7 +6,9 @@ const currentYear = new Date().getFullYear();
 const logoSymbol = withBase("/images/logo-symbol.png");
 ---
 
-<footer class="dark-zone bg-dark-bg">
+<!-- v3 Phase 1-B: Footer 背景を透過して背後のニューロン canvas を透かす -->
+<!-- dark-zone クラスは残す（文字色など依存スタイルがあるため）/ bg-dark-bg は外す -->
+<footer class="dark-zone" style="background: transparent;">
   <div class="mx-auto max-w-6xl px-4 py-20 md:px-8">
     <!-- 上部: ロゴ + ナビ -->
     <div class="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">

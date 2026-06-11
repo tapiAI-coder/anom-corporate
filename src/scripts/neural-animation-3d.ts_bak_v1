@@ -1,0 +1,567 @@
+/**
+ * neural-animation-3d.ts — 3D ニューロン伝達アニメーション
+ *
+ * コンセプト:
+ *   - 3D 空間に神経細胞（ノード）を配置
+ *   - 細胞間を有機的な曲線（軸索）で接続
+ *   - 軸索上を光のパルスが走り、到達先のノードを発火 → 連鎖（カスケード）
+ *   - Bloom（UnrealBloomPass）で全体をネオン発光
+ *   - カメラはマウス視差 + スクロール連動で奥行きが変わる
+ *
+ * パフォーマンス:
+ *   - DPR 上限 2（モバイル 1.5）
+ *   - PC: 100 ノード / モバイル: 50 ノード
+ *   - prefers-reduced-motion: 静止画フォールバック
+ *   - document.hidden / IntersectionObserver で停止
+ */
+
+import * as THREE from "three";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+
+// ===== 設定定数 =====
+
+// 環境判定（モバイル検出）
+const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches;
+
+const CONFIG = {
+  // ノード数
+  NODE_COUNT: isMobile ? 50 : 100,
+  // 接続判定半径（3D 距離）
+  CONNECT_RADIUS: isMobile ? 140 : 180,
+  // 空間サイズ（立方体の一辺）
+  SPACE_SIZE: 800,
+  // ノード球の半径
+  NODE_RADIUS: 2.2,
+  // ノード色（Glow ベース）
+  NODE_COLOR_A: 0x3b82f6, // blue-500
+  NODE_COLOR_B: 0x8b5cf6, // violet-500
+  // 軸索ラインの不透明度
+  EDGE_OPACITY: 0.12,
+  // パルス（発火）速度（0-1 / 秒）
+  PULSE_SPEED: 0.6,
+  // パルス生成間隔（ms）
+  PULSE_INTERVAL_MIN: 400,
+  PULSE_INTERVAL_MAX: 900,
+  // カスケード発火確率（パルスが到達したノードから更に発火するか）
+  CASCADE_PROBABILITY: 0.55,
+  CASCADE_MAX_DEPTH: 3,
+  // カメラ視差（マウス連動）
+  CAMERA_PARALLAX: 60,
+  // Bloom 設定（PC のみ）
+  BLOOM_STRENGTH: 0.9,
+  BLOOM_RADIUS: 0.5,
+  BLOOM_THRESHOLD: 0.0,
+  // DPR 上限
+  DPR_MAX_PC: 2,
+  DPR_MAX_MOBILE: 1.5,
+};
+
+// ===== 型定義 =====
+
+interface Node {
+  position: THREE.Vector3;
+  velocity: THREE.Vector3;
+  baseIntensity: number; // 基本発光強度（0-1）
+  currentIntensity: number; // 現在の発光強度（発火時に上昇）
+  mesh: THREE.Mesh;
+  connections: number[]; // 接続先ノードのインデックス
+}
+
+interface Edge {
+  from: number; // ノードインデックス
+  to: number;
+  line: THREE.Line;
+  geometry: THREE.BufferGeometry;
+}
+
+interface Pulse {
+  from: number;
+  to: number;
+  progress: number; // 0-1
+  depth: number; // カスケード深度（連鎖用）
+  mesh: THREE.Mesh;
+}
+
+// ===== メインクラス =====
+
+export class NeuralAnimation3D {
+  private canvas: HTMLCanvasElement;
+  private scene: THREE.Scene;
+  private camera: THREE.PerspectiveCamera;
+  private renderer: THREE.WebGLRenderer;
+  private composer: EffectComposer | null = null;
+  private useBloom: boolean;
+
+  private nodes: Node[] = [];
+  private edges: Edge[] = [];
+  private pulses: Pulse[] = [];
+
+  private pointer = new THREE.Vector2(0, 0);
+  private targetCameraOffset = new THREE.Vector3(0, 0, 0);
+  private currentCameraOffset = new THREE.Vector3(0, 0, 0);
+  private scrollProgress = 0;
+
+  private clock = new THREE.Clock();
+  private lastPulseTime = 0;
+  private nextPulseInterval = 500;
+
+  private animationId: number | null = null;
+  private running = false;
+  private visible = true;
+  private prefersReducedMotion = false;
+
+  // リソース（破棄用）
+  private nodeGeometry: THREE.BufferGeometry;
+  private nodeMaterial: THREE.MeshBasicMaterial;
+  private pulseGeometry: THREE.BufferGeometry;
+  private pulseMaterial: THREE.MeshBasicMaterial;
+  private edgeMaterial: THREE.LineBasicMaterial;
+
+  constructor(canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
+
+    // 動きを控えめにする設定の検出
+    this.prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Bloom は PC かつ reduced-motion でない場合のみ有効
+    this.useBloom = !isMobile && !this.prefersReducedMotion;
+
+    // シーン・カメラ・レンダラー
+    this.scene = new THREE.Scene();
+    this.scene.fog = new THREE.Fog(0x0a0a0a, CONFIG.SPACE_SIZE * 0.4, CONFIG.SPACE_SIZE * 1.2);
+
+    this.camera = new THREE.PerspectiveCamera(
+      60,
+      window.innerWidth / window.innerHeight,
+      1,
+      2000
+    );
+    this.camera.position.set(0, 0, CONFIG.SPACE_SIZE * 0.55);
+    this.camera.lookAt(0, 0, 0);
+
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance",
+    });
+    this.renderer.setClearColor(0x000000, 0);
+    this.setupRenderSize();
+
+    // ジオメトリ・マテリアル（共有で軽量化）
+    this.nodeGeometry = new THREE.SphereGeometry(CONFIG.NODE_RADIUS, 8, 8);
+    this.nodeMaterial = new THREE.MeshBasicMaterial({
+      color: CONFIG.NODE_COLOR_A,
+      transparent: true,
+      opacity: 0.85,
+    });
+    this.pulseGeometry = new THREE.SphereGeometry(CONFIG.NODE_RADIUS * 1.6, 8, 8);
+    this.pulseMaterial = new THREE.MeshBasicMaterial({
+      color: CONFIG.NODE_COLOR_B,
+      transparent: true,
+      opacity: 1,
+    });
+    this.edgeMaterial = new THREE.LineBasicMaterial({
+      color: 0x6366f1, // indigo-500 (blue と violet の中間)
+      transparent: true,
+      opacity: CONFIG.EDGE_OPACITY,
+    });
+
+    // Bloom（PC のみ）
+    if (this.useBloom) {
+      this.setupBloom();
+    }
+
+    // ノード・エッジ生成
+    this.createNodes();
+    this.createEdges();
+
+    // イベント登録
+    this.bindEvents();
+  }
+
+  // ===== セットアップ =====
+
+  private setupRenderSize(): void {
+    const dprMax = isMobile ? CONFIG.DPR_MAX_MOBILE : CONFIG.DPR_MAX_PC;
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, dprMax));
+    this.renderer.setSize(window.innerWidth, window.innerHeight, false);
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+  }
+
+  private setupBloom(): void {
+    const renderPass = new RenderPass(this.scene, this.camera);
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      CONFIG.BLOOM_STRENGTH,
+      CONFIG.BLOOM_RADIUS,
+      CONFIG.BLOOM_THRESHOLD
+    );
+    this.composer = new EffectComposer(this.renderer);
+    this.composer.addPass(renderPass);
+    this.composer.addPass(bloomPass);
+  }
+
+  private createNodes(): void {
+    const half = CONFIG.SPACE_SIZE / 2;
+
+    for (let i = 0; i < CONFIG.NODE_COUNT; i++) {
+      // 立方体空間にランダム配置（中心から少し離れた位置を優先）
+      const position = new THREE.Vector3(
+        (Math.random() - 0.5) * CONFIG.SPACE_SIZE,
+        (Math.random() - 0.5) * CONFIG.SPACE_SIZE * 0.7, // 縦は少し抑える
+        (Math.random() - 0.5) * CONFIG.SPACE_SIZE * 0.8
+      );
+
+      // ゆっくり漂う速度
+      const velocity = new THREE.Vector3(
+        (Math.random() - 0.5) * 4,
+        (Math.random() - 0.5) * 4,
+        (Math.random() - 0.5) * 4
+      );
+
+      // 個別のマテリアルクローン（発光強度を個別制御したいので）
+      const material = this.nodeMaterial.clone();
+      material.opacity = 0.5 + Math.random() * 0.4;
+
+      const mesh = new THREE.Mesh(this.nodeGeometry, material);
+      mesh.position.copy(position);
+      this.scene.add(mesh);
+
+      this.nodes.push({
+        position,
+        velocity,
+        baseIntensity: 0.6 + Math.random() * 0.3,
+        currentIntensity: 0.6 + Math.random() * 0.3,
+        mesh,
+        connections: [],
+      });
+    }
+
+    // 接続（近傍ノード）を計算
+    for (let i = 0; i < this.nodes.length; i++) {
+      for (let j = i + 1; j < this.nodes.length; j++) {
+        const dist = this.nodes[i].position.distanceTo(this.nodes[j].position);
+        if (dist < CONFIG.CONNECT_RADIUS) {
+          this.nodes[i].connections.push(j);
+          this.nodes[j].connections.push(i);
+        }
+      }
+    }
+  }
+
+  private createEdges(): void {
+    const processed = new Set<string>();
+
+    for (let i = 0; i < this.nodes.length; i++) {
+      for (const j of this.nodes[i].connections) {
+        const key = i < j ? `${i}-${j}` : `${j}-${i}`;
+        if (processed.has(key)) continue;
+        processed.add(key);
+
+        const geometry = new THREE.BufferGeometry().setFromPoints([
+          this.nodes[i].position,
+          this.nodes[j].position,
+        ]);
+        const line = new THREE.Line(geometry, this.edgeMaterial);
+        this.scene.add(line);
+
+        this.edges.push({ from: i, to: j, line, geometry });
+      }
+    }
+  }
+
+  // ===== イベント =====
+
+  private bindEvents(): void {
+    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("pointermove", this.handlePointerMove, { passive: true });
+    window.addEventListener("scroll", this.handleScroll, { passive: true });
+    document.addEventListener("visibilitychange", this.handleVisibilityChange);
+  }
+
+  private handleResize = (): void => {
+    this.setupRenderSize();
+    if (this.composer) {
+      this.composer.setSize(window.innerWidth, window.innerHeight);
+    }
+  };
+
+  private handlePointerMove = (e: PointerEvent): void => {
+    // -1 〜 1 に正規化
+    this.pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+    this.pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+    // カメラ視差（モバイルでは無効）
+    if (!isMobile) {
+      this.targetCameraOffset.x = this.pointer.x * CONFIG.CAMERA_PARALLAX;
+      this.targetCameraOffset.y = this.pointer.y * CONFIG.CAMERA_PARALLAX * 0.5;
+    }
+  };
+
+  private handleScroll = (): void => {
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    this.scrollProgress = maxScroll > 0 ? Math.min(window.scrollY / maxScroll, 1) : 0;
+    // スクロールで奥へ潜る
+    this.targetCameraOffset.z = -this.scrollProgress * CONFIG.SPACE_SIZE * 0.3;
+  };
+
+  private handleVisibilityChange = (): void => {
+    this.visible = !document.hidden;
+    if (this.visible && this.running && !this.animationId) {
+      this.clock.start();
+      this.loop();
+    }
+  };
+
+  // ===== 発火ロジック =====
+
+  private triggerPulse(fromIdx: number, toIdx: number, depth: number): void {
+    const mesh = new THREE.Mesh(this.pulseGeometry, this.pulseMaterial.clone());
+    mesh.position.copy(this.nodes[fromIdx].position);
+    this.scene.add(mesh);
+
+    this.pulses.push({
+      from: fromIdx,
+      to: toIdx,
+      progress: 0,
+      depth,
+      mesh,
+    });
+
+    // 発火ノードの発光強度を上昇
+    this.nodes[fromIdx].currentIntensity = Math.min(
+      this.nodes[fromIdx].currentIntensity + 0.8,
+      2.5
+    );
+  }
+
+  private spawnRandomPulse(): void {
+    if (this.nodes.length === 0) return;
+    // 接続を持つノードからランダム選択
+    const candidates = this.nodes.filter((n) => n.connections.length > 0);
+    if (candidates.length === 0) return;
+
+    const from = candidates[Math.floor(Math.random() * candidates.length)];
+    const fromIdx = this.nodes.indexOf(from);
+    const toIdx = from.connections[Math.floor(Math.random() * from.connections.length)];
+    this.triggerPulse(fromIdx, toIdx, 0);
+  }
+
+  private updatePulses(delta: number): void {
+    for (let i = this.pulses.length - 1; i >= 0; i--) {
+      const pulse = this.pulses[i];
+      pulse.progress += CONFIG.PULSE_SPEED * delta;
+
+      const from = this.nodes[pulse.from].position;
+      const to = this.nodes[pulse.to].position;
+
+      if (pulse.progress >= 1) {
+        // 到達 → 発火ノード発光 + カスケード判定
+        this.nodes[pulse.to].currentIntensity = Math.min(
+          this.nodes[pulse.to].currentIntensity + 1.0,
+          3.0
+        );
+
+        if (
+          pulse.depth < CONFIG.CASCADE_MAX_DEPTH &&
+          Math.random() < CONFIG.CASCADE_PROBABILITY
+        ) {
+          const nextNode = this.nodes[pulse.to];
+          // 来た方向以外の接続先を選ぶ
+          const candidates = nextNode.connections.filter((c) => c !== pulse.from);
+          if (candidates.length > 0) {
+            const nextTo = candidates[Math.floor(Math.random() * candidates.length)];
+            this.triggerPulse(pulse.to, nextTo, pulse.depth + 1);
+          }
+        }
+
+        // パルスを除去
+        this.scene.remove(pulse.mesh);
+        (pulse.mesh.material as THREE.Material).dispose();
+        this.pulses.splice(i, 1);
+      } else {
+        // 線形補間で位置更新
+        pulse.mesh.position.lerpVectors(from, to, pulse.progress);
+        // 色を blue → violet に線形補間
+        const mat = pulse.mesh.material as THREE.MeshBasicMaterial;
+        const color = new THREE.Color(CONFIG.NODE_COLOR_A).lerp(
+          new THREE.Color(CONFIG.NODE_COLOR_B),
+          pulse.progress
+        );
+        mat.color = color;
+      }
+    }
+  }
+
+  // ===== メインループ =====
+
+  private update(delta: number): void {
+    const now = performance.now();
+
+    // 新パルスを一定間隔で生成
+    if (!this.prefersReducedMotion && now - this.lastPulseTime > this.nextPulseInterval) {
+      this.spawnRandomPulse();
+      this.lastPulseTime = now;
+      this.nextPulseInterval =
+        CONFIG.PULSE_INTERVAL_MIN +
+        Math.random() * (CONFIG.PULSE_INTERVAL_MAX - CONFIG.PULSE_INTERVAL_MIN);
+    }
+
+    // ノード更新
+    const half = CONFIG.SPACE_SIZE / 2;
+    for (const node of this.nodes) {
+      // ドリフト移動
+      if (!this.prefersReducedMotion) {
+        node.position.addScaledVector(node.velocity, delta);
+
+        // 境界反射
+        if (Math.abs(node.position.x) > half) node.velocity.x *= -1;
+        if (Math.abs(node.position.y) > half * 0.7) node.velocity.y *= -1;
+        if (Math.abs(node.position.z) > half * 0.8) node.velocity.z *= -1;
+
+        node.mesh.position.copy(node.position);
+      }
+
+      // 発光強度を徐々に base に戻す（減衰）
+      node.currentIntensity +=
+        (node.baseIntensity - node.currentIntensity) * Math.min(delta * 2, 1);
+
+      // マテリアル透明度に反映
+      const mat = node.mesh.material as THREE.MeshBasicMaterial;
+      mat.opacity = Math.min(node.currentIntensity * 0.5, 1);
+      // 発火中は色を violet 寄りに
+      const colorT = Math.min((node.currentIntensity - node.baseIntensity) / 2, 1);
+      mat.color = new THREE.Color(CONFIG.NODE_COLOR_A).lerp(
+        new THREE.Color(CONFIG.NODE_COLOR_B),
+        colorT
+      );
+    }
+
+    // エッジ位置更新（ノードが動いたため）
+    if (!this.prefersReducedMotion) {
+      for (const edge of this.edges) {
+        const positions = edge.geometry.attributes.position as THREE.BufferAttribute;
+        const from = this.nodes[edge.from].position;
+        const to = this.nodes[edge.to].position;
+        positions.setXYZ(0, from.x, from.y, from.z);
+        positions.setXYZ(1, to.x, to.y, to.z);
+        positions.needsUpdate = true;
+      }
+    }
+
+    // パルス更新
+    this.updatePulses(delta);
+
+    // カメラを目標位置へスムーズ移動
+    this.currentCameraOffset.lerp(this.targetCameraOffset, Math.min(delta * 3, 1));
+    this.camera.position.x = this.currentCameraOffset.x;
+    this.camera.position.y = this.currentCameraOffset.y;
+    this.camera.position.z = CONFIG.SPACE_SIZE * 0.55 + this.currentCameraOffset.z;
+    this.camera.lookAt(0, 0, 0);
+  }
+
+  private render(): void {
+    if (this.composer) {
+      this.composer.render();
+    } else {
+      this.renderer.render(this.scene, this.camera);
+    }
+  }
+
+  private loop = (): void => {
+    if (!this.running || !this.visible) {
+      this.animationId = null;
+      return;
+    }
+
+    const delta = Math.min(this.clock.getDelta(), 0.1); // 大きすぎる delta をクランプ
+    this.update(delta);
+    this.render();
+
+    this.animationId = requestAnimationFrame(this.loop);
+  };
+
+  // ===== 公開 API =====
+
+  start(): void {
+    if (this.running) return;
+    this.running = true;
+    this.clock.start();
+    // 初回スクロール値を取得
+    this.handleScroll();
+    this.loop();
+  }
+
+  pause(): void {
+    this.running = false;
+    if (this.animationId !== null) {
+      cancelAnimationFrame(this.animationId);
+      this.animationId = null;
+    }
+  }
+
+  destroy(): void {
+    this.pause();
+    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("pointermove", this.handlePointerMove);
+    window.removeEventListener("scroll", this.handleScroll);
+    document.removeEventListener("visibilitychange", this.handleVisibilityChange);
+
+    // リソース解放
+    this.nodes.forEach((n) => {
+      this.scene.remove(n.mesh);
+      (n.mesh.material as THREE.Material).dispose();
+    });
+    this.edges.forEach((e) => {
+      this.scene.remove(e.line);
+      e.geometry.dispose();
+    });
+    this.pulses.forEach((p) => {
+      this.scene.remove(p.mesh);
+      (p.mesh.material as THREE.Material).dispose();
+    });
+    this.nodeGeometry.dispose();
+    this.nodeMaterial.dispose();
+    this.pulseGeometry.dispose();
+    this.pulseMaterial.dispose();
+    this.edgeMaterial.dispose();
+    this.renderer.dispose();
+  }
+}
+
+// ===== エクスポート関数（起動ヘルパー） =====
+
+let instance: NeuralAnimation3D | null = null;
+
+export function startNeuralAnimation3D(canvasId: string): void {
+  // 既にインスタンスがある場合は重複起動を防ぐ
+  if (instance) return;
+
+  const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null;
+  if (!canvas) {
+    console.warn(`[neural-animation-3d] canvas #${canvasId} not found`);
+    return;
+  }
+
+  try {
+    instance = new NeuralAnimation3D(canvas);
+    instance.start();
+
+    // ページ離脱時にクリーンアップ
+    window.addEventListener("beforeunload", () => {
+      instance?.destroy();
+      instance = null;
+    });
+
+    // デバッグ用（開発時のみ）
+    if (import.meta.env.DEV) {
+      (window as any).__neural3d = instance;
+    }
+  } catch (err) {
+    console.error("[neural-animation-3d] failed to start:", err);
+  }
+}

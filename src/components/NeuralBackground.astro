@@ -1,0 +1,97 @@
+---
+/**
+ * NeuralBackground — ニューロン伝達アニメーション背景
+ *
+ * 使い方（ページ全体背景）:
+ *   <NeuralBackground />
+ *
+ * 使い方（z-index カスタム）:
+ *   <NeuralBackground zIndex={-1} />
+ *
+ * 仕様:
+ *   - 固定配置（position: fixed, inset: 0）
+ *   - コンテンツより背後（z-0）
+ *   - pointer-events: none（クリックを阻害しない）
+ *   - Astro Island にしない — 純粋な <canvas> + <script>
+ */
+
+interface Props {
+  /** z-index 値（デフォルト -1 = すべての静的コンテンツの背後） */
+  zIndex?: number;
+  /** 透明度（デフォルト 1） */
+  opacity?: number;
+}
+
+// デフォルトで z-index: -1
+// これにより、position を持たないセクション（static）の背後に配置され、
+// 透明セクションだけが canvas を「透かして」見せる構造になる
+const { zIndex = -1, opacity = 1 } = Astro.props;
+---
+
+<canvas
+  id="neural-canvas"
+  class="neural-canvas"
+  aria-hidden="true"
+  style={`z-index: ${zIndex}; opacity: ${opacity};`}
+></canvas>
+
+<style>
+  /* Canvas 基本配置 — 画面全体に固定、背後 */
+  .neural-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    /* フェードイン（初期描画のチラつき回避） */
+    animation: neural-fade-in 800ms ease-out 200ms backwards;
+  }
+
+  @keyframes neural-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: var(--neural-opacity, 1);
+    }
+  }
+
+  /* 動きを控えめにする設定のユーザー向け */
+  @media (prefers-reduced-motion: reduce) {
+    .neural-canvas {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  // ANOM コア背景シーン（v3 Phase B）
+  //   - ロゴアニメーション動画の VideoTexture 合成（anom-core-scene）
+  //   - 星屑 + 浮遊ボケ + Bloom
+  //   - Hero→About の動画 scrub 再生（anom-scroll-orchestrator）
+  //   - マウスパララックス（同上）
+  import { startAnomCoreScene } from "../scripts/anom-core-scene";
+  import { startAnomScrollOrchestrator } from "../scripts/anom-scroll-orchestrator";
+
+  function initScene() {
+    const core = startAnomCoreScene("neural-canvas");
+    if (!core) return;
+
+    // グローバル公開（デバッグ用）
+    (window as any).__anomCoreScene = core;
+
+    // スクロール演出 & マウス入力を起動
+    const orchestrator = startAnomScrollOrchestrator(core, {
+      heroSelector: "[data-hero-section]",
+      scrub: 0.8,
+    });
+    (window as any).__anomScrollOrchestrator = orchestrator;
+  }
+
+  // DOMContentLoaded 済みであれば即起動、そうでなければ待つ
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initScene);
+  } else {
+    initScene();
+  }
+</script>

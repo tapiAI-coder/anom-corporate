@@ -1,0 +1,222 @@
+// UseCases セクションコンポーネント（v2 再設計 Phase 2）
+// 活用事例（想定シナリオ 4 件）を表示する
+// AboutSection.tsx のアニメーションパターン・スタイルを完全踏襲
+
+import { motion, useReducedMotion, useInView, type Variants } from "framer-motion";
+import { useRef } from "react";
+
+// ===== 型定義 =====
+
+// 想定シナリオカードのデータ型
+interface UseCase {
+  num: string;
+  label: string;
+  title: string;
+  body: string;
+}
+
+// ===== コンテンツデータ =====
+
+// 想定シナリオ 4 件（実績ではなく「こういう入口がある」という提示）
+const USE_CASES: UseCase[] = [
+  {
+    num: "01",
+    label: "CONSTRUCTION",
+    title: "書類と写真を、AIで軽く",
+    body: "紙の工程管理・現場写真・見積作成で事務が飽和する建設・土木。OCR と業務フロー自動化で事務負担を削減し、現場監督が本来の業務に戻れる状態へ。",
+  },
+  {
+    num: "02",
+    label: "RETAIL & FOOD",
+    title: "売上データを、発注判断に",
+    body: "POS はあるのに活かせない。発注はベテランの勘頼り。売上予測と発注提案の仕組み化で、属人化と廃棄ロスを同時に減らす。",
+  },
+  {
+    num: "03",
+    label: "MANUFACTURING",
+    title: "熟練の目を、AIで補完する",
+    body: "外観検査が属人化し、技術承継に時間がかかる製造業。画像 AI による検査補助と、社内ナレッジ検索基盤で若手が自走できる体制へ。",
+  },
+  {
+    num: "04",
+    label: "SERVICES",
+    title: "問い合わせを、AIと分業する",
+    body: "電話・メール対応で本業が進まない士業・サービス業。よくある質問の一次対応、議事録・文書の下書き自動化で、専門業務に集中できる環境を。",
+  },
+];
+
+// ===== アニメーション Variants ファクトリー =====
+// AboutSection と同じパターン: prefersReducedMotion で y 移動を無効化
+
+function makeContainerVariants(): Variants {
+  return {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.2,
+      },
+    },
+  };
+}
+
+function makeChildVariants(prefersReducedMotion: boolean | null): Variants {
+  if (prefersReducedMotion) {
+    // 動き軽減時: opacity のみ（y 移動なし）
+    return {
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: { duration: 0.3, ease: "easeOut" },
+      },
+    };
+  }
+  // 通常: y 移動 + フェードイン（spring）
+  return {
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 50, damping: 20 },
+    },
+  };
+}
+
+// ===== メインコンポーネント =====
+export default function UseCasesSection() {
+  // アクセシビリティ: 動き軽減設定を検知
+  const prefersReducedMotion = useReducedMotion();
+
+  // Variants を生成（prefersReducedMotion に応じて切り替え）
+  const containerVariants = makeContainerVariants();
+  const childVariants = makeChildVariants(prefersReducedMotion ?? false);
+
+  // ===== useInView フック — セクションヘッダとグリッドで独立してトリガー =====
+  // セクションヘッダ
+  const headerRef = useRef<HTMLDivElement>(null);
+  const headerInView = useInView(headerRef, { once: true, margin: "-15%" });
+
+  // シナリオグリッド
+  const gridRef = useRef<HTMLDivElement>(null);
+  const gridInView = useInView(gridRef, { once: true, margin: "-15%" });
+
+  return (
+    // section タグからコンポーネント内で完結（Astro 側で section を巻かない）
+    <section
+      // v3 Phase 1-B: 背景を透過（背後のニューロン canvas を透かす）
+      className="relative py-24 md:py-32 lg:py-40"
+      style={{ background: "transparent" }}
+    >
+      {/* ===== コンテナ ===== */}
+      <div className="mx-auto max-w-6xl px-4 md:px-8">
+
+        {/* ===== セクションヘッダ ===== */}
+        <motion.div
+          ref={headerRef}
+          variants={containerVariants}
+          initial="hidden"
+          animate={headerInView ? "visible" : "hidden"}
+        >
+          {/* モノスペースラベル */}
+          <motion.p
+            variants={childVariants}
+            className="text-xs uppercase tracking-[0.25em]"
+            style={{
+              color: "var(--color-v2-text-subtle)",
+              fontFamily: "var(--font-v2-mono)",
+            }}
+          >
+            02 / USECASES
+          </motion.p>
+
+          {/* 大見出し */}
+          <motion.h2
+            variants={childVariants}
+            className="mt-6 font-bold tracking-tight text-3xl md:text-5xl lg:text-6xl"
+            style={{
+              color: "var(--color-v2-text)",
+              fontFamily: "var(--font-v2-display)",
+            }}
+          >
+            こんな現場に、届けます。
+          </motion.h2>
+
+          {/* リード段落 */}
+          <motion.p
+            variants={childVariants}
+            className="mt-8 max-w-2xl text-base leading-relaxed md:text-lg"
+            style={{
+              color: "var(--color-v2-text-body)",
+              fontFamily: "var(--font-v2-sans)",
+            }}
+          >
+            以下は、秋田の中小企業でよく伺う課題と、ANOM のアプローチ例です。実績ではなく「こういう入口があります」という想定シナリオとして参考にしてください。御社の業種・規模に合わせた入口は、ご一緒に探します。
+          </motion.p>
+        </motion.div>
+
+        {/* ===== シナリオ 4 件グリッド ===== */}
+        {/* gap-0 + border でボーダー分割グリッドを実現（AboutSection の WHY グリッドと同じ手法） */}
+        <motion.div
+          ref={gridRef}
+          variants={containerVariants}
+          initial="hidden"
+          animate={gridInView ? "visible" : "hidden"}
+          className="mt-16 md:mt-20 grid grid-cols-1 md:grid-cols-2 border border-white/[0.08] rounded-none"
+        >
+          {USE_CASES.map((useCase, index) => (
+            <motion.div
+              key={useCase.num}
+              variants={childVariants}
+              // 内部区切り線パターン（AboutSection の WHY グリッドと同一）:
+              // - モバイル: 最初以外は上ボーダー
+              // - md以上: 右列（index 1, 3）は左ボーダー、下行（index >= 2）は上ボーダー
+              className={[
+                "p-8 md:p-10 transition-colors duration-300 hover:bg-white/[0.02]",
+                // モバイル: 最初のセルを除き上ボーダー
+                index === 0 ? "" : "border-t border-white/[0.08]",
+                // md以上: 右列（奇数インデックス）は左ボーダー
+                index % 2 === 1 ? "md:border-l md:border-white/[0.08]" : "",
+                // md以上: 下行（index 2,3）は上ボーダーを維持、上行（index 0,1）は上ボーダーを消す
+                index >= 2 ? "md:border-t md:border-white/[0.08]" : "md:border-t-0",
+              ].join(" ")}
+            >
+              {/* 番号 + 業種ラベル */}
+              <p
+                className="text-xs uppercase tracking-[0.25em]"
+                style={{
+                  color: "var(--color-v2-accent)",
+                  fontFamily: "var(--font-v2-mono)",
+                }}
+              >
+                {useCase.num} / {useCase.label}
+              </p>
+
+              {/* タイトル */}
+              <h3
+                className="mt-3 font-semibold text-lg md:text-2xl"
+                style={{
+                  color: "var(--color-v2-text)",
+                  fontFamily: "var(--font-v2-display)",
+                }}
+              >
+                {useCase.title}
+              </h3>
+
+              {/* 本文 */}
+              <p
+                className="mt-4 text-sm leading-relaxed md:text-base"
+                style={{
+                  color: "var(--color-v2-text-body)",
+                  fontFamily: "var(--font-v2-sans)",
+                }}
+              >
+                {useCase.body}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+      </div>
+    </section>
+  );
+}

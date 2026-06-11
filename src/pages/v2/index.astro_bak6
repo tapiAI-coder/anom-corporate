@@ -1,0 +1,53 @@
+---
+// v2 トップページ — Hero + About セクション（Phase 1b で About を追加）
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HeroV2 from "../../components/redesign/HeroV2";
+import HeroBackgroundV2 from "../../components/redesign/HeroBackgroundV2";
+import AboutSection from "../../components/redesign/AboutSection";
+import UseCasesSection from "../../components/redesign/UseCasesSection";
+import ServicesPricingSection from "../../components/redesign/ServicesPricingSection";
+import FAQSection from "../../components/redesign/FAQSection";
+import { withBase } from "../../data/navigation";
+
+// Astro の base を適用したリンクパス（ロゴ画像は v2 では使わない）
+const contactHref = withBase("/contact");
+const servicesHref = withBase("/services");
+---
+
+<BaseLayout
+  title="ANOM — 無駄を削ぎ落とし、AIで自走する組織へ"
+  description="秋田の中小企業のDX・AI導入を、戦略から定着まで伴走支援。"
+  headerTheme="dark"
+>
+  {/* Hero セクション — 最小限の余白構成 */}
+  <section
+    class="relative flex min-h-screen items-center justify-center overflow-hidden"
+    style="background: var(--color-v2-bg)"
+  >
+    {/* 背景層: グロー blob + グリッド線（クライアント側でパララックスを適用） */}
+    <HeroBackgroundV2 client:load />
+
+    {/* 前景層: テキスト・CTA（クライアント側でアニメーションを実行） */}
+    <HeroV2
+      client:load
+      contactHref={contactHref}
+      servicesHref={servicesHref}
+    />
+  </section>
+
+  {/* About セクション — Mission（ANOM 3要素）+ 選ばれる理由を融合（Phase 1b） */}
+  {/* コンポーネント内で section タグから始まるため、外側の section は不要 */}
+  <AboutSection client:load />
+
+  {/* UseCases セクション — 想定シナリオ 4 件（Phase 2） */}
+  {/* コンポーネント内で section タグから始まるため、外側の section は不要 */}
+  <UseCasesSection client:load />
+
+  {/* Services & Pricing セクション — 月額顧問 + プロジェクト型の 2 カラム（Phase 3） */}
+  {/* コンポーネント内で section タグから始まるため、外側の section は不要 */}
+  <ServicesPricingSection client:load contactHref={contactHref} />
+
+  {/* FAQ セクション — sticky 見出し + アコーディオン（Phase 4） */}
+  {/* コンポーネント内で section タグから始まるため、外側の section は不要 */}
+  <FAQSection client:load />
+</BaseLayout>

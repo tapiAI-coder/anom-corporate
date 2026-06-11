@@ -11,21 +11,90 @@ interface Props {
   ogImage?: string;
   /** ヘッダーテーマ。"dark" = 白テキスト（ダーク背景ヒーロー上）、"light" = 黒テキスト（白背景上） */
   headerTheme?: "dark" | "light";
+  /** Lenis 慣性スクロールを有効化（デフォルト true。フォームページでは false 推奨） */
+  smoothScroll?: boolean;
 }
 
-const { title, description, ogImage, headerTheme = "dark" } = Astro.props;
+const { title, description, ogImage, headerTheme = "dark", smoothScroll = true } = Astro.props;
 ---
 
 <html lang="ja">
   <head>
     <SEOHead title={title} description={description} ogImage={ogImage} />
   </head>
-  <body class="bg-bg text-text">
+  <!-- v5: ページ全体スクロール連動グラデーション（黒→朝焼け→ライト）
+       各 section は transparent 背景なので body のグラデが透けて見える -->
+  <body
+    style="background: linear-gradient(to bottom, #0A0A0F 0%, #14141F 18%, #2A1F2E 36%, #6E4D3F 56%, #C8966A 72%, #E8C9A0 86%, #FAFAFA 100%); background-attachment: scroll; color: var(--color-v2-text);"
+  >
     <Header theme={headerTheme} />
     <!-- メインコンテンツ -->
     <main>
       <slot />
     </main>
     <Footer />
+
+    <!-- Lenis 慣性スクロール（v3 追加）
+         - prefers-reduced-motion: reduce の場合は無効化
+         - smoothScroll prop が false の場合は無効化
+         - アンカーリンク（#services 等）は Lenis.scrollTo で同期 -->
+    {smoothScroll && (
+      <script>
+        // v3 Phase B: Lenis 慣性スクロール + GSAP ScrollTrigger 連携
+        //   - Lenis の scroll イベントで ScrollTrigger を更新
+        //   - gsap.ticker に Lenis の raf を統合（自前 raf ループは廃止）
+        //   - アンカーリンクは Lenis.scrollTo で同期
+        import Lenis from "lenis";
+        import gsap from "gsap";
+        import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+        // 動きを控えめにする設定のユーザーには Lenis を適用しない
+        const prefersReducedMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)"
+        ).matches;
+
+        if (!prefersReducedMotion) {
+          // GSAP ScrollTrigger プラグイン登録（冪等。他ファイルで登録済みでも no-op）
+          gsap.registerPlugin(ScrollTrigger);
+
+          // Lenis インスタンス生成
+          const lenis = new Lenis({
+            duration: 1.1,               // 慣性の持続時間
+            easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true,
+          });
+
+          // Lenis の scroll イベント → ScrollTrigger 更新
+          lenis.on("scroll", ScrollTrigger.update);
+
+          // gsap.ticker に Lenis の raf を統合（時間単位を ms に揃える）
+          gsap.ticker.add((time: number) => {
+            lenis.raf(time * 1000);
+          });
+          gsap.ticker.lagSmoothing(0);
+
+          // アンカーリンク（#services 等）のクリックを Lenis で同期スクロール
+          document.addEventListener("click", (e) => {
+            const target = e.target as HTMLElement;
+            const link = target.closest("a[href^='#']") as HTMLAnchorElement | null;
+            if (!link) return;
+
+            const hash = link.getAttribute("href");
+            if (!hash || hash === "#") return;
+
+            const el = document.querySelector(hash);
+            if (!el) return;
+
+            e.preventDefault();
+            lenis.scrollTo(el as HTMLElement, { offset: -80 }); // ヘッダー高さ分オフセット
+          });
+
+          // デバッグ用にグローバル公開（開発時のみ）
+          if (import.meta.env.DEV) {
+            (window as any).__lenis = lenis;
+          }
+        }
+      </script>
+    )}
   </body>
 </html>

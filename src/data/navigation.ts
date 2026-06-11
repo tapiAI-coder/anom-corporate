@@ -9,10 +9,11 @@ export function withBase(path: string): string {
 }
 
 // ナビゲーションリンク定義
+// v2 再設計で最小構成に整理（2026-04-22）:
+//   - ホーム: ロゴクリックで戻れるため削除
+//   - サービス / 料金: ホーム内「Services & Pricing」セクションに集約されたため削除
+//   - 残す: 代表紹介 / 会社概要 / お問い合わせ（「誰が / どこに / どう連絡」の 3 軸）
 export const navLinks = [
-  { label: "ホーム", href: withBase("/") },
-  { label: "サービス", href: withBase("/services") },
-  { label: "料金", href: withBase("/pricing") },
   { label: "代表紹介", href: withBase("/about") },
   { label: "会社概要", href: withBase("/company") },
   { label: "お問い合わせ", href: withBase("/contact") },

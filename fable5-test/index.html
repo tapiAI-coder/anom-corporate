@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANOM — 無駄を削ぎ落とし、AIで自走する組織へ。</title>
+<meta name="description" content="秋田の中小企業のDX・AI導入を、戦略から定着まで伴走支援。ANOM（アノム）— AUTONOMOUS + MINIMALISM">
+
+<!-- フォント: Inter（英字）+ Noto Sans JP（日本語） -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+<style>
+/* ============ 基本設計 ============ */
+:root{
+  --ink:#16243E;        /* 濃紺（インク） */
+  --white:#FFFFFF;
+  --warm:#F7F6F1;       /* 温白 */
+  --muted:#5A6275;      /* 弱い文字 */
+  --accent:#4D5DFF;     /* エレクトリックブルー */
+  --dark:#0B1322;       /* ヒーロー/CTAの深紺 */
+  --line:rgba(22,36,62,.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:auto;}
+body{
+  font-family:'Inter','Noto Sans JP',sans-serif;
+  background:var(--dark); /* セクションの重なり演出のため基調は深紺 */
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--accent);color:#fff;}
+a{color:inherit;text-decoration:none;}
+img{max-width:100%;display:block;}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px;}
+
+/* JSが有効かつ精密ポインタの時のみ標準カーソルを消す */
+body.js-fine, body.js-fine a, body.js-fine button{cursor:none;}
+
+/* ============ カスタムカーソル ============ */
+.cursor-dot,.cursor-ring{
+  position:fixed;top:0;left:0;pointer-events:none;z-index:9999;
+  border-radius:50%;transform:translate(-50%,-50%);
+  display:none;
+}
+body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
+.cursor-dot{width:8px;height:8px;background:var(--accent);}
+.cursor-ring{
+  width:38px;height:38px;border:1.5px solid rgba(77,93,255,.55);
+  transition:width .25s,height .25s,border-color .25s,background .25s;
+}
+.cursor-ring.is-hover{width:64px;height:64px;border-color:var(--accent);background:rgba(77,93,255,.08);}
+
+/* ============ ナビ ============ */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px clamp(20px,4vw,48px);
+  transition:background .4s,box-shadow .4s,padding .4s;
+  color:#fff;
+}
+.nav.scrolled{
+  background:rgba(255,255,255,.86);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  color:var(--ink);
+  padding:14px clamp(20px,4vw,48px);
+  box-shadow:0 1px 0 var(--line);
+}
+.nav-logo{font-weight:800;letter-spacing:.32em;font-size:17px;}
+.nav-links{display:flex;align-items:center;gap:30px;font-size:13.5px;font-weight:500;}
+.nav-links a{position:relative;padding:4px 0;}
+.nav-links a::after{
+  content:"";position:absolute;left:0;bottom:0;width:100%;height:1.5px;
+  background:var(--accent);transform:scaleX(0);transform-origin:right;transition:transform .35s cubic-bezier(.6,0,.2,1);
+}
+.nav-links a:hover::after{transform:scaleX(1);transform-origin:left;}
+.nav-cta{
+  background:var(--accent);color:#fff !important;padding:10px 22px;border-radius:8px;
+  font-size:13px;font-weight:600;display:inline-block;
+  box-shadow:0 6px 22px rgba(77,93,255,.35);
+}
+.nav-cta::after{display:none;}
+.nav-burger{display:none;background:none;border:none;width:40px;height:40px;position:relative;z-index:102;}
+.nav-burger span{
+  display:block;width:22px;height:2px;background:currentColor;margin:5px auto;
+  transition:transform .35s,opacity .35s;
+}
+.nav.menu-open .nav-burger span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav.menu-open .nav-burger span:nth-child(2){opacity:0;}
+.nav.menu-open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.mobile-menu{
+  position:fixed;inset:0;background:var(--dark);z-index:101;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;
+  opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;
+}
+.mobile-menu.open{opacity:1;visibility:visible;}
+.mobile-menu a{color:#fff;font-size:22px;font-weight:600;}
+.mobile-menu .nav-cta{font-size:16px;padding:14px 34px;}
+
+/* ============ ヒーロー ============ */
+.hero{
+  position:relative;height:100vh;min-height:640px;
+  background:var(--dark);overflow:hidden;color:#fff;
+}
+#particle-canvas{position:absolute;inset:0;width:100%;height:100%;}
+.hero-inner{
+  position:relative;z-index:2;height:100%;
+  display:flex;flex-direction:column;justify-content:flex-end;align-items:center;
+  text-align:center;padding:0 24px 14vh;
+  pointer-events:none;
+}
+.hero-inner a{pointer-events:auto;}
+.hero-label{
+  font-size:11px;letter-spacing:.5em;color:rgba(255,255,255,.55);
+  margin-bottom:26px;font-weight:500;
+}
+.hero-copy{
+  font-size:clamp(28px,4.6vw,58px);font-weight:700;line-height:1.5;
+  letter-spacing:.02em;font-family:'Noto Sans JP',sans-serif;
+}
+.hero-copy .ch{display:inline-block;will-change:transform,filter,opacity;}
+.hero-sub{
+  margin-top:22px;font-size:clamp(13px,1.4vw,15.5px);color:rgba(255,255,255,.62);
+  line-height:2;font-weight:400;
+}
+.hero-ctas{display:flex;gap:14px;margin-top:38px;flex-wrap:wrap;justify-content:center;}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:15px 32px;border-radius:9px;font-size:14px;font-weight:600;
+  transition:box-shadow .3s,background .3s,border-color .3s;
+  will-change:transform;
+}
+.btn-primary{
+  background:var(--accent);color:#fff;
+  box-shadow:0 8px 30px rgba(77,93,255,.4);
+}
+.btn-primary:hover{box-shadow:0 10px 40px rgba(77,93,255,.6);}
+.btn-ghost{
+  background:transparent;color:#fff;border:1px solid rgba(255,255,255,.35);
+}
+.btn-ghost:hover{border-color:rgba(255,255,255,.8);}
+.btn .arrow{transition:transform .3s;}
+.btn:hover .arrow{transform:translateX(4px);}
+.hero-tagline{
+  position:absolute;bottom:34px;left:0;right:0;z-index:2;
+  display:flex;align-items:center;justify-content:center;gap:22px;
+  font-size:10px;letter-spacing:.55em;color:rgba(255,255,255,.4);font-weight:500;
+}
+.hero-tagline::before,.hero-tagline::after{
+  content:"";width:clamp(40px,8vw,110px);height:1px;background:rgba(255,255,255,.18);
+}
+.scroll-hint{
+  position:absolute;right:clamp(18px,3vw,40px);bottom:34px;z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  font-size:9px;letter-spacing:.4em;color:rgba(255,255,255,.45);
+  writing-mode:vertical-rl;
+}
+.scroll-hint .bar{
+  width:1px;height:52px;background:rgba(255,255,255,.15);position:relative;overflow:hidden;writing-mode:horizontal-tb;
+}
+.scroll-hint .bar::after{
+  content:"";position:absolute;top:-50%;left:0;width:100%;height:50%;
+  background:var(--accent);animation:scrollbar 1.8s cubic-bezier(.6,0,.3,1) infinite;
+}
+@keyframes scrollbar{0%{top:-50%;}100%{top:110%;}}
+
+/* ============ セクション共通 ============ */
+.section{position:relative;padding:clamp(90px,11vw,160px) clamp(22px,5vw,64px);overflow:hidden;}
+.wrap{max-width:1180px;margin:0 auto;position:relative;z-index:2;}
+.sec-label{
+  display:flex;align-items:center;gap:14px;
+  font-size:11px;letter-spacing:.35em;color:var(--accent);font-weight:600;
+  margin-bottom:26px;
+}
+.sec-label::before{content:"";width:34px;height:1px;background:var(--accent);}
+.sec-title{
+  font-size:clamp(26px,3.8vw,46px);font-weight:700;line-height:1.5;
+  font-family:'Noto Sans JP',sans-serif;letter-spacing:.01em;
+}
+.sec-title .ch{display:inline-block;}
+.sec-lead{
+  margin-top:20px;font-size:clamp(13.5px,1.3vw,15.5px);color:var(--muted);
+  line-height:2.1;max-width:560px;
+}
+/* 白セクションがダーク背景の上に丸く重なる演出 */
+.sheet{background:var(--white);position:relative;z-index:3;}
+.sheet-first{border-radius:clamp(18px,3vw,32px) clamp(18px,3vw,32px) 0 0;margin-top:-28px;}
+.sheet-warm{background:var(--warm);}
+
+/* ============ Aboutカード ============ */
+.cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:54px;perspective:1200px;}
+.card{
+  background:var(--white);border:1px solid var(--line);border-radius:14px;
+  padding:34px 28px;position:relative;
+  transition:border-color .35s,box-shadow .35s;
+  transform-style:preserve-3d;will-change:transform;
+}
+.card:hover{border-color:rgba(77,93,255,.45);box-shadow:0 18px 50px rgba(22,36,62,.08);}
+.card-num{
+  font-size:11px;letter-spacing:.2em;color:var(--accent);font-weight:600;margin-bottom:38px;
+}
+.card-en{font-size:19px;font-weight:600;letter-spacing:.01em;margin-bottom:6px;}
+.card-jp{font-size:13px;color:var(--accent);font-weight:600;margin-bottom:14px;}
+.card-body{font-size:13px;color:var(--muted);line-height:2;}
+
+/* ============ WHY（2×2） ============ */
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:54px;border-top:1px solid var(--line);}
+.why-item{
+  padding:38px 30px 38px 0;border-bottom:1px solid var(--line);
+  display:flex;gap:24px;align-items:flex-start;
+}
+.why-item:nth-child(odd){border-right:1px solid var(--line);padding-right:36px;}
+.why-item:nth-child(even){padding-left:36px;}
+.why-num{
+  font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.08em;
+  padding-top:4px;flex-shrink:0;
+}
+.why-h{font-size:16.5px;font-weight:700;margin-bottom:10px;line-height:1.6;}
+.why-p{font-size:13px;color:var(--muted);line-height:2;}
+
+/* ============ UseCases（Bento） ============ */
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:54px;perspective:1400px;}
+.bento .card{padding:38px 32px;display:flex;flex-direction:column;min-height:230px;}
+.bento .b1{grid-column:span 7;}
+.bento .b2{grid-column:span 5;}
+.bento .b3{grid-column:span 5;}
+.bento .b4{grid-column:span 7;}
+.bento .tag{
+  font-size:10.5px;letter-spacing:.28em;color:var(--accent);font-weight:600;margin-bottom:auto;
+}
+.bento h3{font-size:clamp(18px,1.8vw,22px);font-weight:700;margin:34px 0 12px;line-height:1.6;}
+.bento p{font-size:13px;color:var(--muted);line-height:2;}
+
+/* ============ Services ============ */
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:54px;perspective:1200px;}
+.svc{
+  background:var(--white);border:1px solid var(--line);border-radius:14px;
+  padding:36px 30px;position:relative;overflow:hidden;
+  transition:border-color .35s,box-shadow .35s;transform-style:preserve-3d;will-change:transform;
+}
+.svc:hover{border-color:rgba(77,93,255,.5);box-shadow:0 18px 50px rgba(22,36,62,.09);}
+.svc-head{font-size:17.5px;font-weight:700;margin-bottom:16px;line-height:1.6;}
+.svc-body{font-size:13px;color:var(--muted);line-height:2.05;}
+.svc.is-web::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--accent),#8B5CF6);
+}
+.svc-badge{
+  display:inline-block;font-size:10px;letter-spacing:.18em;font-weight:600;
+  color:var(--accent);border:1px solid rgba(77,93,255,.4);border-radius:99px;
+  padding:4px 12px;margin-bottom:16px;
+}
+
+/* ============ 自己言及バンド ============ */
+.band{
+  position:relative;background:var(--accent);color:#fff;
+  padding:clamp(90px,12vw,150px) clamp(22px,5vw,64px);overflow:hidden;z-index:3;
+}
+.band-marquee{
+  position:absolute;inset:0;display:flex;align-items:center;overflow:hidden;pointer-events:none;
+}
+.band-track{
+  display:flex;white-space:nowrap;will-change:transform;
+  animation:marq 26s linear infinite;
+}
+.band-seg{
+  font-size:clamp(64px,11vw,150px);font-weight:800;letter-spacing:.03em;
+  color:rgba(255,255,255,.10);padding-right:60px;
+}
+@keyframes marq{to{transform:translateX(-50%);}}
+.band-inner{position:relative;z-index:2;max-width:1180px;margin:0 auto;text-align:center;}
+.band-copy{
+  font-size:clamp(26px,4vw,48px);font-weight:700;line-height:1.6;
+  font-family:'Noto Sans JP',sans-serif;
+}
+.band-copy .line{display:block;overflow:hidden;}
+.band-copy .line>span{display:inline-block;will-change:transform;}
+.band-sub{
+  margin-top:24px;font-size:clamp(13px,1.3vw,15px);color:rgba(255,255,255,.78);line-height:2.1;
+}
+.band .btn{margin-top:40px;background:#fff;color:var(--ink);box-shadow:0 10px 36px rgba(11,19,34,.3);}
+
+/* ============ 最終CTA ============ */
+.contact{
+  background:var(--dark);color:#fff;text-align:center;z-index:3;position:relative;
+  padding:clamp(110px,14vw,190px) clamp(22px,5vw,64px) clamp(90px,11vw,150px);
+}
+.contact .sec-label{justify-content:center;color:rgba(255,255,255,.5);}
+.contact .sec-label::before{background:rgba(255,255,255,.4);}
+.contact-title{
+  font-size:clamp(30px,5vw,62px);font-weight:700;line-height:1.5;
+  font-family:'Noto Sans JP',sans-serif;
+}
+.contact-sub{margin-top:22px;font-size:14px;color:rgba(255,255,255,.6);line-height:2;}
+.contact .btn{margin-top:44px;}
+.contact-glow{
+  position:absolute;left:50%;top:0;transform:translate(-50%,-40%);
+  width:760px;height:760px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(77,93,255,.22),transparent 62%);
+}
+
+/* ============ フッター ============ */
+.footer{
+  background:var(--dark);color:rgba(255,255,255,.5);
+  border-top:1px solid rgba(255,255,255,.08);
+  padding:30px clamp(22px,5vw,64px);position:relative;z-index:3;
+  display:flex;align-items:center;justify-content:space-between;font-size:12px;
+}
+.footer .f-logo{color:#fff;font-weight:800;letter-spacing:.3em;font-size:14px;}
+
+/* ============ モーフィングブロブ（差し色の有機形状） ============ */
+.blob{
+  position:absolute;width:clamp(300px,42vw,620px);aspect-ratio:1;
+  background:var(--accent);opacity:.07;pointer-events:none;z-index:1;
+  border-radius:58% 42% 55% 45%/45% 58% 42% 55%;
+  animation:blobmorph 14s ease-in-out infinite alternate;
+  will-change:transform,border-radius;
+}
+@keyframes blobmorph{
+  0%{border-radius:58% 42% 55% 45%/45% 58% 42% 55%;transform:rotate(0deg) scale(1);}
+  50%{border-radius:45% 55% 40% 60%/55% 45% 60% 40%;transform:rotate(25deg) scale(1.08);}
+  100%{border-radius:42% 58% 45% 55%/58% 45% 55% 42%;transform:rotate(46deg) scale(1.14);}
+}
+.blob-1{top:-6%;right:-14%;}
+.blob-2{bottom:-10%;left:-16%;animation-delay:-7s;}
+
+/* ============ レスポンシブ ============ */
+@media (max-width:900px){
+  .nav-links{display:none;}
+  .nav-burger{display:block;}
+  .cards-3{grid-template-columns:1fr;}
+  .why-grid{grid-template-columns:1fr;}
+  .why-item:nth-child(odd){border-right:none;padding-right:0;}
+  .why-item:nth-child(even){padding-left:0;}
+  .bento{grid-template-columns:1fr;}
+  .bento .b1,.bento .b2,.bento .b3,.bento .b4{grid-column:span 1;}
+  .bento .card{min-height:0;}
+  .bento h3{margin-top:22px;}
+  .svc-grid{grid-template-columns:1fr;}
+  .scroll-hint{display:none;}
+}
+
+/* ============ モーション低減設定への配慮 ============ */
+@media (prefers-reduced-motion: reduce){
+  .band-track,.blob,.scroll-hint .bar::after{animation:none !important;}
+  html{scroll-behavior:smooth;}
+}
+</style>
+</head>
+<body>
+
+<!-- カスタムカーソル -->
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+
+<!-- ============ ナビ ============ -->
+<nav class="nav" id="nav" aria-label="メインナビゲーション">
+  <a class="nav-logo" href="#top" data-scroll>ANOM</a>
+  <div class="nav-links">
+    <!-- ※本番ではサブページ（/about /company /contact）へ差し替え -->
+    <a href="#about" data-scroll>代表紹介</a>
+    <a href="#services" data-scroll>会社概要</a>
+    <a href="#contact" data-scroll>お問い合わせ</a>
+    <a href="#contact" class="nav-cta magnetic" data-scroll>無料相談</a>
+  </div>
+  <button class="nav-burger" id="burger" aria-label="メニューを開く" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" data-scroll>代表紹介</a>
+  <a href="#services" data-scroll>会社概要</a>
+  <a href="#contact" data-scroll>お問い合わせ</a>
+  <a href="#contact" class="nav-cta" data-scroll>無料相談</a>
+</div>
+
+<!-- ============ 1. ヒーロー（粒子の混沌→秩序） ============ -->
+<header class="hero" id="top">
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="hero-label reveal-hero">AKITA · DX &amp; AI PARTNER</p>
+    <h1 class="hero-copy" id="heroCopy">無駄を削ぎ落とし、<br>AIで自走する組織へ。</h1>
+    <p class="hero-sub reveal-hero">秋田の中小企業のDX・AI導入を、戦略から定着まで伴走支援します。</p>
+    <div class="hero-ctas reveal-hero">
+      <a href="#contact" class="btn btn-primary magnetic" data-scroll>無料相談する <span class="arrow">→</span></a>
+      <a href="#services" class="btn btn-ghost magnetic" data-scroll>サービスを見る</a>
+    </div>
+  </div>
+  <p class="hero-tagline reveal-hero">AUTONOMOUS ＋ MINIMALISM</p>
+  <div class="scroll-hint reveal-hero" aria-hidden="true">SCROLL<span class="bar"></span></div>
+</header>
+
+<!-- ============ 2. About ============ -->
+<section class="section sheet sheet-first" id="about">
+  <div class="blob blob-1" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="sec-label reveal">01 / ABOUT</p>
+    <h2 class="sec-title split">自律と簡潔を、秋田の現場へ。</h2>
+    <p class="sec-lead reveal">ツールの導入で終わらせず、自社で回せる状態まで伴走します。関東と同じ景色を、秋田からも。</p>
+    <div class="cards-3 reveal-group">
+      <div class="card tilt">
+        <p class="card-num">01</p>
+        <h3 class="card-en">Autonomous</h3>
+        <p class="card-jp">自律</p>
+        <p class="card-body">依存しない。使いこなして前に進める状態をつくる。</p>
+      </div>
+      <div class="card tilt">
+        <p class="card-num">02</p>
+        <h3 class="card-en">Minimalism</h3>
+        <p class="card-jp">簡潔</p>
+        <p class="card-body">増やすのではなく減らす。残ったものだけが効く。</p>
+      </div>
+      <div class="card tilt">
+        <p class="card-num">03</p>
+        <h3 class="card-en">Local × Global</h3>
+        <p class="card-jp">地元×世界水準</p>
+        <p class="card-body">地元の商慣習と、国内外の事例。両方の目で判断する。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. WHY ANOM ============ -->
+<section class="section sheet sheet-warm">
+  <div class="wrap">
+    <p class="sec-label reveal">WHY ANOM</p>
+    <h2 class="sec-title split">選ばれる4つの理由。</h2>
+    <div class="why-grid reveal-group">
+      <div class="why-item">
+        <span class="why-num">01</span>
+        <div><h3 class="why-h">秋田拠点、リモートで全国対応</h3><p class="why-p">地元の商慣習を肌で知り、遠隔でも機動的に動く。</p></div>
+      </div>
+      <div class="why-item">
+        <span class="why-num">02</span>
+        <div><h3 class="why-h">一人体制のスピード</h3><p class="why-p">意思決定の階層なし。相談から着手までが短い。</p></div>
+      </div>
+      <div class="why-item">
+        <span class="why-num">03</span>
+        <div><h3 class="why-h">内製化を前提とした伴走</h3><p class="why-p">ベンダーに依存させない。使いこなせる状態で引き渡す。</p></div>
+      </div>
+      <div class="why-item">
+        <span class="why-num">04</span>
+        <div><h3 class="why-h">ツール選定の中立性</h3><p class="why-p">特定ベンダー系列ではない。ROIと現場適合で選ぶ。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. UseCases（Bento） ============ -->
+<section class="section sheet" id="usecases">
+  <div class="blob blob-2" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="sec-label reveal">02 / USECASES</p>
+    <h2 class="sec-title split">こんな現場に、届けます。</h2>
+    <p class="sec-lead reveal">以下は想定シナリオです。御社の業種・規模に合わせた入口は、ご一緒に探します。</p>
+    <div class="bento reveal-group">
+      <div class="card tilt b1">
+        <p class="tag">CONSTRUCTION ／ 建設・土木</p>
+        <h3>書類と写真を、AIで軽く。</h3>
+        <p>OCRと業務フロー自動化で事務負担を削減。</p>
+      </div>
+      <div class="card tilt b2">
+        <p class="tag">RETAIL &amp; FOOD ／ 小売・飲食</p>
+        <h3>売上データを、発注判断に。</h3>
+        <p>売上予測と発注提案で属人化と廃棄ロスを削減。</p>
+      </div>
+      <div class="card tilt b3">
+        <p class="tag">MANUFACTURING ／ 製造</p>
+        <h3>熟練の目を、AIで補完する。</h3>
+        <p>画像AI検査補助とナレッジ検索で若手が自走。</p>
+      </div>
+      <div class="card tilt b4">
+        <p class="tag">SERVICES ／ サービス・士業</p>
+        <h3>問い合わせを、AIと分業する。</h3>
+        <p>一次対応と文書下書きの自動化。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. Services ============ -->
+<section class="section sheet sheet-warm" id="services">
+  <div class="wrap">
+    <p class="sec-label reveal">03 / SERVICES</p>
+    <h2 class="sec-title split">ANOMにできること。</h2>
+    <p class="sec-lead reveal">課題の整理から、仕組みづくり、集客の入口まで。一社にまとめて任せられます。</p>
+    <div class="svc-grid reveal-group">
+      <div class="svc tilt">
+        <h3 class="svc-head">AI・DX顧問（月額）</h3>
+        <p class="svc-body">経営・事業判断へのAI/DX相談、ツール選定の中立アドバイス、月次の振り返りと次アクション設計。</p>
+      </div>
+      <div class="svc tilt">
+        <h3 class="svc-head">DX導入プロジェクト</h3>
+        <p class="svc-body">現状診断、業務フロー改善設計、AIツール導入支援（設定・研修）、導入後の定着サポート。</p>
+      </div>
+      <div class="svc tilt is-web">
+        <span class="svc-badge">WEB</span>
+        <h3 class="svc-head">Web制作・運用</h3>
+        <p class="svc-body">売れるサイトで、集客と信頼の入口をつくる。LP・コーポレートサイトの制作から、アクセス解析にもとづく改善・運用まで。魅せる体験で、競合と差をつける。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5.5 自己言及バンド（Web制作の証明） ============ -->
+<section class="band" id="band">
+  <div class="band-marquee" aria-hidden="true">
+    <div class="band-track">
+      <span class="band-seg">WEB DESIGN — AI — DX — AUTOMATION — WEB DESIGN — AI — DX — AUTOMATION —&nbsp;</span>
+      <span class="band-seg">WEB DESIGN — AI — DX — AUTOMATION — WEB DESIGN — AI — DX — AUTOMATION —&nbsp;</span>
+    </div>
+  </div>
+  <div class="band-inner">
+    <h2 class="band-copy">
+      <span class="line"><span>このサイトも、</span></span>
+      <span class="line"><span>ANOMが制作しています。</span></span>
+    </h2>
+    <p class="band-sub reveal">今ご覧いただいている体験そのものが、私たちの制作物です。<br>同じ熱量で、御社の「入口」をつくります。</p>
+    <a href="#contact" class="btn magnetic reveal" data-scroll>Web制作を相談する <span class="arrow">→</span></a>
+  </div>
+</section>
+
+<!-- ============ 6. 最終CTA ============ -->
+<section class="contact" id="contact">
+  <div class="contact-glow" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="sec-label reveal">04 / CONTACT</p>
+    <h2 class="contact-title split">まず、話してみませんか。</h2>
+    <p class="contact-sub reveal">御社の業種・規模に合わせた入口を、ご一緒に探します。</p>
+    <!-- ※送信先は正式アドレスに差し替え -->
+    <a href="mailto:contact@anom.jp" class="btn btn-primary magnetic reveal">無料相談する <span class="arrow">→</span></a>
+  </div>
+</section>
+
+<!-- ============ フッター ============ -->
+<footer class="footer">
+  <span class="f-logo">ANOM</span>
+  <span>© 2026 ANOM</span>
+  <span>秋田県</span>
+</footer>
+
+<!-- ============ ライブラリ（CDN） ============ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+
+<script>
+/* =========================================================
+   ANOM — 混沌→秩序。粒子がANOMを形づくるワンページ。
+   構成: Lenis慣性スクロール / Three.js粒子 / GSAP演出
+========================================================= */
+(function(){
+"use strict";
+
+/* ---- 環境判定 ---- */
+var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches; // モーション低減設定
+var FINE    = window.matchMedia("(pointer: fine)").matches;                   // マウス等の精密ポインタ
+var MOBILE  = window.innerWidth < 768;
+
+gsap.registerPlugin(ScrollTrigger);
+
+/* ---- 慣性スクロール（Lenis） ---- */
+var lenis = null;
+if(!REDUCED && typeof Lenis !== "undefined"){
+  lenis = new Lenis({ duration:1.15, smoothWheel:true });
+  lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add(function(t){ lenis.raf(t*1000); });
+  gsap.ticker.lagSmoothing(0);
+}
+
+/* ---- アンカーのスムーズスクロール ---- */
+document.querySelectorAll("[data-scroll]").forEach(function(a){
+  a.addEventListener("click", function(e){
+    var href = a.getAttribute("href");
+    if(!href || href.charAt(0) !== "#") return;
+    var target = document.querySelector(href);
+    if(!target) return;
+    e.preventDefault();
+    closeMenu();
+    if(lenis){ lenis.scrollTo(target, { offset:-64 }); }
+    else{ target.scrollIntoView({ behavior:"smooth" }); }
+  });
+});
+
+/* ---- モバイルメニュー ---- */
+var burger = document.getElementById("burger");
+var mobileMenu = document.getElementById("mobileMenu");
+var nav = document.getElementById("nav");
+function closeMenu(){
+  nav.classList.remove("menu-open");
+  mobileMenu.classList.remove("open");
+  burger.setAttribute("aria-expanded","false");
+}
+burger.addEventListener("click", function(){
+  var open = mobileMenu.classList.toggle("open");
+  nav.classList.toggle("menu-open", open);
+  burger.setAttribute("aria-expanded", String(open));
+});
+
+/* ---- ナビの状態切替（ヒーローを抜けたら白背景に） ---- */
+ScrollTrigger.create({
+  trigger:"#about", start:"top 80px",
+  onEnter:function(){ nav.classList.add("scrolled"); },
+  onLeaveBack:function(){ nav.classList.remove("scrolled"); }
+});
+
+/* ---- 文字分割ユーティリティ（キネティック文字用） ---- */
+function splitChars(el){
+  var chars = [];
+  var nodes = Array.prototype.slice.call(el.childNodes);
+  el.innerHTML = "";
+  nodes.forEach(function(node){
+    if(node.nodeType === 3){ // テキストノード → 1文字ずつspan化
+      Array.prototype.forEach.call(node.textContent, function(c){
+        var s = document.createElement("span");
+        s.className = "ch";
+        s.textContent = c;
+        el.appendChild(s);
+        chars.push(s);
+      });
+    }else{
+      el.appendChild(node); // <br>等はそのまま
+    }
+  });
+  return chars;
+}
+
+/* =========================================================
+   Three.js — 粒子の混沌→秩序（ANOMワードマーク形成）
+========================================================= */
+var heroVisible = true;
+var three = null; // { renderer, scene, camera, uniforms, points }
+
+function initParticles(){
+  var canvas = document.getElementById("particle-canvas");
+  var renderer;
+  try{
+    renderer = new THREE.WebGLRenderer({ canvas:canvas, alpha:true, antialias:false });
+  }catch(e){
+    canvas.style.display = "none"; // WebGL不可なら静的表示にフォールバック
+    return null;
+  }
+  var DPR = Math.min(window.devicePixelRatio || 1, MOBILE ? 1.5 : 2);
+  renderer.setPixelRatio(DPR);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, .1, 100);
+  camera.position.z = 11;
+
+  /* --- "ANOM" の文字形状をオフスクリーンcanvasからサンプリング --- */
+  var W = 1000, H = 320;
+  var tc = document.createElement("canvas");
+  tc.width = W; tc.height = H;
+  var tx = tc.getContext("2d");
+  tx.fillStyle = "#fff";
+  tx.textBaseline = "middle";
+  tx.font = "800 235px Inter, 'Arial Black', sans-serif";
+  // 字間を手動で空けてワードマークらしく描画
+  var word = "ANOM", sp = 18;
+  var totalW = 0;
+  for(var i=0;i<word.length;i++){ totalW += tx.measureText(word[i]).width + (i<word.length-1?sp:0); }
+  var cx = (W-totalW)/2;
+  for(var i=0;i<word.length;i++){
+    tx.fillText(word[i], cx, H/2);
+    cx += tx.measureText(word[i]).width + sp;
+  }
+  var img = tx.getImageData(0,0,W,H).data;
+  var targets = [];
+  for(var y=0; y<H; y+=3){
+    for(var x=0; x<W; x+=3){
+      if(img[(y*W+x)*4+3] > 128){
+        // 文字幅=10ユニットの正規化空間へ変換（中心原点）
+        targets.push([ (x-W/2)/W*10, -(y-H/2)/W*10 ]);
+      }
+    }
+  }
+
+  var COUNT = MOBILE ? 2600 : (window.innerWidth < 1100 ? 4500 : 7000);
+  var startArr  = new Float32Array(COUNT*3);
+  var targetArr = new Float32Array(COUNT*3);
+  var randArr   = new Float32Array(COUNT);
+
+  for(var i=0;i<COUNT;i++){
+    // 混沌: 球状にランダム散布
+    var r = 9*Math.cbrt(Math.random());
+    var th = Math.random()*Math.PI*2, ph = Math.acos(2*Math.random()-1);
+    startArr[i*3]   = r*Math.sin(ph)*Math.cos(th);
+    startArr[i*3+1] = r*Math.sin(ph)*Math.sin(th)*.6;
+    startArr[i*3+2] = r*Math.cos(ph)*.5;
+    // 秩序: 文字上の点（微ジッタ付き）
+    var t = targets[(Math.random()*targets.length)|0];
+    targetArr[i*3]   = t[0] + (Math.random()-.5)*.03;
+    targetArr[i*3+1] = t[1] + (Math.random()-.5)*.03;
+    targetArr[i*3+2] = (Math.random()-.5)*.25;
+    randArr[i] = Math.random();
+  }
+
+  var geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(startArr, 3)); // 始点=混沌
+  geo.setAttribute("aTarget",  new THREE.BufferAttribute(targetArr, 3));
+  geo.setAttribute("aRand",    new THREE.BufferAttribute(randArr, 1));
+
+  var uniforms = {
+    uProgress:{ value: REDUCED ? 1 : 0 }, // 形成進行度
+    uScatter:{ value: 0 },                // トンネル再拡散
+    uFade:{ value: 1 },                   // 全体フェード
+    uTime:{ value: 0 },
+    uMouse:{ value: new THREE.Vector3(999,999,0) },
+    uMouseActive:{ value: FINE && !REDUCED ? 1 : 0 },
+    uPixelRatio:{ value: DPR },
+    uColorA:{ value: new THREE.Color("#4D5DFF") },
+    uColorB:{ value: new THREE.Color("#C9D6FF") }
+  };
+
+  var mat = new THREE.ShaderMaterial({
+    uniforms: uniforms,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    vertexShader: [
+      "attribute vec3 aTarget;",
+      "attribute float aRand;",
+      "uniform float uProgress;",
+      "uniform float uScatter;",
+      "uniform float uTime;",
+      "uniform vec3 uMouse;",
+      "uniform float uMouseActive;",
+      "uniform float uPixelRatio;",
+      "varying float vAlpha;",
+      "varying float vRand;",
+      "float easeOutCubic(float x){ return 1.0 - pow(1.0 - x, 3.0); }",
+      "void main(){",
+      "  // 粒子ごとに到達タイミングをずらし、混沌→秩序の波をつくる",
+      "  float p = clamp(uProgress * 1.6 - aRand * 0.6, 0.0, 1.0);",
+      "  p = easeOutCubic(p);",
+      "  vec3 pos = mix(position, aTarget, p);",
+      "  // 形成後の微細な呼吸",
+      "  float w = sin(uTime*1.3 + aRand*40.0)*0.02 + cos(uTime*0.8 + aRand*23.0)*0.02;",
+      "  pos.xy += w * (0.4 + aRand);",
+      "  // カーソル反発（uMouseActiveで無効化可能）",
+      "  vec2 d = pos.xy - uMouse.xy;",
+      "  float dist = length(d);",
+      "  float force = smoothstep(1.7, 0.0, dist) * uMouseActive;",
+      "  pos.xy += normalize(d + 0.0001) * force * 0.9;",
+      "  // トンネル: 粒子が再び散り、視点の脇を流れていく",
+      "  pos.z += uScatter * (aRand * 16.0 - 4.0);",
+      "  pos.xy *= 1.0 + uScatter * (aRand * 1.5);",
+      "  vec4 mv = modelViewMatrix * vec4(pos, 1.0);",
+      "  gl_Position = projectionMatrix * mv;",
+      "  float size = (1.6 + aRand * 2.6) * uPixelRatio;",
+      "  gl_PointSize = min(size * (6.0 / -mv.z), 60.0 * uPixelRatio);",
+      "  vAlpha = 0.35 + 0.65 * p;",
+      "  vRand = aRand;",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "precision mediump float;",
+      "varying float vAlpha;",
+      "varying float vRand;",
+      "uniform vec3 uColorA;",
+      "uniform vec3 uColorB;",
+      "uniform float uFade;",
+      "void main(){",
+      "  vec2 uv = gl_PointCoord - 0.5;",
+      "  float d = length(uv);",
+      "  float a = smoothstep(0.5, 0.05, d) * vAlpha * uFade;",
+      "  vec3 col = mix(uColorA, uColorB, vRand);",
+      "  gl_FragColor = vec4(col, a);",
+      "}"
+    ].join("\n")
+  });
+
+  var points = new THREE.Points(geo, mat);
+  var group = new THREE.Group();
+  group.add(points);
+  scene.add(group);
+
+  /* --- 奥行きの星屑（静的・薄い） --- */
+  var dustN = 500;
+  var dustArr = new Float32Array(dustN*3);
+  for(var i=0;i<dustN;i++){
+    dustArr[i*3]   = (Math.random()-.5)*30;
+    dustArr[i*3+1] = (Math.random()-.5)*16;
+    dustArr[i*3+2] = -4 - Math.random()*14;
+  }
+  var dustGeo = new THREE.BufferGeometry();
+  dustGeo.setAttribute("position", new THREE.BufferAttribute(dustArr,3));
+  var dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({
+    color:0x5A6FB0, size:.05, transparent:true, opacity:.55,
+    depthWrite:false, blending:THREE.AdditiveBlending
+  }));
+  scene.add(dust);
+
+  /* --- ビューポートに合わせてワードマークをスケール --- */
+  function fit(){
+    var vh = 2 * camera.position.z * Math.tan(camera.fov*Math.PI/360);
+    var vw = vh * camera.aspect;
+    var s = Math.min(vw*.8/10, 1.5);
+    group.scale.set(s,s,s);
+    group.position.y = vh*.14; // コピーの上に文字が来るよう少し上へ
+  }
+  fit();
+
+  /* --- マウス座標 → z=0平面のワールド座標へ --- */
+  var mouseTarget = new THREE.Vector3(999,999,0);
+  if(FINE && !REDUCED){
+    window.addEventListener("mousemove", function(e){
+      var ndc = new THREE.Vector3(
+        (e.clientX/window.innerWidth)*2-1,
+        -(e.clientY/window.innerHeight)*2+1, .5);
+      ndc.unproject(camera);
+      var dir = ndc.sub(camera.position).normalize();
+      var t = -camera.position.z/dir.z;
+      mouseTarget.copy(camera.position).add(dir.multiplyScalar(t));
+      // グループのスケール分を補正
+      mouseTarget.divideScalar(group.scale.x || 1);
+      mouseTarget.y -= group.position.y/(group.scale.x||1);
+    });
+    window.addEventListener("mouseleave", function(){ mouseTarget.set(999,999,0); });
+  }
+
+  /* --- 描画ループ --- */
+  var clock = new THREE.Clock();
+  function loop(){
+    requestAnimationFrame(loop);
+    if(!heroVisible) return; // ヒーロー外では描画停止（省電力）
+    uniforms.uTime.value = clock.getElapsedTime();
+    uniforms.uMouse.value.lerp(mouseTarget, .12);
+    renderer.render(scene, camera);
+  }
+  loop();
+
+  /* --- リサイズ --- */
+  var rT;
+  window.addEventListener("resize", function(){
+    clearTimeout(rT);
+    rT = setTimeout(function(){
+      camera.aspect = window.innerWidth/window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      fit();
+      ScrollTrigger.refresh();
+    }, 150);
+  });
+
+  return { renderer:renderer, camera:camera, uniforms:uniforms, canvas:canvas };
+}
+
+/* =========================================================
+   イントロ & スクロール演出
+========================================================= */
+function initMotion(){
+  var heroChars = splitChars(document.getElementById("heroCopy"));
+
+  if(REDUCED){
+    /* モーション低減: 全て即時表示・演出なし */
+    gsap.set(".reveal-hero, .reveal, .reveal-group > *, .band-copy .line > span", { opacity:1 });
+    return;
+  }
+
+  /* --- イントロ: 粒子形成 → キャッチコピーが文字単位で立ち上がる --- */
+  if(three){
+    gsap.to(three.uniforms.uProgress, { value:1, duration:2.6, ease:"power2.inOut", delay:.35 });
+  }
+  gsap.set(heroChars, { opacity:0, y:26, filter:"blur(10px)" });
+  gsap.set(".reveal-hero", { opacity:0, y:20 });
+  gsap.to(heroChars, {
+    opacity:1, y:0, filter:"blur(0px)",
+    duration:.9, ease:"power3.out", stagger:.035, delay:1.5
+  });
+  gsap.to(".reveal-hero", { opacity:1, y:0, duration:1, ease:"power3.out", stagger:.12, delay:2.2 });
+
+  /* --- トンネル: ヒーローを固定し、組織の内側へ潜る --- */
+  var tunnel = gsap.timeline({
+    scrollTrigger:{
+      trigger:".hero", start:"top top",
+      end: MOBILE ? "+=80%" : "+=130%",
+      pin:true, scrub:.8,
+      onLeave:function(){ heroVisible=false; },
+      onEnterBack:function(){ heroVisible=true; }
+    }
+  });
+  if(three){
+    tunnel
+      .to(three.camera.position, { z:3.2, ease:"power1.in" }, 0)
+      .to(three.uniforms.uScatter, { value:1, ease:"power1.in" }, 0)
+      .to(three.uniforms.uFade, { value:0, ease:"power1.in" }, .45);
+  }
+  tunnel
+    .to(".hero-inner", { y:-90, opacity:0, filter:"blur(6px)", ease:"power1.in" }, 0)
+    .to(".hero-tagline, .scroll-hint", { opacity:0, ease:"power1.in" }, 0);
+
+  /* --- 見出しの文字分割リビール --- */
+  document.querySelectorAll(".split").forEach(function(h){
+    var chars = splitChars(h);
+    gsap.from(chars, {
+      opacity:0, y:30, filter:"blur(6px)",
+      duration:.8, ease:"power3.out", stagger:.025,
+      scrollTrigger:{ trigger:h, start:"top 85%" }
+    });
+  });
+
+  /* --- 汎用リビール --- */
+  gsap.utils.toArray(".reveal").forEach(function(el){
+    gsap.from(el, {
+      opacity:0, y:42, duration:1, ease:"power3.out",
+      scrollTrigger:{ trigger:el, start:"top 88%" }
+    });
+  });
+  gsap.utils.toArray(".reveal-group").forEach(function(g){
+    gsap.from(g.children, {
+      opacity:0, y:50, duration:.95, ease:"power3.out", stagger:.1,
+      scrollTrigger:{ trigger:g, start:"top 85%" }
+    });
+  });
+
+  /* --- バンド: 行マスクのスライドアップ --- */
+  gsap.from(".band-copy .line > span", {
+    yPercent:110, duration:1.1, ease:"power4.out", stagger:.14,
+    scrollTrigger:{ trigger:".band", start:"top 75%" }
+  });
+
+  /* --- ブロブのスクロール連動パララックス --- */
+  gsap.to(".blob-1", { yPercent:36, scrollTrigger:{ trigger:"#about", start:"top bottom", end:"bottom top", scrub:1.2 }});
+  gsap.to(".blob-2", { yPercent:-30, scrollTrigger:{ trigger:"#usecases", start:"top bottom", end:"bottom top", scrub:1.2 }});
+}
+
+/* =========================================================
+   カーソル / マグネティック / チルト（精密ポインタのみ）
+========================================================= */
+function initPointerFX(){
+  if(!FINE || REDUCED) return;
+  document.body.classList.add("js-fine");
+
+  /* --- カスタムカーソル（ドット+遅延リング） --- */
+  var dot = document.querySelector(".cursor-dot");
+  var ring = document.querySelector(".cursor-ring");
+  var mx=innerWidth/2, my=innerHeight/2, rx=mx, ry=my;
+  window.addEventListener("mousemove", function(e){ mx=e.clientX; my=e.clientY; });
+  gsap.ticker.add(function(){
+    rx += (mx-rx)*.16; ry += (my-ry)*.16;
+    dot.style.transform  = "translate("+mx+"px,"+my+"px) translate(-50%,-50%)";
+    ring.style.transform = "translate("+rx+"px,"+ry+"px) translate(-50%,-50%)";
+  });
+  document.querySelectorAll("a, button, .tilt").forEach(function(el){
+    el.addEventListener("mouseenter", function(){ ring.classList.add("is-hover"); });
+    el.addEventListener("mouseleave", function(){ ring.classList.remove("is-hover"); });
+  });
+
+  /* --- マグネティックボタン --- */
+  document.querySelectorAll(".magnetic").forEach(function(el){
+    var xTo = gsap.quickTo(el, "x", { duration:.4, ease:"power3" });
+    var yTo = gsap.quickTo(el, "y", { duration:.4, ease:"power3" });
+    el.addEventListener("mousemove", function(e){
+      var b = el.getBoundingClientRect();
+      xTo((e.clientX - (b.left+b.width/2)) * .32);
+      yTo((e.clientY - (b.top+b.height/2)) * .32);
+    });
+    el.addEventListener("mouseleave", function(){
+      gsap.to(el, { x:0, y:0, duration:.7, ease:"elastic.out(1,.45)" });
+    });
+  });
+
+  /* --- カードの微3Dチルト --- */
+  document.querySelectorAll(".tilt").forEach(function(card){
+    var rX = gsap.quickTo(card, "rotationX", { duration:.5, ease:"power2" });
+    var rY = gsap.quickTo(card, "rotationY", { duration:.5, ease:"power2" });
+    card.addEventListener("mousemove", function(e){
+      var b = card.getBoundingClientRect();
+      var px = (e.clientX-b.left)/b.width - .5;
+      var py = (e.clientY-b.top)/b.height - .5;
+      rX(-py*7); rY(px*7);
+    });
+    card.addEventListener("mouseleave", function(){ rX(0); rY(0); });
+  });
+}
+
+/* =========================================================
+   起動
+========================================================= */
+function boot(){
+  three = initParticles();
+  initMotion();
+  initPointerFX();
+  window.addEventListener("load", function(){ ScrollTrigger.refresh(); });
+}
+
+/* Interのロードを待ってから文字をサンプリング（形が正しく出るように） */
+if(document.fonts && document.fonts.load){
+  Promise.all([
+    document.fonts.load("800 235px Inter"),
+    document.fonts.load("700 40px 'Noto Sans JP'")
+  ]).then(boot).catch(boot);
+  setTimeout(function(){ if(!three) boot(); }, 1800); // フォント取得失敗時の保険
+}else{
+  boot();
+}
+
+})();
+</script>
+</body>
+</html>

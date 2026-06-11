@@ -1,0 +1,35 @@
+---
+// v2 トップページ — Hero セクションのみ（後続 Phase で Mission 等を追加予定）
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HeroV2 from "../../components/redesign/HeroV2";
+import HeroBackgroundV2 from "../../components/redesign/HeroBackgroundV2";
+import { withBase } from "../../data/navigation";
+
+// Astro の base を適用した画像・リンクパス
+const logoUrl = withBase("/images/logo-symbol.png");
+const contactHref = withBase("/contact");
+const servicesHref = withBase("/services");
+---
+
+<BaseLayout
+  title="ANOM — 無駄を削ぎ落とし、AIで自走する組織へ"
+  description="秋田の中小企業のDX・AI導入を、戦略から定着まで伴走支援。"
+  headerTheme="dark"
+>
+  {/* Hero セクション — 最小限の余白構成 */}
+  <section
+    class="relative flex min-h-screen items-center justify-center overflow-hidden"
+    style="background: var(--color-v2-bg)"
+  >
+    {/* 背景層: グロー blob + グリッド線（クライアント側でパララックスを適用） */}
+    <HeroBackgroundV2 client:load />
+
+    {/* 前景層: テキスト・ロゴ・CTA（クライアント側でアニメーションを実行） */}
+    <HeroV2
+      client:load
+      logoUrl={logoUrl}
+      contactHref={contactHref}
+      servicesHref={servicesHref}
+    />
+  </section>
+</BaseLayout>

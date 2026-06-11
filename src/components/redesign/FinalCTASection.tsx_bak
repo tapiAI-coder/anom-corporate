@@ -1,0 +1,223 @@
+// Final CTA（最終問い合わせ誘導）セクションコンポーネント（v2 再設計 Phase 6）
+// ページ末尾・フッター直前。見出し + 基本情報リスト + 無料相談ボタンで締める。
+// 既存の CTASection.astro（v1 スタイル・LINE ボタン付き）は v2 では使わず、
+// v2 の視覚言語（gap:0 + border / 72% 本文 / v2 フォント）で統一する。
+
+import { motion, useInView, useReducedMotion, type Variants } from "framer-motion";
+import { useRef } from "react";
+
+// ===== 型定義 =====
+interface InfoItem {
+  label: string;
+  value: string;
+}
+
+// 基本情報 4 件（preview の Contact セクションを踏襲。事実ベース）
+const INFO: InfoItem[] = [
+  { label: "LOCATION", value: "秋田県（全国リモート対応可）" },
+  { label: "HOURS", value: "平日 9:00–18:00（JST）" },
+  { label: "EMAIL", value: "info@anom-ai.com" },
+  { label: "SESSION", value: "初回 30〜60 分（オンライン）" },
+];
+
+// ===== Props =====
+interface FinalCTASectionProps {
+  /** お問い合わせページのURL */
+  contactHref: string;
+}
+
+// ===== アニメーション Variants ファクトリー =====
+function makeContainerVariants(): Variants {
+  return {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.2,
+      },
+    },
+  };
+}
+
+function makeChildVariants(prefersReducedMotion: boolean | null): Variants {
+  if (prefersReducedMotion) {
+    return {
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: { duration: 0.3, ease: "easeOut" },
+      },
+    };
+  }
+  return {
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 50, damping: 20 },
+    },
+  };
+}
+
+// ===== メインコンポーネント =====
+export default function FinalCTASection({ contactHref }: FinalCTASectionProps) {
+  const prefersReducedMotion = useReducedMotion();
+  const containerVariants = makeContainerVariants();
+  const childVariants = makeChildVariants(prefersReducedMotion ?? false);
+
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(sectionRef, { once: true, margin: "-15%" });
+
+  // CTA ホバー設定
+  const ctaTransition = { type: "spring", stiffness: 400, damping: 17 } as const;
+
+  return (
+    <section
+      // v3 Phase 1-B: 背景を透過。上部境界線は薄い白で残して仕切り感を維持
+      className="relative py-24 md:py-32 lg:py-40 border-t"
+      style={{
+        background: "transparent",
+        borderTopColor: "rgba(255, 255, 255, 0.08)",
+      }}
+    >
+      <div className="mx-auto max-w-4xl px-4 text-center md:px-8">
+        <motion.div
+          ref={sectionRef}
+          variants={containerVariants}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+        >
+          {/* セクションラベル */}
+          <motion.p
+            variants={childVariants}
+            className="text-xs uppercase tracking-[0.25em]"
+            style={{
+              color: "var(--color-v2-text-subtle)",
+              fontFamily: "var(--font-v2-mono)",
+            }}
+          >
+            06 / CONTACT
+          </motion.p>
+
+          {/* 大見出し */}
+          <motion.h2
+            variants={childVariants}
+            className="mt-6 font-bold leading-tight tracking-tight text-4xl md:text-6xl lg:text-7xl"
+            style={{
+              color: "var(--color-v2-text)",
+              fontFamily: "var(--font-v2-display)",
+            }}
+          >
+            まず、
+            <br />
+            話してみませんか。
+          </motion.h2>
+
+          {/* 区切り線（Hero と同じ、中央から広がる横線） */}
+          <motion.div
+            variants={childVariants}
+            className="mx-auto mt-10 h-px w-16 md:w-24"
+            style={{
+              background:
+                "linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent)",
+            }}
+          />
+
+          {/* サブコピー */}
+          <motion.p
+            variants={childVariants}
+            className="mt-10 text-base leading-relaxed md:text-lg"
+            style={{
+              color: "var(--color-v2-text-body)",
+              fontFamily: "var(--font-v2-sans)",
+            }}
+          >
+            初回相談は無料です。
+            <br className="hidden md:inline" />
+            「何から始めればいいかわからない」という段階からで、大丈夫です。
+          </motion.p>
+
+          {/* ===== 基本情報リスト ===== */}
+          {/* 2x2 グリッド（モバイル 1 列）。gap:0 + border で統一 */}
+          <motion.div
+            variants={childVariants}
+            className="mx-auto mt-14 max-w-2xl grid grid-cols-1 sm:grid-cols-2 border"
+            style={{ borderColor: "var(--color-v2-border)" }}
+          >
+            {INFO.map((item, index) => {
+              // 区切り線:
+              // - モバイル (1列): 最初以外は上ボーダー
+              // - sm (2列): 右列（奇数）は左ボーダー / 下行（>=2）は上ボーダー
+              const borderClasses: string[] = [];
+              if (index > 0) borderClasses.push("border-t");
+              if (index % 2 === 1) borderClasses.push("sm:border-l");
+              if (index >= 2) {
+                borderClasses.push("sm:border-t");
+              } else {
+                borderClasses.push("sm:border-t-0");
+              }
+              return (
+                <div
+                  key={item.label}
+                  className={[
+                    "px-6 py-5 text-left",
+                    ...borderClasses,
+                  ].join(" ")}
+                  style={{ borderColor: "var(--color-v2-border)" }}
+                >
+                  <p
+                    className="text-[10px] tracking-[0.25em]"
+                    style={{
+                      color: "var(--color-v2-text-subtle)",
+                      fontFamily: "var(--font-v2-mono)",
+                    }}
+                  >
+                    {item.label}
+                  </p>
+                  <p
+                    className="mt-2 text-sm"
+                    style={{
+                      color: "var(--color-v2-text-body)",
+                      fontFamily: "var(--font-v2-sans)",
+                    }}
+                  >
+                    {item.value}
+                  </p>
+                </div>
+              );
+            })}
+          </motion.div>
+
+          {/* ===== CTA ボタン ===== */}
+          <motion.div variants={childVariants} className="mt-14">
+            <motion.a
+              href={contactHref}
+              whileHover={prefersReducedMotion ? {} : { scale: 1.03 }}
+              whileTap={prefersReducedMotion ? {} : { scale: 0.97 }}
+              transition={ctaTransition}
+              className="group relative inline-flex min-h-[48px] items-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-semibold transition-shadow duration-300 hover:shadow-[0_0_40px_rgba(255,255,255,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-v2-bg"
+              style={{ color: "#0A0A0B" }}
+            >
+              無料相談する
+              {/* 矢印アイコン */}
+              <svg
+                aria-hidden="true"
+                className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </motion.a>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
