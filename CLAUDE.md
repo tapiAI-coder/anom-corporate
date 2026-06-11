@@ -21,8 +21,8 @@
 ## 1. リポジトリ概要
 
 - **GitHub:** https://github.com/tapiAI-coder/anom-corporate
-- **公開:** GitHub Pages（main ブランチ / ルート配信）※2026-06-11時点では未公開（QA後に再有効化）
-- **本番URL:** ★独自ドメイン接続後にここへ記載（暫定: https://tapiai-coder.github.io/anom-corporate/）
+- **公開:** GitHub Pages（main ブランチ / ルート配信）
+- **本番URL:** https://anom-ai.com/ （独自ドメイン。GitHub Pagesのカスタムドメイン機能で接続）
 - **ブランチ:** `main`=本番 ／ `archive/astro-v3`=旧Astro版アーカイブ（触らない・消さない）
 
 ## 2. ファイル構成と編集の早見表

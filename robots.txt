@@ -1,6 +1,6 @@
 # 検索エンジンのクローラー向け設定
-# ★URL: 独自ドメイン接続後は Sitemap の行を新ドメインに更新すること
+# ★URL: ドメイン変更時は Sitemap の行を更新すること
 User-agent: *
 Allow: /
 
-Sitemap: https://tapiai-coder.github.io/anom-corporate/sitemap.xml
+Sitemap: https://anom-ai.com/sitemap.xml
