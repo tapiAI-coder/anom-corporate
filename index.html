@@ -3,365 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ANOM — 無駄を削ぎ落とし、AIで自走する組織へ。</title>
-<meta name="description" content="秋田の中小企業のDX・AI導入を、戦略から定着まで伴走支援。ANOM（アノム）— AUTONOMOUS + MINIMALISM">
+
+<!-- ============================================================
+     ANOM コーポレートサイト
+     ------------------------------------------------------------
+     ■ ファイル構成（編集する場所の早見表）
+       ・文言の修正        → このファイル（index.html）
+       ・見た目の調整      → assets/css/style.css
+       ・フォーム設定など  → assets/js/config.js
+       ・演出の仕組み      → assets/js/（particles / animations / form / main）
+     ■ 公開URLを変更したら、このファイル内の「★URL」と
+       sitemap.xml / robots.txt も合わせて更新すること
+============================================================ -->
+
+<title>ANOM｜秋田のAI・DXコンサルティング — 無駄を削ぎ落とし、AIで自走する組織へ</title>
+<meta name="description" content="秋田の中小企業のDX・AI導入を、戦略から定着まで伴走支援するANOM（アノム）。AI・DXコンサルティングを主軸に、Web制作・保守管理・システム開発まで。初回相談無料。">
+
+<!-- セキュリティ: コンテンツセキュリティポリシー（CSP）
+     このサイトが読み込んでよい外部サービスを限定し、改ざん・不正スクリプトを防ぐ。
+     外部サービスを追加する時は、ここに追記が必要（詳細は docs/運用マニュアル.md） -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.web3forms.com; form-action 'self' https://api.web3forms.com; base-uri 'self'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
+<!-- 検索エンジン・SNS向け情報（★URL: 独自ドメイン接続後に差し替え） -->
+<link rel="canonical" href="https://tapiai-coder.github.io/anom-corporate/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ANOM">
+<meta property="og:title" content="ANOM｜秋田のAI・DXコンサルティング">
+<meta property="og:description" content="無駄を削ぎ落とし、AIで自走する組織へ。秋田の中小企業のDX・AI導入を、戦略から定着まで伴走支援します。">
+<meta property="og:url" content="https://tapiai-coder.github.io/anom-corporate/">
+<meta property="og:image" content="https://tapiai-coder.github.io/anom-corporate/assets/img/ogp.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0B1322">
+
+<!-- アイコン -->
+<link rel="icon" type="image/png" href="assets/img/favicon.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
 <!-- フォント: Inter（英字）+ Noto Sans JP（日本語） -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 
-<style>
-/* ============ 基本設計 ============ */
-:root{
-  --ink:#16243E;        /* 濃紺（インク） */
-  --white:#FFFFFF;
-  --warm:#F7F6F1;       /* 温白 */
-  --muted:#5A6275;      /* 弱い文字 */
-  --accent:#4D5DFF;     /* エレクトリックブルー */
-  --dark:#0B1322;       /* ヒーロー/CTAの深紺 */
-  --line:rgba(22,36,62,.12);
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:auto;}
-body{
-  font-family:'Inter','Noto Sans JP',sans-serif;
-  background:var(--dark); /* セクションの重なり演出のため基調は深紺 */
-  color:var(--ink);
-  -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
-}
-::selection{background:var(--accent);color:#fff;}
-a{color:inherit;text-decoration:none;}
-img{max-width:100%;display:block;}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px;}
+<!-- スタイル -->
+<link rel="stylesheet" href="assets/css/style.css">
 
-/* JSが有効かつ精密ポインタの時のみ標準カーソルを消す */
-body.js-fine, body.js-fine a, body.js-fine button{cursor:none;}
-
-/* ============ カスタムカーソル ============ */
-.cursor-dot,.cursor-ring{
-  position:fixed;top:0;left:0;pointer-events:none;z-index:9999;
-  border-radius:50%;transform:translate(-50%,-50%);
-  display:none;
+<!-- 検索エンジン向けの構造化データ（事業情報。表示には影響しない） -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "ANOM",
+  "alternateName": "アノム",
+  "description": "秋田の中小企業向けAI・DXコンサルティング。Web制作・保守管理・システム開発まで伴走支援。",
+  "url": "https://tapiai-coder.github.io/anom-corporate/",
+  "email": "info@anom-ai.com",
+  "founder": { "@type": "Person", "name": "菊地隆雅" },
+  "address": { "@type": "PostalAddress", "addressRegion": "秋田県", "addressCountry": "JP" },
+  "areaServed": "JP",
+  "knowsAbout": ["AI導入支援", "DXコンサルティング", "業務フロー改善", "Web制作", "システム開発"]
 }
-body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
-.cursor-dot{width:8px;height:8px;background:var(--accent);}
-.cursor-ring{
-  width:38px;height:38px;border:1.5px solid rgba(77,93,255,.55);
-  transition:width .25s,height .25s,border-color .25s,background .25s;
-}
-.cursor-ring.is-hover{width:64px;height:64px;border-color:var(--accent);background:rgba(77,93,255,.08);}
-
-/* ============ ナビ ============ */
-.nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:22px clamp(20px,4vw,48px);
-  transition:background .4s,box-shadow .4s,padding .4s;
-  color:#fff;
-}
-.nav.scrolled{
-  background:rgba(255,255,255,.86);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  color:var(--ink);
-  padding:14px clamp(20px,4vw,48px);
-  box-shadow:0 1px 0 var(--line);
-}
-.nav-logo{font-weight:800;letter-spacing:.32em;font-size:17px;}
-.nav-links{display:flex;align-items:center;gap:30px;font-size:13.5px;font-weight:500;}
-.nav-links a{position:relative;padding:4px 0;}
-.nav-links a::after{
-  content:"";position:absolute;left:0;bottom:0;width:100%;height:1.5px;
-  background:var(--accent);transform:scaleX(0);transform-origin:right;transition:transform .35s cubic-bezier(.6,0,.2,1);
-}
-.nav-links a:hover::after{transform:scaleX(1);transform-origin:left;}
-.nav-cta{
-  background:var(--accent);color:#fff !important;padding:10px 22px;border-radius:8px;
-  font-size:13px;font-weight:600;display:inline-block;
-  box-shadow:0 6px 22px rgba(77,93,255,.35);
-}
-.nav-cta::after{display:none;}
-.nav-burger{display:none;background:none;border:none;width:40px;height:40px;position:relative;z-index:102;}
-.nav-burger span{
-  display:block;width:22px;height:2px;background:currentColor;margin:5px auto;
-  transition:transform .35s,opacity .35s;
-}
-.nav.menu-open .nav-burger span:nth-child(1){transform:translateY(7px) rotate(45deg);}
-.nav.menu-open .nav-burger span:nth-child(2){opacity:0;}
-.nav.menu-open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-.mobile-menu{
-  position:fixed;inset:0;background:var(--dark);z-index:101;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;
-  opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;
-}
-.mobile-menu.open{opacity:1;visibility:visible;}
-.mobile-menu a{color:#fff;font-size:22px;font-weight:600;}
-.mobile-menu .nav-cta{font-size:16px;padding:14px 34px;}
-
-/* ============ ヒーロー ============ */
-.hero{
-  position:relative;height:100vh;min-height:640px;
-  background:var(--dark);overflow:hidden;color:#fff;
-}
-#particle-canvas{position:absolute;inset:0;width:100%;height:100%;}
-.hero-inner{
-  position:relative;z-index:2;height:100%;
-  display:flex;flex-direction:column;justify-content:flex-end;align-items:center;
-  text-align:center;padding:0 24px 14vh;
-  pointer-events:none;
-}
-.hero-inner a{pointer-events:auto;}
-.hero-label{
-  font-size:11px;letter-spacing:.5em;color:rgba(255,255,255,.55);
-  margin-bottom:26px;font-weight:500;
-}
-.hero-copy{
-  font-size:clamp(28px,4.6vw,58px);font-weight:700;line-height:1.5;
-  letter-spacing:.02em;font-family:'Noto Sans JP',sans-serif;
-}
-.hero-copy .ch{display:inline-block;will-change:transform,filter,opacity;}
-.hero-sub{
-  margin-top:22px;font-size:clamp(13px,1.4vw,15.5px);color:rgba(255,255,255,.62);
-  line-height:2;font-weight:400;
-}
-.hero-ctas{display:flex;gap:14px;margin-top:38px;flex-wrap:wrap;justify-content:center;}
-.btn{
-  display:inline-flex;align-items:center;gap:10px;
-  padding:15px 32px;border-radius:9px;font-size:14px;font-weight:600;
-  transition:box-shadow .3s,background .3s,border-color .3s;
-  will-change:transform;
-}
-.btn-primary{
-  background:var(--accent);color:#fff;
-  box-shadow:0 8px 30px rgba(77,93,255,.4);
-}
-.btn-primary:hover{box-shadow:0 10px 40px rgba(77,93,255,.6);}
-.btn-ghost{
-  background:transparent;color:#fff;border:1px solid rgba(255,255,255,.35);
-}
-.btn-ghost:hover{border-color:rgba(255,255,255,.8);}
-.btn .arrow{transition:transform .3s;}
-.btn:hover .arrow{transform:translateX(4px);}
-.hero-tagline{
-  position:absolute;bottom:34px;left:0;right:0;z-index:2;
-  display:flex;align-items:center;justify-content:center;gap:22px;
-  font-size:10px;letter-spacing:.55em;color:rgba(255,255,255,.4);font-weight:500;
-}
-.hero-tagline::before,.hero-tagline::after{
-  content:"";width:clamp(40px,8vw,110px);height:1px;background:rgba(255,255,255,.18);
-}
-.scroll-hint{
-  position:absolute;right:clamp(18px,3vw,40px);bottom:34px;z-index:2;
-  display:flex;flex-direction:column;align-items:center;gap:10px;
-  font-size:9px;letter-spacing:.4em;color:rgba(255,255,255,.45);
-  writing-mode:vertical-rl;
-}
-.scroll-hint .bar{
-  width:1px;height:52px;background:rgba(255,255,255,.15);position:relative;overflow:hidden;writing-mode:horizontal-tb;
-}
-.scroll-hint .bar::after{
-  content:"";position:absolute;top:-50%;left:0;width:100%;height:50%;
-  background:var(--accent);animation:scrollbar 1.8s cubic-bezier(.6,0,.3,1) infinite;
-}
-@keyframes scrollbar{0%{top:-50%;}100%{top:110%;}}
-
-/* ============ セクション共通 ============ */
-.section{position:relative;padding:clamp(90px,11vw,160px) clamp(22px,5vw,64px);overflow:hidden;}
-.wrap{max-width:1180px;margin:0 auto;position:relative;z-index:2;}
-.sec-label{
-  display:flex;align-items:center;gap:14px;
-  font-size:11px;letter-spacing:.35em;color:var(--accent);font-weight:600;
-  margin-bottom:26px;
-}
-.sec-label::before{content:"";width:34px;height:1px;background:var(--accent);}
-.sec-title{
-  font-size:clamp(26px,3.8vw,46px);font-weight:700;line-height:1.5;
-  font-family:'Noto Sans JP',sans-serif;letter-spacing:.01em;
-}
-.sec-title .ch{display:inline-block;}
-.sec-lead{
-  margin-top:20px;font-size:clamp(13.5px,1.3vw,15.5px);color:var(--muted);
-  line-height:2.1;max-width:560px;
-}
-/* 白セクションがダーク背景の上に丸く重なる演出 */
-.sheet{background:var(--white);position:relative;z-index:3;}
-.sheet-first{border-radius:clamp(18px,3vw,32px) clamp(18px,3vw,32px) 0 0;margin-top:-28px;}
-.sheet-warm{background:var(--warm);}
-
-/* ============ Aboutカード ============ */
-.cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:54px;perspective:1200px;}
-.card{
-  background:var(--white);border:1px solid var(--line);border-radius:14px;
-  padding:34px 28px;position:relative;
-  transition:border-color .35s,box-shadow .35s;
-  transform-style:preserve-3d;will-change:transform;
-}
-.card:hover{border-color:rgba(77,93,255,.45);box-shadow:0 18px 50px rgba(22,36,62,.08);}
-.card-num{
-  font-size:11px;letter-spacing:.2em;color:var(--accent);font-weight:600;margin-bottom:38px;
-}
-.card-en{font-size:19px;font-weight:600;letter-spacing:.01em;margin-bottom:6px;}
-.card-jp{font-size:13px;color:var(--accent);font-weight:600;margin-bottom:14px;}
-.card-body{font-size:13px;color:var(--muted);line-height:2;}
-
-/* ============ WHY（2×2） ============ */
-.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:54px;border-top:1px solid var(--line);}
-.why-item{
-  padding:38px 30px 38px 0;border-bottom:1px solid var(--line);
-  display:flex;gap:24px;align-items:flex-start;
-}
-.why-item:nth-child(odd){border-right:1px solid var(--line);padding-right:36px;}
-.why-item:nth-child(even){padding-left:36px;}
-.why-num{
-  font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.08em;
-  padding-top:4px;flex-shrink:0;
-}
-.why-h{font-size:16.5px;font-weight:700;margin-bottom:10px;line-height:1.6;}
-.why-p{font-size:13px;color:var(--muted);line-height:2;}
-
-/* ============ UseCases（Bento） ============ */
-.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:54px;perspective:1400px;}
-.bento .card{padding:38px 32px;display:flex;flex-direction:column;min-height:230px;}
-.bento .b1{grid-column:span 7;}
-.bento .b2{grid-column:span 5;}
-.bento .b3{grid-column:span 5;}
-.bento .b4{grid-column:span 7;}
-.bento .tag{
-  font-size:10.5px;letter-spacing:.28em;color:var(--accent);font-weight:600;margin-bottom:auto;
-}
-.bento h3{font-size:clamp(18px,1.8vw,22px);font-weight:700;margin:34px 0 12px;line-height:1.6;}
-.bento p{font-size:13px;color:var(--muted);line-height:2;}
-
-/* ============ Services ============ */
-.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:54px;perspective:1200px;}
-.svc{
-  background:var(--white);border:1px solid var(--line);border-radius:14px;
-  padding:36px 30px;position:relative;overflow:hidden;
-  transition:border-color .35s,box-shadow .35s;transform-style:preserve-3d;will-change:transform;
-}
-.svc:hover{border-color:rgba(77,93,255,.5);box-shadow:0 18px 50px rgba(22,36,62,.09);}
-.svc-head{font-size:17.5px;font-weight:700;margin-bottom:16px;line-height:1.6;}
-.svc-body{font-size:13px;color:var(--muted);line-height:2.05;}
-.svc.is-web::before{
-  content:"";position:absolute;top:0;left:0;right:0;height:3px;
-  background:linear-gradient(90deg,var(--accent),#8B5CF6);
-}
-.svc-badge{
-  display:inline-block;font-size:10px;letter-spacing:.18em;font-weight:600;
-  color:var(--accent);border:1px solid rgba(77,93,255,.4);border-radius:99px;
-  padding:4px 12px;margin-bottom:16px;
-}
-
-/* ============ 自己言及バンド ============ */
-.band{
-  position:relative;background:var(--accent);color:#fff;
-  padding:clamp(90px,12vw,150px) clamp(22px,5vw,64px);overflow:hidden;z-index:3;
-}
-.band-marquee{
-  position:absolute;inset:0;display:flex;align-items:center;overflow:hidden;pointer-events:none;
-}
-.band-track{
-  display:flex;white-space:nowrap;will-change:transform;
-  animation:marq 26s linear infinite;
-}
-.band-seg{
-  font-size:clamp(64px,11vw,150px);font-weight:800;letter-spacing:.03em;
-  color:rgba(255,255,255,.10);padding-right:60px;
-}
-@keyframes marq{to{transform:translateX(-50%);}}
-.band-inner{position:relative;z-index:2;max-width:1180px;margin:0 auto;text-align:center;}
-.band-copy{
-  font-size:clamp(26px,4vw,48px);font-weight:700;line-height:1.6;
-  font-family:'Noto Sans JP',sans-serif;
-}
-.band-copy .line{display:block;overflow:hidden;}
-.band-copy .line>span{display:inline-block;will-change:transform;}
-.band-sub{
-  margin-top:24px;font-size:clamp(13px,1.3vw,15px);color:rgba(255,255,255,.78);line-height:2.1;
-}
-.band .btn{margin-top:40px;background:#fff;color:var(--ink);box-shadow:0 10px 36px rgba(11,19,34,.3);}
-
-/* ============ 最終CTA ============ */
-.contact{
-  background:var(--dark);color:#fff;text-align:center;z-index:3;position:relative;
-  padding:clamp(110px,14vw,190px) clamp(22px,5vw,64px) clamp(90px,11vw,150px);
-}
-.contact .sec-label{justify-content:center;color:rgba(255,255,255,.5);}
-.contact .sec-label::before{background:rgba(255,255,255,.4);}
-.contact-title{
-  font-size:clamp(30px,5vw,62px);font-weight:700;line-height:1.5;
-  font-family:'Noto Sans JP',sans-serif;
-}
-.contact-sub{margin-top:22px;font-size:14px;color:rgba(255,255,255,.6);line-height:2;}
-.contact .btn{margin-top:44px;}
-.contact-glow{
-  position:absolute;left:50%;top:0;transform:translate(-50%,-40%);
-  width:760px;height:760px;border-radius:50%;pointer-events:none;
-  background:radial-gradient(circle,rgba(77,93,255,.22),transparent 62%);
-}
-
-/* ============ フッター ============ */
-.footer{
-  background:var(--dark);color:rgba(255,255,255,.5);
-  border-top:1px solid rgba(255,255,255,.08);
-  padding:30px clamp(22px,5vw,64px);position:relative;z-index:3;
-  display:flex;align-items:center;justify-content:space-between;font-size:12px;
-}
-.footer .f-logo{color:#fff;font-weight:800;letter-spacing:.3em;font-size:14px;}
-
-/* ============ モーフィングブロブ（差し色の有機形状） ============ */
-.blob{
-  position:absolute;width:clamp(300px,42vw,620px);aspect-ratio:1;
-  background:var(--accent);opacity:.07;pointer-events:none;z-index:1;
-  border-radius:58% 42% 55% 45%/45% 58% 42% 55%;
-  animation:blobmorph 14s ease-in-out infinite alternate;
-  will-change:transform,border-radius;
-}
-@keyframes blobmorph{
-  0%{border-radius:58% 42% 55% 45%/45% 58% 42% 55%;transform:rotate(0deg) scale(1);}
-  50%{border-radius:45% 55% 40% 60%/55% 45% 60% 40%;transform:rotate(25deg) scale(1.08);}
-  100%{border-radius:42% 58% 45% 55%/58% 45% 55% 42%;transform:rotate(46deg) scale(1.14);}
-}
-.blob-1{top:-6%;right:-14%;}
-.blob-2{bottom:-10%;left:-16%;animation-delay:-7s;}
-
-/* ============ レスポンシブ ============ */
-@media (max-width:900px){
-  .nav-links{display:none;}
-  .nav-burger{display:block;}
-  .cards-3{grid-template-columns:1fr;}
-  .why-grid{grid-template-columns:1fr;}
-  .why-item:nth-child(odd){border-right:none;padding-right:0;}
-  .why-item:nth-child(even){padding-left:0;}
-  .bento{grid-template-columns:1fr;}
-  .bento .b1,.bento .b2,.bento .b3,.bento .b4{grid-column:span 1;}
-  .bento .card{min-height:0;}
-  .bento h3{margin-top:22px;}
-  .svc-grid{grid-template-columns:1fr;}
-  .scroll-hint{display:none;}
-}
-
-/* ============ モーション低減設定への配慮 ============ */
-@media (prefers-reduced-motion: reduce){
-  .band-track,.blob,.scroll-hint .bar::after{animation:none !important;}
-  html{scroll-behavior:smooth;}
-}
-</style>
+</script>
 </head>
 <body>
 
-<!-- カスタムカーソル -->
+<!-- カスタムカーソル（マウス操作のPCのみ表示。タッチ端末では出ない） -->
 <div class="cursor-dot" aria-hidden="true"></div>
 <div class="cursor-ring" aria-hidden="true"></div>
 
-<!-- ============ ナビ ============ -->
+<!-- ============ ナビゲーション ============ -->
 <nav class="nav" id="nav" aria-label="メインナビゲーション">
   <a class="nav-logo" href="#top" data-scroll>ANOM</a>
   <div class="nav-links">
-    <!-- ※本番ではサブページ（/about /company /contact）へ差し替え -->
-    <a href="#about" data-scroll>代表紹介</a>
-    <a href="#services" data-scroll>会社概要</a>
+    <a href="#services" data-scroll>サービス</a>
+    <a href="#faq" data-scroll>よくある質問</a>
+    <a href="#company" data-scroll>会社概要</a>
     <a href="#contact" data-scroll>お問い合わせ</a>
     <a href="#contact" class="nav-cta magnetic" data-scroll>無料相談</a>
   </div>
@@ -370,8 +87,9 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   </button>
 </nav>
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#about" data-scroll>代表紹介</a>
-  <a href="#services" data-scroll>会社概要</a>
+  <a href="#services" data-scroll>サービス</a>
+  <a href="#faq" data-scroll>よくある質問</a>
+  <a href="#company" data-scroll>会社概要</a>
   <a href="#contact" data-scroll>お問い合わせ</a>
   <a href="#contact" class="nav-cta" data-scroll>無料相談</a>
 </div>
@@ -379,6 +97,8 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 <!-- ============ 1. ヒーロー（粒子の混沌→秩序） ============ -->
 <header class="hero" id="top">
   <canvas id="particle-canvas" aria-hidden="true"></canvas>
+  <!-- WebGLが使えない端末では、こちらの静的表示に自動で切り替わる -->
+  <div class="hero-fallback" id="heroFallback" hidden aria-hidden="true"><span>ANOM</span></div>
   <div class="hero-inner">
     <p class="hero-label reveal-hero">AKITA · DX &amp; AI PARTNER</p>
     <h1 class="hero-copy" id="heroCopy">無駄を削ぎ落とし、<br>AIで自走する組織へ。</h1>
@@ -448,7 +168,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   </div>
 </section>
 
-<!-- ============ 4. UseCases（Bento） ============ -->
+<!-- ============ 4. UseCases（想定シナリオ） ============ -->
 <section class="section sheet" id="usecases">
   <div class="blob blob-2" aria-hidden="true"></div>
   <div class="wrap">
@@ -480,25 +200,61 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   </div>
 </section>
 
-<!-- ============ 5. Services ============ -->
+<!-- ============ 5. Services（主サービス＋サブサービス） ============ -->
 <section class="section sheet sheet-warm" id="services">
   <div class="wrap">
     <p class="sec-label reveal">03 / SERVICES</p>
     <h2 class="sec-title split">ANOMにできること。</h2>
-    <p class="sec-lead reveal">課題の整理から、仕組みづくり、集客の入口まで。一社にまとめて任せられます。</p>
-    <div class="svc-grid reveal-group">
+    <p class="sec-lead reveal">主軸はAI・DXコンサルティング。その実行を支えるWeb制作から保守・管理、システム開発まで、一社にまとめて任せられます。</p>
+
+    <!-- 主サービス: AI・DXコンサルティング -->
+    <div class="svc-main reveal">
+      <span class="svc-badge">MAIN SERVICE</span>
+      <h3 class="svc-main-title">AI・DXコンサルティング</h3>
+      <p class="svc-main-lead">課題の整理から導入・定着まで、経営と現場の両方に伴走する主力サービス。関わり方は、継続的な「月額顧問」と、ゴールを決めて取り組む「プロジェクト型」の2つから選べます。</p>
+      <div class="svc-cols">
+        <div class="svc-col">
+          <p class="svc-col-tag">01 ／ ADVISORY</p>
+          <h4 class="svc-col-h">月額顧問</h4>
+          <p class="svc-col-c">経営と現場の、外付けの頭脳。</p>
+          <ul class="svc-list">
+            <li>経営・事業判断へのAI／DX相談</li>
+            <li>ツール選定の中立アドバイス</li>
+            <li>月次の振り返りと次アクション設計</li>
+            <li>導入後の継続サポート</li>
+          </ul>
+        </div>
+        <div class="svc-col">
+          <p class="svc-col-tag">02 ／ PROJECT</p>
+          <h4 class="svc-col-h">プロジェクト型</h4>
+          <p class="svc-col-c">課題ごとに、期間と成果を決めて。</p>
+          <ul class="svc-list">
+            <li>現状診断（DX・AI準備度調査）</li>
+            <li>業務フロー改善設計</li>
+            <li>AIツール導入支援（設定・研修）</li>
+            <li>導入後の定着サポート</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- サブサービス: コンサルの実行を支える3つ -->
+    <p class="co-h svc-sub-cap reveal">SUPPORT SERVICES ／ 実行まで支える</p>
+    <div class="svc-sub-grid reveal-group">
       <div class="svc tilt">
-        <h3 class="svc-head">AI・DX顧問（月額）</h3>
-        <p class="svc-body">経営・事業判断へのAI/DX相談、ツール選定の中立アドバイス、月次の振り返りと次アクション設計。</p>
+        <p class="svc-tag">WEB ／ 制作</p>
+        <h3 class="svc-head">Web制作</h3>
+        <p class="svc-body">売れるサイトで、集客と信頼の入口をつくる。LP・コーポレートサイトを設計から制作まで。いまご覧のこのサイトも、ANOMの制作です。</p>
       </div>
       <div class="svc tilt">
-        <h3 class="svc-head">DX導入プロジェクト</h3>
-        <p class="svc-body">現状診断、業務フロー改善設計、AIツール導入支援（設定・研修）、導入後の定着サポート。</p>
+        <p class="svc-tag">CARE ／ 保守・管理</p>
+        <h3 class="svc-head">保守・管理</h3>
+        <p class="svc-body">作って終わりにしない。サイトや導入ツールの更新・トラブル対応、アクセス解析にもとづく改善まで、運用の面倒ごとを引き受けます。</p>
       </div>
-      <div class="svc tilt is-web">
-        <span class="svc-badge">WEB</span>
-        <h3 class="svc-head">Web制作・運用</h3>
-        <p class="svc-body">売れるサイトで、集客と信頼の入口をつくる。LP・コーポレートサイトの制作から、アクセス解析にもとづく改善・運用まで。魅せる体験で、競合と差をつける。</p>
+      <div class="svc tilt">
+        <p class="svc-tag">DEV ／ 開発</p>
+        <h3 class="svc-head">システム開発</h3>
+        <p class="svc-body">既製ツールで足りない部分は、業務に合わせた小さな仕組みをつくる。AIを組み込んだ自動化・効率化まで対応します。</p>
       </div>
     </div>
   </div>
@@ -517,490 +273,140 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
       <span class="line"><span>このサイトも、</span></span>
       <span class="line"><span>ANOMが制作しています。</span></span>
     </h2>
-    <p class="band-sub reveal">今ご覧いただいている体験そのものが、私たちの制作物です。<br>同じ熱量で、御社の「入口」をつくります。</p>
+    <p class="band-sub reveal">今ご覧いただいている体験そのものが、制作物のサンプルです。<br>同じ熱量で、御社の「入口」をつくります。</p>
     <a href="#contact" class="btn magnetic reveal" data-scroll>Web制作を相談する <span class="arrow">→</span></a>
   </div>
 </section>
 
-<!-- ============ 6. 最終CTA ============ -->
+<!-- ============ 6. FAQ ============ -->
+<section class="section sheet" id="faq">
+  <div class="wrap">
+    <p class="sec-label reveal">04 / FAQ</p>
+    <h2 class="sec-title split">疑問に、お答えします。</h2>
+    <p class="sec-lead reveal">ここにない疑問は、お気軽にご相談ください。初回相談は無料です。</p>
+    <div class="faq-list reveal-group">
+      <details class="faq-item">
+        <summary><span class="q">Q1</span>AIを導入したことがない企業でも大丈夫ですか？</summary>
+        <p class="faq-a">はい、初めての企業様が大半です。現状診断から始めて「何から手を付けるべきか」を一緒に整理するところからご支援します。いきなりツールを導入することはありません。</p>
+      </details>
+      <details class="faq-item">
+        <summary><span class="q">Q2</span>費用はどのくらいかかりますか？</summary>
+        <p class="faq-a">規模・内容により異なります。まず無料相談で状況を伺い、概算をご提示します。月額顧問・プロジェクト単発、どちらもスモールスタート可能です。</p>
+      </details>
+      <details class="faq-item">
+        <summary><span class="q">Q3</span>秋田県外でも対応できますか？</summary>
+        <p class="faq-a">はい、全国対応しています。原則リモート中心で、必要に応じて現地訪問も対応可能です。秋田と関東の距離を埋めるためにANOMは動きます。</p>
+      </details>
+      <details class="faq-item">
+        <summary><span class="q">Q4</span>どのくらいの期間で成果が出ますか？</summary>
+        <p class="faq-a">PoC（試験導入）は1〜3ヶ月、本格導入は3〜6ヶ月が目安です。プロジェクトの複雑さや社内体制により変わりますが、早期の効果創出を重視します。</p>
+      </details>
+      <details class="faq-item">
+        <summary><span class="q">Q5</span>データが少なくてもAIは使えますか？</summary>
+        <p class="faq-a">データの量と質でアプローチは変わりますが、少量でも有効な手法があります。まずは現状のデータをご共有いただき、可能性を診断させてください。</p>
+      </details>
+      <details class="faq-item">
+        <summary><span class="q">Q6</span>社内の人間だけで運用できるようになりますか？</summary>
+        <p class="faq-a">内製化支援も中心メニューの一つです。導入後に自走できるよう、研修・ドキュメント整備・技術移転まで伴走します。</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. 会社概要・代表挨拶 ============ -->
+<section class="section sheet sheet-warm" id="company">
+  <div class="wrap">
+    <p class="sec-label reveal">05 / COMPANY</p>
+    <h2 class="sec-title split">ANOMについて。</h2>
+    <div class="company-grid">
+      <div class="reveal">
+        <p class="co-h">PROFILE ／ 代表挨拶</p>
+        <p class="profile-msg">難しい言葉ではなく、<br>現場の言葉で。</p>
+        <p class="profile-body">秋田の中小企業には、まだ引き出されていない伸びしろが眠っています。AIはそのための道具にすぎません。大切なのは、無駄を見つけて削ぎ落とし、人の時間を本来の仕事に返すこと。ツールを売って終わりではなく、自社で回せるようになるまで、一緒に手を動かして伴走します。</p>
+        <p class="profile-name">代表<b>菊地 隆雅</b></p>
+      </div>
+      <div class="reveal">
+        <p class="co-h">COMPANY ／ 会社概要</p>
+        <dl class="co-table">
+          <div class="co-row"><dt>屋号</dt><dd>ANOM（アノム）※法人化準備中</dd></div>
+          <div class="co-row"><dt>代表</dt><dd>菊地 隆雅</dd></div>
+          <div class="co-row"><dt>所在地</dt><dd>秋田県</dd></div>
+          <div class="co-row"><dt>事業内容</dt><dd>AI・DXコンサルティング（月額顧問／プロジェクト型）、Web制作、保守・管理、システム開発</dd></div>
+          <div class="co-row"><dt>対応エリア</dt><dd>全国（リモート対応）／秋田県内は訪問可</dd></div>
+          <div class="co-row"><dt>対応時間</dt><dd>平日 9:00–18:00（JST）</dd></div>
+          <div class="co-row"><dt>連絡先</dt><dd>info@anom-ai.com</dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8. お問い合わせ（フォーム） ============ -->
 <section class="contact" id="contact">
   <div class="contact-glow" aria-hidden="true"></div>
   <div class="wrap">
-    <p class="sec-label reveal">04 / CONTACT</p>
+    <p class="sec-label reveal">06 / CONTACT</p>
     <h2 class="contact-title split">まず、話してみませんか。</h2>
-    <p class="contact-sub reveal">御社の業種・規模に合わせた入口を、ご一緒に探します。</p>
-    <!-- ※送信先は正式アドレスに差し替え -->
-    <a href="mailto:contact@anom.jp" class="btn btn-primary magnetic reveal">無料相談する <span class="arrow">→</span></a>
+    <p class="contact-sub reveal">初回相談は無料です。「何から始めればいいかわからない」という段階からで、大丈夫です。</p>
+
+    <!-- お問い合わせフォーム（送信の仕組みは assets/js/form.js）-->
+    <form id="contactForm" class="form-card reveal" action="https://api.web3forms.com/submit" method="POST">
+      <div class="field">
+        <label for="f-name">お名前<span class="req">必須</span></label>
+        <input id="f-name" name="name" type="text" required maxlength="60" autocomplete="name" placeholder="例）山田 太郎">
+      </div>
+      <div class="field">
+        <label for="f-company">会社名・屋号</label>
+        <input id="f-company" name="company" type="text" maxlength="80" autocomplete="organization" placeholder="例）株式会社サンプル">
+      </div>
+      <div class="field">
+        <label for="f-email">メールアドレス<span class="req">必須</span></label>
+        <input id="f-email" name="email" type="email" required maxlength="120" autocomplete="email" placeholder="例）yamada@example.com">
+      </div>
+      <div class="field">
+        <label for="f-message">ご相談内容<span class="req">必須</span></label>
+        <textarea id="f-message" name="message" required maxlength="2000" placeholder="例）紙の事務作業が多く、何から手を付けるべきか相談したい。"></textarea>
+      </div>
+
+      <!-- スパムボット対策のハニーポット（人間には見えない欄。触らないこと） -->
+      <div class="hp-field" aria-hidden="true">
+        <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off">
+      </div>
+
+      <label class="consent">
+        <input type="checkbox" required>
+        <span><a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>に同意のうえ送信します。</span>
+      </label>
+
+      <button type="submit" class="btn btn-primary magnetic">無料相談を送信する <span class="arrow">→</span></button>
+      <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
+    </form>
+
+    <p class="contact-alt reveal">フォームが使えない場合は <a href="mailto:info@anom-ai.com">info@anom-ai.com</a> へ直接ご連絡ください。</p>
   </div>
 </section>
 
 <!-- ============ フッター ============ -->
 <footer class="footer">
   <span class="f-logo">ANOM</span>
-  <span>© 2026 ANOM</span>
-  <span>秋田県</span>
+  <nav class="f-links" aria-label="フッターナビゲーション">
+    <a href="privacy.html">プライバシーポリシー</a>
+    <a href="#top" data-scroll>ページの先頭へ</a>
+  </nav>
+  <span>© 2026 ANOM ／ 秋田県</span>
 </footer>
 
-<!-- ============ ライブラリ（CDN） ============ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
-
-<script>
-/* =========================================================
-   ANOM — 混沌→秩序。粒子がANOMを形づくるワンページ。
-   構成: Lenis慣性スクロール / Three.js粒子 / GSAP演出
-========================================================= */
-(function(){
-"use strict";
-
-/* ---- 環境判定 ---- */
-var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches; // モーション低減設定
-var FINE    = window.matchMedia("(pointer: fine)").matches;                   // マウス等の精密ポインタ
-var MOBILE  = window.innerWidth < 768;
-
-gsap.registerPlugin(ScrollTrigger);
-
-/* ---- 慣性スクロール（Lenis） ---- */
-var lenis = null;
-if(!REDUCED && typeof Lenis !== "undefined"){
-  lenis = new Lenis({ duration:1.15, smoothWheel:true });
-  lenis.on("scroll", ScrollTrigger.update);
-  gsap.ticker.add(function(t){ lenis.raf(t*1000); });
-  gsap.ticker.lagSmoothing(0);
-}
-
-/* ---- アンカーのスムーズスクロール ---- */
-document.querySelectorAll("[data-scroll]").forEach(function(a){
-  a.addEventListener("click", function(e){
-    var href = a.getAttribute("href");
-    if(!href || href.charAt(0) !== "#") return;
-    var target = document.querySelector(href);
-    if(!target) return;
-    e.preventDefault();
-    closeMenu();
-    if(lenis){ lenis.scrollTo(target, { offset:-64 }); }
-    else{ target.scrollIntoView({ behavior:"smooth" }); }
-  });
-});
-
-/* ---- モバイルメニュー ---- */
-var burger = document.getElementById("burger");
-var mobileMenu = document.getElementById("mobileMenu");
-var nav = document.getElementById("nav");
-function closeMenu(){
-  nav.classList.remove("menu-open");
-  mobileMenu.classList.remove("open");
-  burger.setAttribute("aria-expanded","false");
-}
-burger.addEventListener("click", function(){
-  var open = mobileMenu.classList.toggle("open");
-  nav.classList.toggle("menu-open", open);
-  burger.setAttribute("aria-expanded", String(open));
-});
-
-/* ---- ナビの状態切替（ヒーローを抜けたら白背景に） ---- */
-ScrollTrigger.create({
-  trigger:"#about", start:"top 80px",
-  onEnter:function(){ nav.classList.add("scrolled"); },
-  onLeaveBack:function(){ nav.classList.remove("scrolled"); }
-});
-
-/* ---- 文字分割ユーティリティ（キネティック文字用） ---- */
-function splitChars(el){
-  var chars = [];
-  var nodes = Array.prototype.slice.call(el.childNodes);
-  el.innerHTML = "";
-  nodes.forEach(function(node){
-    if(node.nodeType === 3){ // テキストノード → 1文字ずつspan化
-      Array.prototype.forEach.call(node.textContent, function(c){
-        var s = document.createElement("span");
-        s.className = "ch";
-        s.textContent = c;
-        el.appendChild(s);
-        chars.push(s);
-      });
-    }else{
-      el.appendChild(node); // <br>等はそのまま
-    }
-  });
-  return chars;
-}
-
-/* =========================================================
-   Three.js — 粒子の混沌→秩序（ANOMワードマーク形成）
-========================================================= */
-var heroVisible = true;
-var three = null; // { renderer, scene, camera, uniforms, points }
-
-function initParticles(){
-  var canvas = document.getElementById("particle-canvas");
-  var renderer;
-  try{
-    renderer = new THREE.WebGLRenderer({ canvas:canvas, alpha:true, antialias:false });
-  }catch(e){
-    canvas.style.display = "none"; // WebGL不可なら静的表示にフォールバック
-    return null;
-  }
-  var DPR = Math.min(window.devicePixelRatio || 1, MOBILE ? 1.5 : 2);
-  renderer.setPixelRatio(DPR);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-
-  var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, .1, 100);
-  camera.position.z = 11;
-
-  /* --- "ANOM" の文字形状をオフスクリーンcanvasからサンプリング --- */
-  var W = 1000, H = 320;
-  var tc = document.createElement("canvas");
-  tc.width = W; tc.height = H;
-  var tx = tc.getContext("2d");
-  tx.fillStyle = "#fff";
-  tx.textBaseline = "middle";
-  tx.font = "800 235px Inter, 'Arial Black', sans-serif";
-  // 字間を手動で空けてワードマークらしく描画
-  var word = "ANOM", sp = 18;
-  var totalW = 0;
-  for(var i=0;i<word.length;i++){ totalW += tx.measureText(word[i]).width + (i<word.length-1?sp:0); }
-  var cx = (W-totalW)/2;
-  for(var i=0;i<word.length;i++){
-    tx.fillText(word[i], cx, H/2);
-    cx += tx.measureText(word[i]).width + sp;
-  }
-  var img = tx.getImageData(0,0,W,H).data;
-  var targets = [];
-  for(var y=0; y<H; y+=3){
-    for(var x=0; x<W; x+=3){
-      if(img[(y*W+x)*4+3] > 128){
-        // 文字幅=10ユニットの正規化空間へ変換（中心原点）
-        targets.push([ (x-W/2)/W*10, -(y-H/2)/W*10 ]);
-      }
-    }
-  }
-
-  var COUNT = MOBILE ? 2600 : (window.innerWidth < 1100 ? 4500 : 7000);
-  var startArr  = new Float32Array(COUNT*3);
-  var targetArr = new Float32Array(COUNT*3);
-  var randArr   = new Float32Array(COUNT);
-
-  for(var i=0;i<COUNT;i++){
-    // 混沌: 球状にランダム散布
-    var r = 9*Math.cbrt(Math.random());
-    var th = Math.random()*Math.PI*2, ph = Math.acos(2*Math.random()-1);
-    startArr[i*3]   = r*Math.sin(ph)*Math.cos(th);
-    startArr[i*3+1] = r*Math.sin(ph)*Math.sin(th)*.6;
-    startArr[i*3+2] = r*Math.cos(ph)*.5;
-    // 秩序: 文字上の点（微ジッタ付き）
-    var t = targets[(Math.random()*targets.length)|0];
-    targetArr[i*3]   = t[0] + (Math.random()-.5)*.03;
-    targetArr[i*3+1] = t[1] + (Math.random()-.5)*.03;
-    targetArr[i*3+2] = (Math.random()-.5)*.25;
-    randArr[i] = Math.random();
-  }
-
-  var geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.BufferAttribute(startArr, 3)); // 始点=混沌
-  geo.setAttribute("aTarget",  new THREE.BufferAttribute(targetArr, 3));
-  geo.setAttribute("aRand",    new THREE.BufferAttribute(randArr, 1));
-
-  var uniforms = {
-    uProgress:{ value: REDUCED ? 1 : 0 }, // 形成進行度
-    uScatter:{ value: 0 },                // トンネル再拡散
-    uFade:{ value: 1 },                   // 全体フェード
-    uTime:{ value: 0 },
-    uMouse:{ value: new THREE.Vector3(999,999,0) },
-    uMouseActive:{ value: FINE && !REDUCED ? 1 : 0 },
-    uPixelRatio:{ value: DPR },
-    uColorA:{ value: new THREE.Color("#4D5DFF") },
-    uColorB:{ value: new THREE.Color("#C9D6FF") }
-  };
-
-  var mat = new THREE.ShaderMaterial({
-    uniforms: uniforms,
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    vertexShader: [
-      "attribute vec3 aTarget;",
-      "attribute float aRand;",
-      "uniform float uProgress;",
-      "uniform float uScatter;",
-      "uniform float uTime;",
-      "uniform vec3 uMouse;",
-      "uniform float uMouseActive;",
-      "uniform float uPixelRatio;",
-      "varying float vAlpha;",
-      "varying float vRand;",
-      "float easeOutCubic(float x){ return 1.0 - pow(1.0 - x, 3.0); }",
-      "void main(){",
-      "  // 粒子ごとに到達タイミングをずらし、混沌→秩序の波をつくる",
-      "  float p = clamp(uProgress * 1.6 - aRand * 0.6, 0.0, 1.0);",
-      "  p = easeOutCubic(p);",
-      "  vec3 pos = mix(position, aTarget, p);",
-      "  // 形成後の微細な呼吸",
-      "  float w = sin(uTime*1.3 + aRand*40.0)*0.02 + cos(uTime*0.8 + aRand*23.0)*0.02;",
-      "  pos.xy += w * (0.4 + aRand);",
-      "  // カーソル反発（uMouseActiveで無効化可能）",
-      "  vec2 d = pos.xy - uMouse.xy;",
-      "  float dist = length(d);",
-      "  float force = smoothstep(1.7, 0.0, dist) * uMouseActive;",
-      "  pos.xy += normalize(d + 0.0001) * force * 0.9;",
-      "  // トンネル: 粒子が再び散り、視点の脇を流れていく",
-      "  pos.z += uScatter * (aRand * 16.0 - 4.0);",
-      "  pos.xy *= 1.0 + uScatter * (aRand * 1.5);",
-      "  vec4 mv = modelViewMatrix * vec4(pos, 1.0);",
-      "  gl_Position = projectionMatrix * mv;",
-      "  float size = (1.6 + aRand * 2.6) * uPixelRatio;",
-      "  gl_PointSize = min(size * (6.0 / -mv.z), 60.0 * uPixelRatio);",
-      "  vAlpha = 0.35 + 0.65 * p;",
-      "  vRand = aRand;",
-      "}"
-    ].join("\n"),
-    fragmentShader: [
-      "precision mediump float;",
-      "varying float vAlpha;",
-      "varying float vRand;",
-      "uniform vec3 uColorA;",
-      "uniform vec3 uColorB;",
-      "uniform float uFade;",
-      "void main(){",
-      "  vec2 uv = gl_PointCoord - 0.5;",
-      "  float d = length(uv);",
-      "  float a = smoothstep(0.5, 0.05, d) * vAlpha * uFade;",
-      "  vec3 col = mix(uColorA, uColorB, vRand);",
-      "  gl_FragColor = vec4(col, a);",
-      "}"
-    ].join("\n")
-  });
-
-  var points = new THREE.Points(geo, mat);
-  var group = new THREE.Group();
-  group.add(points);
-  scene.add(group);
-
-  /* --- 奥行きの星屑（静的・薄い） --- */
-  var dustN = 500;
-  var dustArr = new Float32Array(dustN*3);
-  for(var i=0;i<dustN;i++){
-    dustArr[i*3]   = (Math.random()-.5)*30;
-    dustArr[i*3+1] = (Math.random()-.5)*16;
-    dustArr[i*3+2] = -4 - Math.random()*14;
-  }
-  var dustGeo = new THREE.BufferGeometry();
-  dustGeo.setAttribute("position", new THREE.BufferAttribute(dustArr,3));
-  var dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({
-    color:0x5A6FB0, size:.05, transparent:true, opacity:.55,
-    depthWrite:false, blending:THREE.AdditiveBlending
-  }));
-  scene.add(dust);
-
-  /* --- ビューポートに合わせてワードマークをスケール --- */
-  function fit(){
-    var vh = 2 * camera.position.z * Math.tan(camera.fov*Math.PI/360);
-    var vw = vh * camera.aspect;
-    var s = Math.min(vw*.8/10, 1.5);
-    group.scale.set(s,s,s);
-    group.position.y = vh*.14; // コピーの上に文字が来るよう少し上へ
-  }
-  fit();
-
-  /* --- マウス座標 → z=0平面のワールド座標へ --- */
-  var mouseTarget = new THREE.Vector3(999,999,0);
-  if(FINE && !REDUCED){
-    window.addEventListener("mousemove", function(e){
-      var ndc = new THREE.Vector3(
-        (e.clientX/window.innerWidth)*2-1,
-        -(e.clientY/window.innerHeight)*2+1, .5);
-      ndc.unproject(camera);
-      var dir = ndc.sub(camera.position).normalize();
-      var t = -camera.position.z/dir.z;
-      mouseTarget.copy(camera.position).add(dir.multiplyScalar(t));
-      // グループのスケール分を補正
-      mouseTarget.divideScalar(group.scale.x || 1);
-      mouseTarget.y -= group.position.y/(group.scale.x||1);
-    });
-    window.addEventListener("mouseleave", function(){ mouseTarget.set(999,999,0); });
-  }
-
-  /* --- 描画ループ --- */
-  var clock = new THREE.Clock();
-  function loop(){
-    requestAnimationFrame(loop);
-    if(!heroVisible) return; // ヒーロー外では描画停止（省電力）
-    uniforms.uTime.value = clock.getElapsedTime();
-    uniforms.uMouse.value.lerp(mouseTarget, .12);
-    renderer.render(scene, camera);
-  }
-  loop();
-
-  /* --- リサイズ --- */
-  var rT;
-  window.addEventListener("resize", function(){
-    clearTimeout(rT);
-    rT = setTimeout(function(){
-      camera.aspect = window.innerWidth/window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      fit();
-      ScrollTrigger.refresh();
-    }, 150);
-  });
-
-  return { renderer:renderer, camera:camera, uniforms:uniforms, canvas:canvas };
-}
-
-/* =========================================================
-   イントロ & スクロール演出
-========================================================= */
-function initMotion(){
-  var heroChars = splitChars(document.getElementById("heroCopy"));
-
-  if(REDUCED){
-    /* モーション低減: 全て即時表示・演出なし */
-    gsap.set(".reveal-hero, .reveal, .reveal-group > *, .band-copy .line > span", { opacity:1 });
-    return;
-  }
-
-  /* --- イントロ: 粒子形成 → キャッチコピーが文字単位で立ち上がる --- */
-  if(three){
-    gsap.to(three.uniforms.uProgress, { value:1, duration:2.6, ease:"power2.inOut", delay:.35 });
-  }
-  gsap.set(heroChars, { opacity:0, y:26, filter:"blur(10px)" });
-  gsap.set(".reveal-hero", { opacity:0, y:20 });
-  gsap.to(heroChars, {
-    opacity:1, y:0, filter:"blur(0px)",
-    duration:.9, ease:"power3.out", stagger:.035, delay:1.5
-  });
-  gsap.to(".reveal-hero", { opacity:1, y:0, duration:1, ease:"power3.out", stagger:.12, delay:2.2 });
-
-  /* --- トンネル: ヒーローを固定し、組織の内側へ潜る --- */
-  var tunnel = gsap.timeline({
-    scrollTrigger:{
-      trigger:".hero", start:"top top",
-      end: MOBILE ? "+=80%" : "+=130%",
-      pin:true, scrub:.8,
-      onLeave:function(){ heroVisible=false; },
-      onEnterBack:function(){ heroVisible=true; }
-    }
-  });
-  if(three){
-    tunnel
-      .to(three.camera.position, { z:3.2, ease:"power1.in" }, 0)
-      .to(three.uniforms.uScatter, { value:1, ease:"power1.in" }, 0)
-      .to(three.uniforms.uFade, { value:0, ease:"power1.in" }, .45);
-  }
-  tunnel
-    .to(".hero-inner", { y:-90, opacity:0, filter:"blur(6px)", ease:"power1.in" }, 0)
-    .to(".hero-tagline, .scroll-hint", { opacity:0, ease:"power1.in" }, 0);
-
-  /* --- 見出しの文字分割リビール --- */
-  document.querySelectorAll(".split").forEach(function(h){
-    var chars = splitChars(h);
-    gsap.from(chars, {
-      opacity:0, y:30, filter:"blur(6px)",
-      duration:.8, ease:"power3.out", stagger:.025,
-      scrollTrigger:{ trigger:h, start:"top 85%" }
-    });
-  });
-
-  /* --- 汎用リビール --- */
-  gsap.utils.toArray(".reveal").forEach(function(el){
-    gsap.from(el, {
-      opacity:0, y:42, duration:1, ease:"power3.out",
-      scrollTrigger:{ trigger:el, start:"top 88%" }
-    });
-  });
-  gsap.utils.toArray(".reveal-group").forEach(function(g){
-    gsap.from(g.children, {
-      opacity:0, y:50, duration:.95, ease:"power3.out", stagger:.1,
-      scrollTrigger:{ trigger:g, start:"top 85%" }
-    });
-  });
-
-  /* --- バンド: 行マスクのスライドアップ --- */
-  gsap.from(".band-copy .line > span", {
-    yPercent:110, duration:1.1, ease:"power4.out", stagger:.14,
-    scrollTrigger:{ trigger:".band", start:"top 75%" }
-  });
-
-  /* --- ブロブのスクロール連動パララックス --- */
-  gsap.to(".blob-1", { yPercent:36, scrollTrigger:{ trigger:"#about", start:"top bottom", end:"bottom top", scrub:1.2 }});
-  gsap.to(".blob-2", { yPercent:-30, scrollTrigger:{ trigger:"#usecases", start:"top bottom", end:"bottom top", scrub:1.2 }});
-}
-
-/* =========================================================
-   カーソル / マグネティック / チルト（精密ポインタのみ）
-========================================================= */
-function initPointerFX(){
-  if(!FINE || REDUCED) return;
-  document.body.classList.add("js-fine");
-
-  /* --- カスタムカーソル（ドット+遅延リング） --- */
-  var dot = document.querySelector(".cursor-dot");
-  var ring = document.querySelector(".cursor-ring");
-  var mx=innerWidth/2, my=innerHeight/2, rx=mx, ry=my;
-  window.addEventListener("mousemove", function(e){ mx=e.clientX; my=e.clientY; });
-  gsap.ticker.add(function(){
-    rx += (mx-rx)*.16; ry += (my-ry)*.16;
-    dot.style.transform  = "translate("+mx+"px,"+my+"px) translate(-50%,-50%)";
-    ring.style.transform = "translate("+rx+"px,"+ry+"px) translate(-50%,-50%)";
-  });
-  document.querySelectorAll("a, button, .tilt").forEach(function(el){
-    el.addEventListener("mouseenter", function(){ ring.classList.add("is-hover"); });
-    el.addEventListener("mouseleave", function(){ ring.classList.remove("is-hover"); });
-  });
-
-  /* --- マグネティックボタン --- */
-  document.querySelectorAll(".magnetic").forEach(function(el){
-    var xTo = gsap.quickTo(el, "x", { duration:.4, ease:"power3" });
-    var yTo = gsap.quickTo(el, "y", { duration:.4, ease:"power3" });
-    el.addEventListener("mousemove", function(e){
-      var b = el.getBoundingClientRect();
-      xTo((e.clientX - (b.left+b.width/2)) * .32);
-      yTo((e.clientY - (b.top+b.height/2)) * .32);
-    });
-    el.addEventListener("mouseleave", function(){
-      gsap.to(el, { x:0, y:0, duration:.7, ease:"elastic.out(1,.45)" });
-    });
-  });
-
-  /* --- カードの微3Dチルト --- */
-  document.querySelectorAll(".tilt").forEach(function(card){
-    var rX = gsap.quickTo(card, "rotationX", { duration:.5, ease:"power2" });
-    var rY = gsap.quickTo(card, "rotationY", { duration:.5, ease:"power2" });
-    card.addEventListener("mousemove", function(e){
-      var b = card.getBoundingClientRect();
-      var px = (e.clientX-b.left)/b.width - .5;
-      var py = (e.clientY-b.top)/b.height - .5;
-      rX(-py*7); rY(px*7);
-    });
-    card.addEventListener("mouseleave", function(){ rX(0); rY(0); });
-  });
-}
-
-/* =========================================================
-   起動
-========================================================= */
-function boot(){
-  three = initParticles();
-  initMotion();
-  initPointerFX();
-  window.addEventListener("load", function(){ ScrollTrigger.refresh(); });
-}
-
-/* Interのロードを待ってから文字をサンプリング（形が正しく出るように） */
-if(document.fonts && document.fonts.load){
-  Promise.all([
-    document.fonts.load("800 235px Inter"),
-    document.fonts.load("700 40px 'Noto Sans JP'")
-  ]).then(boot).catch(boot);
-  setTimeout(function(){ if(!three) boot(); }, 1800); // フォント取得失敗時の保険
-}else{
-  boot();
-}
-
-})();
-</script>
+<!-- ============ スクリプト（この順番を変えないこと） ============
+     vendor: サイトに同梱した外部ライブラリ（バージョン固定）
+     その後に自作スクリプト。main.js が最後（起動役）。 -->
+<script src="assets/vendor/three.min.js"></script>
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script src="assets/vendor/lenis.min.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/particles.js"></script>
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/form.js"></script>
+<script src="assets/js/main.js"></script>
 </body>
 </html>
