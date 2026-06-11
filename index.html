@@ -44,7 +44,8 @@
 <!-- フォント: Inter（英字）+ Noto Sans JP（日本語） -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<!-- 使用しているウェイトだけ読み込んで軽量化（300/900は未使用） -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <!-- スタイル -->
 <link rel="stylesheet" href="assets/css/style.css">
@@ -111,6 +112,9 @@
   <p class="hero-tagline reveal-hero">AUTONOMOUS ＋ MINIMALISM</p>
   <div class="scroll-hint reveal-hero" aria-hidden="true">SCROLL<span class="bar"></span></div>
 </header>
+
+<!-- 本文ランドマーク（支援技術が本文の開始位置を認識できるように） -->
+<main>
 
 <!-- ============ 2. About ============ -->
 <section class="section sheet sheet-first" id="about">
@@ -386,6 +390,8 @@
   </div>
 </section>
 
+</main>
+
 <!-- ============ フッター ============ -->
 <footer class="footer">
   <span class="f-logo">ANOM</span>
@@ -399,14 +405,14 @@
 <!-- ============ スクリプト（この順番を変えないこと） ============
      vendor: サイトに同梱した外部ライブラリ（バージョン固定）
      その後に自作スクリプト。main.js が最後（起動役）。 -->
-<script src="assets/vendor/three.min.js"></script>
-<script src="assets/vendor/gsap.min.js"></script>
-<script src="assets/vendor/ScrollTrigger.min.js"></script>
-<script src="assets/vendor/lenis.min.js"></script>
-<script src="assets/js/config.js"></script>
-<script src="assets/js/particles.js"></script>
-<script src="assets/js/animations.js"></script>
-<script src="assets/js/form.js"></script>
-<script src="assets/js/main.js"></script>
+<script src="assets/vendor/three.min.js" defer></script>
+<script src="assets/vendor/gsap.min.js" defer></script>
+<script src="assets/vendor/ScrollTrigger.min.js" defer></script>
+<script src="assets/vendor/lenis.min.js" defer></script>
+<script src="assets/js/config.js" defer></script>
+<script src="assets/js/particles.js" defer></script>
+<script src="assets/js/animations.js" defer></script>
+<script src="assets/js/form.js" defer></script>
+<script src="assets/js/main.js" defer></script>
 </body>
 </html>
