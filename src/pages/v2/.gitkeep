@@ -1,3 +1,0 @@
-# redesign-v2 用ページ置き場
-# URL: /v2/... で配信される再設計ページを配置（例: /v2/index.astro → /anom-corporate/v2/）。
-# Phase 1 以降でここに新デザインキットのセクション構成で index / services / pricing / about / company / contact を段階的に構築する。

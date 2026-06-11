@@ -1,3 +1,0 @@
-# redesign-v2 用コンポーネント置き場
-# Linear / Apple 水準の再設計で新規作成する Astro/React コンポーネントを配置。
-# 既存 src/components/ は v1 として温存し、ここに置くものは v2 トークン（--color-v2-*, --font-v2-*）を使う。
