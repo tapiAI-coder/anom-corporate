@@ -27,14 +27,23 @@
 ========================================================= */
 
 /* ============ 1. 基本設計 ============ */
+/* 配色の考え方（折衷ダーク・2026-06改修）:
+   サイトの基調はオフブラック（--bg）で「黒＝ANOM」を表現し、
+   文章を読ませる部分は温白/白のカード（島）を浮かべて可読性を守る。
+   ダーク面に直接置く文字は --txt-dark 系、島の中は従来どおり --ink/--muted。 */
 :root{
-  --ink:#16243E;        /* 濃紺（基本の文字色） */
+  --ink:#16243E;        /* 濃紺（島カード内の基本文字色） */
   --white:#FFFFFF;
-  --warm:#F7F6F1;       /* 温白（交互セクションの背景） */
-  --muted:#5A6275;      /* 弱い文字（本文・補足） */
+  --warm:#F7F6F1;       /* 温白（島カードの背景） */
+  --muted:#5A6275;      /* 弱い文字（島カード内の本文・補足） */
   --accent:#4D5DFF;     /* エレクトリックブルー（差し色） */
-  --dark:#0B1322;       /* ヒーロー/CTAの深紺 */
-  --line:rgba(22,36,62,.12);   /* 罫線 */
+  --dark:#0B1322;       /* 旧深紺（装飾の名残り。基調は--bgに移行） */
+  --bg:#121419;         /* オフブラック（サイト全体の基調。純黒は使わない） */
+  --line:rgba(22,36,62,.12);        /* 島カード内の罫線 */
+  --line-dark:rgba(255,255,255,.10); /* ダーク面の罫線 */
+  --txt-dark:#EDEFF4;               /* ダーク面の見出し文字 */
+  --txt-dark-sub:rgba(237,239,244,.72); /* ダーク面の本文文字 */
+  --accent-soft:#8F9BFF;            /* ダーク面用の明るいアクセント（視認性確保） */
   --ok:#1E8E5A;         /* フォーム成功メッセージ */
   --ng:#C84B4B;         /* フォームエラーメッセージ */
 }
@@ -42,7 +51,7 @@
 html{scroll-behavior:auto;}
 body{
   font-family:'Inter','Noto Sans JP',sans-serif;
-  background:var(--dark); /* セクションの重なり演出のため基調は深紺 */
+  background:var(--bg); /* 基調はオフブラック（折衷ダーク） */
   color:var(--ink);
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
@@ -83,13 +92,13 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   transition:background .4s,box-shadow .4s,padding .4s;
   color:#fff;
 }
-/* ヒーローを抜けると白背景に切り替わる（JSで .scrolled を付与） */
+/* ヒーローを抜けると黒基調の帯に切り替わる（JSで .scrolled を付与） */
 .nav.scrolled{
-  background:rgba(255,255,255,.86);
+  background:rgba(18,20,25,.82);
   backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  color:var(--ink);
+  color:#fff;
   padding:14px clamp(20px,4vw,48px);
-  box-shadow:0 1px 0 var(--line);
+  box-shadow:0 1px 0 var(--line-dark);
 }
 .nav-logo{font-weight:800;letter-spacing:.32em;font-size:17px;}
 .nav-links{display:flex;align-items:center;gap:28px;font-size:13.5px;font-weight:500;}
@@ -115,7 +124,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 .nav.menu-open .nav-burger span:nth-child(2){opacity:0;}
 .nav.menu-open .nav-burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
 .mobile-menu{
-  position:fixed;inset:0;background:var(--dark);z-index:101;
+  position:fixed;inset:0;background:var(--bg);z-index:101;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;
   opacity:0;visibility:hidden;transition:opacity .4s,visibility .4s;
 }
@@ -126,7 +135,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 /* ============ 4. ヒーロー ============ */
 .hero{
   position:relative;height:100vh;min-height:640px;
-  background:var(--dark);overflow:hidden;color:#fff;
+  background:var(--bg);overflow:hidden;color:#fff;
 }
 #particle-canvas{position:absolute;inset:0;width:100%;height:100%;}
 /* WebGLが使えない端末向けの静的フォールバック（JSが表示を切り替える） */
@@ -204,25 +213,27 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 /* ============ 5. セクション共通部品 ============ */
 .section{position:relative;padding:clamp(90px,11vw,160px) clamp(22px,5vw,64px);overflow:hidden;}
 .wrap{max-width:1180px;margin:0 auto;position:relative;z-index:2;}
+/* セクション見出し類はダーク面に直接置くため白系（島カードの中はink系のまま） */
 .sec-label{
   display:flex;align-items:center;gap:14px;
-  font-size:11px;letter-spacing:.35em;color:var(--accent);font-weight:600;
+  font-size:11px;letter-spacing:.35em;color:var(--accent-soft);font-weight:600;
   margin-bottom:26px;
 }
-.sec-label::before{content:"";width:34px;height:1px;background:var(--accent);}
+.sec-label::before{content:"";width:34px;height:1px;background:var(--accent-soft);}
 .sec-title{
   font-size:clamp(26px,3.8vw,46px);font-weight:700;line-height:1.5;
   font-family:'Noto Sans JP',sans-serif;letter-spacing:.01em;
+  color:var(--txt-dark);
 }
 .sec-title .ch{display:inline-block;}
 .sec-lead{
-  margin-top:20px;font-size:clamp(14.5px,1.4vw,16px);color:var(--muted);
+  margin-top:20px;font-size:clamp(14.5px,1.4vw,16px);color:var(--txt-dark-sub);
   line-height:2.1;max-width:620px;
 }
-/* 白セクションがダーク背景の上に丸く重なる演出 */
-.sheet{background:var(--white);position:relative;z-index:3;}
+/* 折衷ダーク: セクションの地はオフブラック。読ませる内容は島カードが担う */
+.sheet{background:var(--bg);position:relative;z-index:3;}
 .sheet-first{border-radius:clamp(18px,3vw,32px) clamp(18px,3vw,32px) 0 0;margin-top:-28px;}
-.sheet-warm{background:var(--warm);}
+.sheet-warm{background:var(--bg);}
 
 /* ============ 6. About / WHY ANOM ============ */
 .cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:54px;perspective:1200px;}
@@ -232,7 +243,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   transition:border-color .35s,box-shadow .35s;
   transform-style:preserve-3d;will-change:transform;
 }
-.card:hover{border-color:rgba(77,93,255,.45);box-shadow:0 18px 50px rgba(22,36,62,.08);}
+.card:hover{border-color:rgba(77,93,255,.45);box-shadow:0 18px 50px rgba(0,0,0,.45);}
 .card-num{
   font-size:11px;letter-spacing:.2em;color:var(--accent);font-weight:600;margin-bottom:38px;
 }
@@ -240,13 +251,19 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 .card-jp{font-size:13px;color:var(--accent);font-weight:600;margin-bottom:14px;}
 .card-body{font-size:13.5px;color:var(--muted);line-height:2;}
 
-.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:54px;border-top:1px solid var(--line);}
+/* WHYは温白の島パネルにまとめて可読性を確保 */
+.why-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:54px;
+  background:var(--warm);border-radius:18px;
+  padding:clamp(10px,2vw,18px) clamp(24px,4vw,46px);
+}
 .why-item{
-  padding:38px 30px 38px 0;border-bottom:1px solid var(--line);
+  padding:34px 30px 34px 0;border-bottom:1px solid var(--line);
   display:flex;gap:24px;align-items:flex-start;
 }
 .why-item:nth-child(odd){border-right:1px solid var(--line);padding-right:36px;}
 .why-item:nth-child(even){padding-left:36px;}
+.why-item:nth-last-child(-n+2){border-bottom:none;} /* 島パネル内の最下段は罫線なし */
 .why-num{
   font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.08em;
   padding-top:4px;flex-shrink:0;
@@ -276,13 +293,13 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 .uc-row dt{font-size:11.5px;font-weight:700;color:var(--accent);letter-spacing:.1em;padding-top:3px;}
 .uc-row dd{font-size:13.5px;color:var(--muted);line-height:1.9;}
 
-/* セクション末の「次の一歩」行（導線） */
+/* セクション末の「次の一歩」行（ダーク面に直接置く導線） */
 .next-step{
-  margin-top:56px;padding-top:24px;border-top:1px solid var(--line);
-  font-size:14.5px;color:var(--muted);line-height:1.9;
+  margin-top:56px;padding-top:24px;border-top:1px solid var(--line-dark);
+  font-size:14.5px;color:var(--txt-dark-sub);line-height:1.9;
   display:flex;align-items:baseline;justify-content:space-between;gap:14px 26px;flex-wrap:wrap;
 }
-.next-step a{color:var(--accent);font-weight:700;white-space:nowrap;}
+.next-step a{color:var(--accent-soft);font-weight:700;white-space:nowrap;}
 .next-step a:hover{text-decoration:underline;}
 .next-step .arrow{display:inline-block;}
 
@@ -297,7 +314,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   content:"";position:absolute;top:0;left:0;right:0;height:4px;
   background:linear-gradient(90deg,var(--accent),#8B5CF6);
 }
-.svc-main:hover{border-color:rgba(77,93,255,.5);box-shadow:0 18px 50px rgba(22,36,62,.09);}
+.svc-main:hover{border-color:rgba(77,93,255,.5);box-shadow:0 18px 50px rgba(0,0,0,.45);}
 .svc-badge{
   display:inline-block;font-size:10px;letter-spacing:.22em;font-weight:700;
   color:var(--accent);border:1px solid rgba(77,93,255,.4);border-radius:99px;
@@ -326,7 +343,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   transition:border-color .35s,box-shadow .35s;transform-style:preserve-3d;will-change:transform;
   display:flex;flex-direction:column;
 }
-.svc:hover{border-color:rgba(77,93,255,.5);box-shadow:0 18px 50px rgba(22,36,62,.09);}
+.svc:hover{border-color:rgba(77,93,255,.5);box-shadow:0 18px 50px rgba(0,0,0,.45);}
 .svc .svc-badge{align-self:flex-start;} /* 柱バッジをカード幅いっぱいに伸ばさない */
 .svc-tag{
   font-size:10px;letter-spacing:.25em;color:var(--accent);font-weight:600;margin-bottom:22px;
@@ -360,10 +377,13 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 
 /* --- 支援の流れ（5ステップの横並び。スマホは縦積み） --- */
 .flow{margin-top:72px;}
-.flow .co-h{margin-bottom:0;}
+.flow .co-h{margin-bottom:0;color:var(--accent-soft);} /* ダーク面の小見出しは明るいアクセント */
+/* 流れも温白の島パネルに載せる */
 .flow-steps{
   list-style:none;display:grid;grid-template-columns:repeat(5,1fr);
-  gap:0;margin-top:24px;border-top:1px solid var(--line);
+  gap:0;margin-top:24px;
+  background:var(--warm);border-radius:18px;
+  padding:8px clamp(24px,3vw,36px) 22px;
 }
 .flow-step{position:relative;padding:24px 30px 6px 0;}
 .flow-step:not(:last-child)::after{ /* 次のステップへの矢印 */
@@ -376,6 +396,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 
 /* --- 料金の考え方 --- */
 .pricing{margin-top:72px;}
+.pricing .co-h{color:var(--accent-soft);} /* ダーク面の小見出し */
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px;}
 .price-item{
   background:var(--white);border:1px solid var(--line);border-radius:14px;
@@ -384,12 +405,15 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 .price-item:hover{border-color:rgba(77,93,255,.4);}
 .price-item h4{font-size:16px;font-weight:700;margin-bottom:10px;color:var(--ink);}
 .price-item p{font-size:13.5px;color:var(--muted);line-height:2;}
-.pricing-note{margin-top:16px;font-size:13px;color:var(--muted);}
+.pricing-note{margin-top:16px;font-size:13px;color:var(--txt-dark-sub);}
 
 /* ============ 8.5 個人向けレーン（BtoC） ============ */
-/* 企業向けセクションと視覚的に区別するための濃紺帯。
-   文字色はコントラスト比を確保した白系を使う（アクセシビリティ） */
-.personal{background:var(--ink);color:#fff;z-index:3;}
+/* 企業向けセクションと視覚的に区別する濃紺帯。
+   オフブラックの海より一段明るい紺＋上下の罫線で「別レーン」を示す */
+.personal{
+  background:var(--ink);color:#fff;z-index:3;
+  border-top:1px solid var(--line-dark);border-bottom:1px solid var(--line-dark);
+}
 .personal .sec-title{color:#fff;}
 .personal .sec-lead{color:rgba(255,255,255,.72);}
 .personal .sec-label{color:#A6B1FF;}
@@ -437,8 +461,14 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 .band .btn{margin-top:40px;background:#fff;color:var(--ink);box-shadow:0 10px 36px rgba(11,19,34,.3);}
 
 /* ============ 10. FAQ ============ */
-.faq-list{max-width:860px;margin-top:48px;border-top:1px solid var(--line);}
+/* 一問一答は白の島パネルにまとめる */
+.faq-list{
+  max-width:860px;margin-top:48px;
+  background:var(--white);border-radius:18px;
+  padding:6px clamp(24px,3.5vw,40px);
+}
 .faq-item{border-bottom:1px solid var(--line);}
+.faq-item:last-child{border-bottom:none;}
 .faq-item summary{
   list-style:none;display:flex;align-items:baseline;gap:18px;
   padding:26px 44px 26px 0;cursor:pointer;position:relative;
@@ -457,7 +487,12 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 .faq-a{padding:0 44px 28px 44px;font-size:14px;color:var(--muted);line-height:2.1;}
 
 /* ============ 11. 会社概要・代表挨拶 ============ */
-.company-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(34px,5vw,70px);margin-top:54px;align-items:start;}
+.company-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.5vw,28px);margin-top:54px;align-items:stretch;}
+/* 代表挨拶・会社概要をそれぞれ温白の島パネルに */
+.company-grid>div{
+  background:var(--warm);border-radius:18px;
+  padding:clamp(28px,3.5vw,42px);
+}
 .co-h{font-size:13px;letter-spacing:.2em;color:var(--accent);font-weight:700;margin-bottom:22px;}
 .co-table{border-top:1px solid var(--line);}
 .co-row{display:grid;grid-template-columns:120px 1fr;gap:16px;padding:17px 4px;border-bottom:1px solid var(--line);}
@@ -473,7 +508,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 
 /* ============ 12. お問い合わせ（フォーム） ============ */
 .contact{
-  background:var(--dark);color:#fff;text-align:center;z-index:3;position:relative;
+  background:var(--bg);color:#fff;text-align:center;z-index:3;position:relative;
   padding:clamp(110px,13vw,180px) clamp(22px,5vw,64px) clamp(90px,11vw,150px);
 }
 .contact .sec-label{justify-content:center;color:rgba(255,255,255,.5);}
@@ -534,8 +569,8 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 
 /* ============ 13. フッター ============ */
 .footer{
-  background:var(--dark);color:rgba(255,255,255,.5);
-  border-top:1px solid rgba(255,255,255,.08);
+  background:var(--bg);color:rgba(255,255,255,.5);
+  border-top:1px solid var(--line-dark);
   padding:34px clamp(22px,5vw,64px);position:relative;z-index:3;
   display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
   font-size:12px;
@@ -566,7 +601,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 }
 /* 404 */
 .nf-page{
-  background:var(--dark);color:#fff;min-height:100vh;
+  background:var(--bg);color:#fff;min-height:100vh;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;padding:24px;
   background-image:radial-gradient(circle at 50% 38%, rgba(77,93,255,.25), transparent 55%);
@@ -578,7 +613,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 /* ============ 15. 装飾（モーフィングブロブ） ============ */
 .blob{
   position:absolute;width:clamp(300px,42vw,620px);aspect-ratio:1;
-  background:var(--accent);opacity:.07;pointer-events:none;z-index:1;
+  background:var(--accent);opacity:.1;pointer-events:none;z-index:1;
   border-radius:58% 42% 55% 45%/45% 58% 42% 55%;
   animation:blobmorph 14s ease-in-out infinite alternate;
   will-change:transform,border-radius;
@@ -599,6 +634,9 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   .why-grid{grid-template-columns:1fr;}
   .why-item:nth-child(odd){border-right:none;padding-right:0;}
   .why-item:nth-child(even){padding-left:0;}
+  /* 1カラム時は最後の1つだけ罫線なしに戻す */
+  .why-item:nth-last-child(-n+2){border-bottom:1px solid var(--line);}
+  .why-item:last-child{border-bottom:none;}
   .bento{grid-template-columns:1fr;}
   .bento .b1,.bento .b2,.bento .b3,.bento .b4{grid-column:span 1;}
   .bento .card{min-height:0;}
@@ -606,8 +644,9 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   .svc-cols{grid-template-columns:1fr;gap:22px;}
   .svc-duo{grid-template-columns:1fr;}
   .personal-grid{grid-template-columns:1fr;}
-  .flow-steps{grid-template-columns:1fr;border-top:none;}
+  .flow-steps{grid-template-columns:1fr;}
   .flow-step{padding:16px 0;border-bottom:1px dashed var(--line);}
+  .flow-step:last-child{border-bottom:none;}
   .flow-step:not(:last-child)::after{display:none;} /* 縦積みでは矢印を消す */
   .pricing-grid{grid-template-columns:1fr;}
   .next-step{flex-direction:column;align-items:flex-start;}
