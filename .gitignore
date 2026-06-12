@@ -25,3 +25,9 @@ Thumbs.db
 # エディタ設定
 .vscode/
 .idea/
+
+# 改修作業用のローカルバックアップ（公開しない）
+index_bak.html
+
+# Claude Code のローカル開発設定（公開不要）
+.claude/
