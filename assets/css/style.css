@@ -216,8 +216,8 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 }
 .sec-title .ch{display:inline-block;}
 .sec-lead{
-  margin-top:20px;font-size:clamp(13.5px,1.3vw,15.5px);color:var(--muted);
-  line-height:2.1;max-width:600px;
+  margin-top:20px;font-size:clamp(14.5px,1.4vw,16px);color:var(--muted);
+  line-height:2.1;max-width:620px;
 }
 /* 白セクションがダーク背景の上に丸く重なる演出 */
 .sheet{background:var(--white);position:relative;z-index:3;}
@@ -238,7 +238,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 }
 .card-en{font-size:19px;font-weight:600;letter-spacing:.01em;margin-bottom:6px;}
 .card-jp{font-size:13px;color:var(--accent);font-weight:600;margin-bottom:14px;}
-.card-body{font-size:13px;color:var(--muted);line-height:2;}
+.card-body{font-size:13.5px;color:var(--muted);line-height:2;}
 
 .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:54px;border-top:1px solid var(--line);}
 .why-item{
@@ -251,8 +251,8 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.08em;
   padding-top:4px;flex-shrink:0;
 }
-.why-h{font-size:16.5px;font-weight:700;margin-bottom:10px;line-height:1.6;}
-.why-p{font-size:13px;color:var(--muted);line-height:2;}
+.why-h{font-size:17px;font-weight:700;margin-bottom:10px;line-height:1.6;}
+.why-p{font-size:13.5px;color:var(--muted);line-height:2;}
 
 /* ============ 7. UseCases（Bento Grid） ============ */
 .bento{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:54px;perspective:1400px;}
@@ -265,7 +265,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   font-size:10.5px;letter-spacing:.28em;color:var(--accent);font-weight:600;margin-bottom:auto;
 }
 .bento h3{font-size:clamp(18px,1.8vw,22px);font-weight:700;margin:34px 0 12px;line-height:1.6;}
-.bento p{font-size:13px;color:var(--muted);line-height:2;}
+.bento p{font-size:13.5px;color:var(--muted);line-height:2;}
 /* カード内の「課題→施策→成果→期間」表 */
 .uc-flow{margin-top:6px;border-top:1px solid var(--line);}
 .uc-row{
@@ -273,13 +273,13 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   padding:9px 0;border-bottom:1px dashed var(--line);
 }
 .uc-row:last-child{border-bottom:none;}
-.uc-row dt{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.1em;padding-top:3px;}
-.uc-row dd{font-size:12.5px;color:var(--muted);line-height:1.9;}
+.uc-row dt{font-size:11.5px;font-weight:700;color:var(--accent);letter-spacing:.1em;padding-top:3px;}
+.uc-row dd{font-size:13.5px;color:var(--muted);line-height:1.9;}
 
 /* セクション末の「次の一歩」行（導線） */
 .next-step{
   margin-top:56px;padding-top:24px;border-top:1px solid var(--line);
-  font-size:13.5px;color:var(--muted);line-height:1.9;
+  font-size:14.5px;color:var(--muted);line-height:1.9;
   display:flex;align-items:baseline;justify-content:space-between;gap:14px 26px;flex-wrap:wrap;
 }
 .next-step a{color:var(--accent);font-weight:700;white-space:nowrap;}
@@ -304,15 +304,15 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   padding:5px 14px;margin-bottom:18px;
 }
 .svc-main-title{font-size:clamp(20px,2.4vw,28px);font-weight:700;line-height:1.6;}
-.svc-main-lead{margin-top:12px;font-size:13.5px;color:var(--muted);line-height:2.05;max-width:720px;}
+.svc-main-lead{margin-top:12px;font-size:14px;color:var(--muted);line-height:2.05;max-width:720px;}
 .svc-cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,3vw,44px);margin-top:34px;}
 .svc-col{border-top:1px solid var(--line);padding-top:24px;}
 .svc-col-tag{font-size:10.5px;letter-spacing:.25em;color:var(--accent);font-weight:600;margin-bottom:12px;}
 .svc-col-h{font-size:17px;font-weight:700;margin-bottom:6px;}
-.svc-col-c{font-size:12.5px;color:var(--accent);font-weight:600;margin-bottom:14px;}
+.svc-col-c{font-size:13px;color:var(--accent);font-weight:600;margin-bottom:14px;}
 .svc-list{list-style:none;}
 .svc-list li{
-  font-size:13px;color:var(--muted);line-height:1.9;
+  font-size:13.5px;color:var(--muted);line-height:1.9;
   padding:5px 0 5px 18px;position:relative;
 }
 .svc-list li::before{ /* 箇条書きの点（アクセント色の小さな四角） */
@@ -331,16 +331,16 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 .svc-tag{
   font-size:10px;letter-spacing:.25em;color:var(--accent);font-weight:600;margin-bottom:22px;
 }
-.svc-head{font-size:17px;font-weight:700;margin-bottom:14px;line-height:1.6;}
-.svc-body{font-size:13px;color:var(--muted);line-height:2.05;}
+.svc-head{font-size:17.5px;font-weight:700;margin-bottom:14px;line-height:1.6;}
+.svc-body{font-size:13.5px;color:var(--muted);line-height:2.05;}
 /* カード下端の「成果イメージ／進め方」を柱2・3で底揃えにする */
 .svc .svc-foot{margin-top:auto;padding-top:14px;}
 
 /* --- 柱共通の部品: こんな方へ ／ 成果イメージ・進め方 --- */
-.svc-fit-cap{font-size:11px;letter-spacing:.14em;color:var(--ink);font-weight:700;margin:22px 0 10px;}
+.svc-fit-cap{font-size:11.5px;letter-spacing:.14em;color:var(--ink);font-weight:700;margin:22px 0 10px;}
 .svc-fit{list-style:none;display:flex;flex-wrap:wrap;gap:6px 26px;}
 .svc-fit li{
-  font-size:12.5px;color:var(--muted);line-height:1.9;
+  font-size:13.5px;color:var(--muted);line-height:1.9;
   padding-left:20px;position:relative;
 }
 .svc-fit li::before{ /* チェックマーク */
@@ -352,9 +352,9 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   margin-top:26px;border-top:1px dashed var(--line);padding-top:16px;
   display:grid;gap:7px;
 }
-.svc-foot p{font-size:12px;color:var(--muted);line-height:1.9;}
+.svc-foot p{font-size:13px;color:var(--muted);line-height:1.9;}
 .svc-foot-k{
-  display:inline-block;font-size:10px;letter-spacing:.12em;color:var(--accent);
+  display:inline-block;font-size:10.5px;letter-spacing:.12em;color:var(--accent);
   font-weight:700;margin-right:10px;
 }
 
@@ -370,9 +370,9 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   content:"→";position:absolute;right:12px;top:26px;
   color:var(--accent);font-weight:700;font-size:14px;
 }
-.flow-num{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.12em;}
-.flow-step b{display:block;font-size:15px;font-weight:700;margin:10px 0 8px;color:var(--ink);}
-.flow-step p{font-size:12px;color:var(--muted);line-height:1.95;}
+.flow-num{font-size:11.5px;color:var(--accent);font-weight:700;letter-spacing:.12em;}
+.flow-step b{display:block;font-size:15.5px;font-weight:700;margin:10px 0 8px;color:var(--ink);}
+.flow-step p{font-size:13px;color:var(--muted);line-height:1.95;}
 
 /* --- 料金の考え方 --- */
 .pricing{margin-top:72px;}
@@ -382,9 +382,9 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   padding:28px 26px;transition:border-color .35s;
 }
 .price-item:hover{border-color:rgba(77,93,255,.4);}
-.price-item h4{font-size:15.5px;font-weight:700;margin-bottom:10px;color:var(--ink);}
-.price-item p{font-size:12.5px;color:var(--muted);line-height:2;}
-.pricing-note{margin-top:16px;font-size:12px;color:var(--muted);}
+.price-item h4{font-size:16px;font-weight:700;margin-bottom:10px;color:var(--ink);}
+.price-item p{font-size:13.5px;color:var(--muted);line-height:2;}
+.pricing-note{margin-top:16px;font-size:13px;color:var(--muted);}
 
 /* ============ 8.5 個人向けレーン（BtoC） ============ */
 /* 企業向けセクションと視覚的に区別するための濃紺帯。
@@ -403,8 +403,8 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 }
 .p-card:hover{border-color:rgba(166,177,255,.6);background:rgba(255,255,255,.07);}
 .p-tag{font-size:10px;letter-spacing:.25em;color:#A6B1FF;font-weight:600;margin-bottom:22px;}
-.p-card h3{font-size:18.5px;font-weight:700;margin-bottom:12px;}
-.p-body{font-size:13px;color:rgba(255,255,255,.7);line-height:2.05;margin-bottom:28px;}
+.p-card h3{font-size:19px;font-weight:700;margin-bottom:12px;}
+.p-body{font-size:14px;color:rgba(255,255,255,.74);line-height:2.05;margin-bottom:28px;}
 .p-card .btn{margin-top:auto;font-size:13px;padding:12px 24px;}
 
 /* ============ 9. 自己言及バンド ============ */
@@ -442,7 +442,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 .faq-item summary{
   list-style:none;display:flex;align-items:baseline;gap:18px;
   padding:26px 44px 26px 0;cursor:pointer;position:relative;
-  font-size:15.5px;font-weight:700;line-height:1.7;
+  font-size:16px;font-weight:700;line-height:1.7;
 }
 .faq-item summary::-webkit-details-marker{display:none;}
 .faq-item summary .q{color:var(--accent);font-weight:700;flex-shrink:0;font-size:13px;letter-spacing:.08em;padding-top:2px;}
@@ -454,20 +454,20 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 }
 .faq-item summary::after{transform:rotate(90deg);}
 .faq-item[open] summary::after{transform:rotate(0deg);}
-.faq-a{padding:0 44px 28px 44px;font-size:13.5px;color:var(--muted);line-height:2.1;}
+.faq-a{padding:0 44px 28px 44px;font-size:14px;color:var(--muted);line-height:2.1;}
 
 /* ============ 11. 会社概要・代表挨拶 ============ */
 .company-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(34px,5vw,70px);margin-top:54px;align-items:start;}
 .co-h{font-size:13px;letter-spacing:.2em;color:var(--accent);font-weight:700;margin-bottom:22px;}
 .co-table{border-top:1px solid var(--line);}
 .co-row{display:grid;grid-template-columns:120px 1fr;gap:16px;padding:17px 4px;border-bottom:1px solid var(--line);}
-.co-row dt{font-size:12.5px;font-weight:600;color:var(--ink);letter-spacing:.04em;padding-top:1px;}
-.co-row dd{font-size:13.5px;color:var(--muted);line-height:1.9;}
+.co-row dt{font-size:13px;font-weight:600;color:var(--ink);letter-spacing:.04em;padding-top:1px;}
+.co-row dd{font-size:14px;color:var(--muted);line-height:1.9;}
 .profile-msg{
   font-size:clamp(15px,1.6vw,18px);font-weight:600;line-height:2.2;
   font-family:'Noto Sans JP',sans-serif;
 }
-.profile-body{margin-top:18px;font-size:13.5px;color:var(--muted);line-height:2.15;}
+.profile-body{margin-top:18px;font-size:14px;color:var(--muted);line-height:2.15;}
 .profile-name{margin-top:26px;font-size:13px;color:var(--ink);}
 .profile-name b{font-size:16px;letter-spacing:.06em;margin-left:10px;}
 
@@ -482,7 +482,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   font-size:clamp(30px,5vw,62px);font-weight:700;line-height:1.5;
   font-family:'Noto Sans JP',sans-serif;
 }
-.contact-sub{margin-top:22px;font-size:14px;color:rgba(255,255,255,.6);line-height:2;}
+.contact-sub{margin-top:22px;font-size:14.5px;color:rgba(255,255,255,.66);line-height:2;}
 .contact-glow{
   position:absolute;left:50%;top:0;transform:translate(-50%,-40%);
   width:760px;height:760px;border-radius:50%;pointer-events:none;
@@ -520,7 +520,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 .field textarea{min-height:140px;resize:vertical;}
 /* ハニーポット（スパムボット対策）: 人間には見えない欄。CSSで画面外へ */
 .hp-field{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
-.consent{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;color:var(--muted);line-height:1.8;margin:24px 0;}
+.consent{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--muted);line-height:1.8;margin:24px 0;}
 .consent input{width:16px;height:16px;margin-top:3px;accent-color:var(--accent);flex-shrink:0;}
 .consent a{color:var(--accent);text-decoration:underline;}
 .form-card .btn{width:100%;justify-content:center;}
@@ -529,7 +529,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 }
 .form-status.ok{display:block;background:rgba(30,142,90,.1);color:var(--ok);}
 .form-status.ng{display:block;background:rgba(200,75,75,.1);color:var(--ng);}
-.contact-alt{margin-top:26px;font-size:12.5px;color:rgba(255,255,255,.45);line-height:2;}
+.contact-alt{margin-top:26px;font-size:13px;color:rgba(255,255,255,.5);line-height:2;}
 .contact-alt a{color:rgba(255,255,255,.75);text-decoration:underline;}
 
 /* ============ 13. フッター ============ */
