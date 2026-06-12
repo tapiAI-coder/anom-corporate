@@ -266,6 +266,25 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 }
 .bento h3{font-size:clamp(18px,1.8vw,22px);font-weight:700;margin:34px 0 12px;line-height:1.6;}
 .bento p{font-size:13px;color:var(--muted);line-height:2;}
+/* カード内の「課題→施策→成果→期間」表 */
+.uc-flow{margin-top:6px;border-top:1px solid var(--line);}
+.uc-row{
+  display:grid;grid-template-columns:50px 1fr;gap:12px;
+  padding:9px 0;border-bottom:1px dashed var(--line);
+}
+.uc-row:last-child{border-bottom:none;}
+.uc-row dt{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.1em;padding-top:3px;}
+.uc-row dd{font-size:12.5px;color:var(--muted);line-height:1.9;}
+
+/* セクション末の「次の一歩」行（導線） */
+.next-step{
+  margin-top:56px;padding-top:24px;border-top:1px solid var(--line);
+  font-size:13.5px;color:var(--muted);line-height:1.9;
+  display:flex;align-items:baseline;justify-content:space-between;gap:14px 26px;flex-wrap:wrap;
+}
+.next-step a{color:var(--accent);font-weight:700;white-space:nowrap;}
+.next-step a:hover{text-decoration:underline;}
+.next-step .arrow{display:inline-block;}
 
 /* ============ 8. Services（3つの柱） ============ */
 /* --- 柱1: 導入・伴走 — AI・DXコンサルティング（1枚の大カード・主軸） --- */
@@ -338,6 +357,34 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   display:inline-block;font-size:10px;letter-spacing:.12em;color:var(--accent);
   font-weight:700;margin-right:10px;
 }
+
+/* --- 支援の流れ（5ステップの横並び。スマホは縦積み） --- */
+.flow{margin-top:72px;}
+.flow .co-h{margin-bottom:0;}
+.flow-steps{
+  list-style:none;display:grid;grid-template-columns:repeat(5,1fr);
+  gap:0;margin-top:24px;border-top:1px solid var(--line);
+}
+.flow-step{position:relative;padding:24px 30px 6px 0;}
+.flow-step:not(:last-child)::after{ /* 次のステップへの矢印 */
+  content:"→";position:absolute;right:12px;top:26px;
+  color:var(--accent);font-weight:700;font-size:14px;
+}
+.flow-num{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.12em;}
+.flow-step b{display:block;font-size:15px;font-weight:700;margin:10px 0 8px;color:var(--ink);}
+.flow-step p{font-size:12px;color:var(--muted);line-height:1.95;}
+
+/* --- 料金の考え方 --- */
+.pricing{margin-top:72px;}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px;}
+.price-item{
+  background:var(--white);border:1px solid var(--line);border-radius:14px;
+  padding:28px 26px;transition:border-color .35s;
+}
+.price-item:hover{border-color:rgba(77,93,255,.4);}
+.price-item h4{font-size:15.5px;font-weight:700;margin-bottom:10px;color:var(--ink);}
+.price-item p{font-size:12.5px;color:var(--muted);line-height:2;}
+.pricing-note{margin-top:16px;font-size:12px;color:var(--muted);}
 
 /* ============ 8.5 個人向けレーン（BtoC） ============ */
 /* 企業向けセクションと視覚的に区別するための濃紺帯。
@@ -455,14 +502,20 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   display:inline-block;font-size:10px;color:#fff;background:var(--accent);
   border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:1px;letter-spacing:.08em;
 }
-.field input,.field textarea{
+.field input,.field textarea,.field select{
   width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:9px;
   font:inherit;font-size:14px;background:var(--warm);color:var(--ink);
   transition:border-color .25s,box-shadow .25s,background .25s;
 }
-.field input:focus,.field textarea:focus{
+.field input:focus,.field textarea:focus,.field select:focus{
   outline:none;border-color:var(--accent);background:#fff;
   box-shadow:0 0 0 3px rgba(77,93,255,.15);
+}
+.field select{cursor:pointer;}
+.field select:invalid{color:var(--muted);} /* 「選択してください」表示中は薄い文字に */
+.opt{ /* 任意項目の補足バッジ（例: 個人の方は空欄でOK） */
+  display:inline-block;font-size:10.5px;color:var(--muted);font-weight:500;
+  margin-left:8px;letter-spacing:.02em;
 }
 .field textarea{min-height:140px;resize:vertical;}
 /* ハニーポット（スパムボット対策）: 人間には見えない欄。CSSで画面外へ */
@@ -553,6 +606,11 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   .svc-cols{grid-template-columns:1fr;gap:22px;}
   .svc-duo{grid-template-columns:1fr;}
   .personal-grid{grid-template-columns:1fr;}
+  .flow-steps{grid-template-columns:1fr;border-top:none;}
+  .flow-step{padding:16px 0;border-bottom:1px dashed var(--line);}
+  .flow-step:not(:last-child)::after{display:none;} /* 縦積みでは矢印を消す */
+  .pricing-grid{grid-template-columns:1fr;}
+  .next-step{flex-direction:column;align-items:flex-start;}
   .company-grid{grid-template-columns:1fr;}
   .co-row{grid-template-columns:96px 1fr;}
   .faq-item summary{padding-right:36px;}
