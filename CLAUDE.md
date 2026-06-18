@@ -43,7 +43,7 @@ anom-corporate/
 │   │   ├── animations.js← GSAPスクロール演出・カーソル演出
 │   │   └── form.js     ← フォーム送信処理
 │   ├── vendor/         ← 同梱ライブラリ（Three.js r128 / GSAP 3.12.5 / ScrollTrigger 3.12.5 / Lenis 1.1.14）
-│   └── img/            ← favicon / apple-touch-icon / ogp
+│   └── img/            ← favicon / apple-touch-icon / ogp / hero-bg.webp（ヒーロー背景）
 └── docs/               ← 本番化計画.md / 運用マニュアル.md
 ```
 
@@ -72,7 +72,8 @@ anom-corporate/
 ## 4. 演出アーキテクチャ
 
 - **粒子（particles.js）**: 混沌→秩序で「ANOM」形成。環境適応（モバイル粒子減・WebGL不可で静的フォールバック・reduced-motionで静止画・タブ非表示/ヒーロー外で描画停止）
-- **スクロール（animations.js）**: Lenis慣性 + GSAP ScrollTrigger。ヒーローpinのトンネル演出は1回だけ
+- **スクロール（animations.js）**: Lenis慣性 + GSAP ScrollTrigger。ヒーローpinのトンネル演出は1回だけ（**PCのみ**。モバイルはアドレスバー伸縮でスクロールがガタつくためpinせず軽いフェードに切替。再追加しないこと。`ScrollTrigger.config({ignoreMobileResize:true})`＋particles.jsのリサイズ再計算を横幅変化時のみに限定して安定化）
+- **ヒーロー背景（hero-bg.webp）**: 漆黒＋一筋の光のシネマ静止画を粒子キャンバスの下（CSS `.hero-bg`、z-index:0）に敷く。上下グラデで可読性確保。粒子アニメ本体は不可侵
 - **HTML側のクラスが演出の合図**: `.reveal` `.reveal-group` `.split` `.magnetic` `.tilt`（詳細はanimations.js冒頭コメント）
 - セクション追加時はこれらのクラスを付けるだけで演出が適用される
 

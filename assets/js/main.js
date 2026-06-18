@@ -28,6 +28,9 @@ document.addEventListener("visibilitychange", function(){
 });
 
 gsap.registerPlugin(ScrollTrigger);
+/* モバイルでアドレスバーの伸縮（画面の高さ変化）によるスクロール再計算を無視し、
+   スクロール中のガタつきを防ぐ。横幅の変化（回転など）では従来どおり再計算する */
+ScrollTrigger.config({ ignoreMobileResize:true });
 
 /* ---- 慣性スクロール（Lenis）。モーション低減設定の人には使わない ---- */
 A.lenis = null;
@@ -60,11 +63,14 @@ function closeMenu(){
   nav.classList.remove("menu-open");
   mobileMenu.classList.remove("open");
   burger.setAttribute("aria-expanded","false");
+  burger.setAttribute("aria-label","メニューを開く");
 }
 burger.addEventListener("click", function(){
   var open = mobileMenu.classList.toggle("open");
   nav.classList.toggle("menu-open", open);
   burger.setAttribute("aria-expanded", String(open));
+  /* 開いている時は×（閉じる）ボタンとして読み上げさせる */
+  burger.setAttribute("aria-label", open ? "メニューを閉じる" : "メニューを開く");
 });
 /* Escキーでも閉じられるように（キーボード操作への配慮） */
 document.addEventListener("keydown", function(e){

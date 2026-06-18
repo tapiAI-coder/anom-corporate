@@ -67,25 +67,43 @@ A.initMotion = function(){
   });
   gsap.to(".reveal-hero", { opacity:1, y:0, duration:1, ease:"power3.out", stagger:.12, delay:2.2 });
 
-  /* --- トンネル: ヒーローを固定し、組織の内側へ潜る（1回だけの見せ場） --- */
-  var tunnel = gsap.timeline({
-    scrollTrigger:{
-      trigger:".hero", start:"top top",
-      end: A.MOBILE ? "+=80%" : "+=130%",
-      pin:true, scrub:.8,
-      onLeave:function(){ A.heroVisible = false; },   /* 通過後は粒子の描画を止める */
+  /* --- トンネル: ヒーローを固定し、組織の内側へ潜る（1回だけの見せ場） ---
+     ※モバイルではピン留め（固定）をしない。スマホのブラウザはスクロールで
+       アドレスバーが伸縮して画面の高さが頻繁に変わり、ピン留め＋100vhの
+       再計算と干渉してスクロールがガタつくため。代わりに固定なしの軽い
+       フェードにし、粒子の省電力（描画ON/OFF）だけ別トリガーで管理する。 */
+  if(A.MOBILE){
+    /* モバイル: ヒーローは普通に流れて消える（ピンなし＝安定） */
+    gsap.to(".hero-inner", {
+      y:-40, opacity:0, ease:"none",
+      scrollTrigger:{ trigger:".hero", start:"top top", end:"bottom 35%", scrub:.5 }
+    });
+    /* 粒子の省電力: ヒーローが画面外に出たら描画を止める／戻ったら再開 */
+    ScrollTrigger.create({
+      trigger:".hero", start:"top top", end:"bottom top",
+      onLeave:function(){ A.heroVisible = false; },
       onEnterBack:function(){ A.heroVisible = true; }
+    });
+  }else{
+    /* デスクトップ: 従来のピン留めトンネル演出 */
+    var tunnel = gsap.timeline({
+      scrollTrigger:{
+        trigger:".hero", start:"top top", end:"+=130%",
+        pin:true, scrub:.8,
+        onLeave:function(){ A.heroVisible = false; },   /* 通過後は粒子の描画を止める */
+        onEnterBack:function(){ A.heroVisible = true; }
+      }
+    });
+    if(A.three){
+      tunnel
+        .to(A.three.camera.position, { z:3.2, ease:"power1.in" }, 0)
+        .to(A.three.uniforms.uScatter, { value:1, ease:"power1.in" }, 0)
+        .to(A.three.uniforms.uFade, { value:0, ease:"power1.in" }, .45);
     }
-  });
-  if(A.three){
     tunnel
-      .to(A.three.camera.position, { z:3.2, ease:"power1.in" }, 0)
-      .to(A.three.uniforms.uScatter, { value:1, ease:"power1.in" }, 0)
-      .to(A.three.uniforms.uFade, { value:0, ease:"power1.in" }, .45);
+      .to(".hero-inner", { y:-90, opacity:0, filter:"blur(6px)", ease:"power1.in" }, 0)
+      .to(".hero-tagline, .scroll-hint", { opacity:0, ease:"power1.in" }, 0);
   }
-  tunnel
-    .to(".hero-inner", { y:-90, opacity:0, filter:"blur(6px)", ease:"power1.in" }, 0)
-    .to(".hero-tagline, .scroll-hint", { opacity:0, ease:"power1.in" }, 0);
 
   /* --- 見出し（.split）の1文字ずつ出現 --- */
   document.querySelectorAll(".split").forEach(function(h){

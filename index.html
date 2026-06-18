@@ -97,6 +97,8 @@
 
 <!-- ============ 1. ヒーロー（粒子の混沌→秩序） ============ -->
 <header class="hero" id="top">
+  <!-- シネマティック背景（漆黒に一筋の光）。粒子はこの上に描画される -->
+  <div class="hero-bg" aria-hidden="true"></div>
   <canvas id="particle-canvas" aria-hidden="true"></canvas>
   <!-- WebGLが使えない端末では、こちらの静的表示に自動で切り替わる -->
   <div class="hero-fallback" id="heroFallback" hidden aria-hidden="true"><span>ANOM</span></div>

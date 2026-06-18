@@ -28,6 +28,9 @@ function showFallback(canvas){
 A.initParticles = function(){
   var canvas = document.getElementById("particle-canvas");
   if(!canvas || typeof THREE === "undefined"){ return showFallback(canvas); }
+  /* 基準サイズはヒーロー要素の実寸（CSSの100svhで固定）を使う。
+     window.innerHeightだとスマホのアドレスバー伸縮で値が揺れ、表示が不安定になるため */
+  var hero = document.querySelector(".hero") || canvas.parentNode;
 
   var renderer;
   try{
@@ -39,7 +42,8 @@ A.initParticles = function(){
   /* 端末の解像度に合わせる（高すぎると重いので上限あり） */
   var DPR = Math.min(window.devicePixelRatio || 1, A.MOBILE ? 1.5 : 2);
   renderer.setPixelRatio(DPR);
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  /* 第3引数false: canvasのCSS(width/height:100%)を上書きしない＝ヒーローに追従させる */
+  renderer.setSize(hero.clientWidth, hero.clientHeight, false);
 
   /* GPUの不調等で描画コンテキストが失われた場合も静的表示へ退避 */
   canvas.addEventListener("webglcontextlost", function(ev){
@@ -48,7 +52,7 @@ A.initParticles = function(){
   });
 
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, .1, 100);
+  var camera = new THREE.PerspectiveCamera(55, hero.clientWidth/hero.clientHeight, .1, 100);
   camera.position.z = 11;
 
   /* --- "ANOM" の文字形状を、見えないcanvasに描いて点として読み取る --- */
@@ -207,14 +211,16 @@ A.initParticles = function(){
   function fit(){
     var vh = 2 * camera.position.z * Math.tan(camera.fov*Math.PI/360);
     var vw = vh * camera.aspect;
-    var H = window.innerHeight;
+    var H = hero.clientHeight;                /* ヒーロー実寸（svhで安定。innerHeightは使わない） */
     var navBottom = 90;                       /* ナビの下端（px目安） */
     var label = document.querySelector(".hero-label");
     var zoneEnd = label ? label.getBoundingClientRect().top : H*.42;
     if(zoneEnd < navBottom + 100){ zoneEnd = H*.42; } /* 計測異常時の保険 */
     /* スケール: 横幅基準と、空きゾーンの高さ基準の小さい方 */
     var availWorld = vh * (zoneEnd - navBottom - 24) / H;
-    var s = Math.min(vw*.8/10, availWorld/3.4, 1.5);
+    /* 横幅の占有率: スマホは粒子の光彩のはみ出し（見切れ）を避けて控えめにする */
+    var widthFactor = A.MOBILE ? 0.6 : 0.8;
+    var s = Math.min(vw*widthFactor/10, availWorld/3.4, 1.5);
     group.scale.set(s,s,s);
     /* 位置: 空きゾーンの中央（px→ワールド座標へ変換） */
     var centerPx = (navBottom + zoneEnd) / 2;
@@ -256,16 +262,22 @@ A.initParticles = function(){
   }
 
   /* --- ウィンドウのリサイズに追従 --- */
-  var rT;
+  var rT, lastW = hero.clientWidth, lastH = hero.clientHeight;
   window.addEventListener("resize", function(){
     clearTimeout(rT);
     rT = setTimeout(function(){
-      camera.aspect = window.innerWidth/window.innerHeight;
+      var hw = hero.clientWidth, hh = hero.clientHeight;
+      /* ヒーロー実寸が変わらない（＝スマホのアドレスバー伸縮だけ）なら何もしない＝表示を安定させる */
+      if(hw === lastW && hh === lastH){ return; }
+      var widthChanged = (hw !== lastW);
+      lastW = hw; lastH = hh;
+      camera.aspect = hw/hh;
       camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setSize(hw, hh, false);
       fit();
       if(A.REDUCED){ renderer.render(scene, camera); }
-      if(window.ScrollTrigger){ ScrollTrigger.refresh(); }
+      /* スクロール演出の再計算は横幅が変わった時だけ（高さ変化＝アドレスバーでは再計算しない） */
+      if(window.ScrollTrigger && widthChanged){ ScrollTrigger.refresh(); }
     }, 150);
   });
 

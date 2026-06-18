@@ -86,7 +86,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 
 /* ============ 3. ナビゲーション ============ */
 .nav{
-  position:fixed;top:0;left:0;right:0;z-index:100;
+  position:fixed;top:0;left:0;right:0;z-index:103;
   display:flex;align-items:center;justify-content:space-between;
   padding:22px clamp(20px,4vw,48px);
   transition:background .4s,box-shadow .4s,padding .4s;
@@ -100,6 +100,9 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   padding:14px clamp(20px,4vw,48px);
   box-shadow:0 1px 0 var(--line-dark);
 }
+/* メニューを開いている間はナビ帯を透明にし、ロゴと×ボタンだけを前面に出す
+   （.nav の z-index を mobile-menu より上にして×印を見せる） */
+.nav.menu-open{background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;}
 .nav-logo{font-weight:800;letter-spacing:.32em;font-size:17px;}
 .nav-links{display:flex;align-items:center;gap:28px;font-size:13.5px;font-weight:500;}
 .nav-links a{position:relative;padding:4px 0;}
@@ -134,10 +137,18 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 
 /* ============ 4. ヒーロー ============ */
 .hero{
-  position:relative;height:100vh;min-height:640px;
+  position:relative;height:100vh;height:100svh;min-height:640px;
   background:var(--bg);overflow:hidden;color:#fff;
 }
-#particle-canvas{position:absolute;inset:0;width:100%;height:100%;}
+/* シネマティック背景画像（漆黒＋一筋の光）。粒子キャンバスの下に敷く。
+   上下をわずかに暗く落として、ナビ・コピーの可読性と次セクションへの繋ぎを確保 */
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    linear-gradient(180deg, rgba(18,20,25,.40) 0%, rgba(18,20,25,0) 26%, rgba(18,20,25,0) 64%, rgba(18,20,25,.72) 100%),
+    #000 url("../img/hero-bg.webp") center center / cover no-repeat;
+}
+#particle-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;}
 /* WebGLが使えない端末向けの静的フォールバック（JSが表示を切り替える） */
 .hero-fallback{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
