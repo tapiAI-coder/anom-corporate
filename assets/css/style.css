@@ -521,6 +521,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 .contact{
   background:var(--bg);color:#fff;text-align:center;z-index:3;position:relative;
   padding:clamp(110px,13vw,180px) clamp(22px,5vw,64px) clamp(90px,11vw,150px);
+  overflow:hidden; /* 装飾グロー(contact-glow)のはみ出し＝横スクロールを防ぐ */
 }
 .contact .sec-label{justify-content:center;color:rgba(255,255,255,.5);}
 .contact .sec-label::before{background:rgba(255,255,255,.4);}
