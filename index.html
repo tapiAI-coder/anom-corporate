@@ -22,7 +22,7 @@
 <!-- セキュリティ: コンテンツセキュリティポリシー（CSP）
      このサイトが読み込んでよい外部サービスを限定し、改ざん・不正スクリプトを防ぐ。
      外部サービスを追加する時は、ここに追記が必要（詳細は docs/運用マニュアル.md） -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.web3forms.com; form-action 'self' https://api.web3forms.com; base-uri 'self'; object-src 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://web3forms.com https://hcaptcha.com https://*.hcaptcha.com; style-src 'self' https://fonts.googleapis.com https://hcaptcha.com https://*.hcaptcha.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://imgs.hcaptcha.com; connect-src 'self' https://api.web3forms.com https://hcaptcha.com https://*.hcaptcha.com; form-action 'self' https://api.web3forms.com; frame-src https://newassets.hcaptcha.com https://*.hcaptcha.com; base-uri 'self'; object-src 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 
 <!-- 検索エンジン・SNS向け情報（★URL: ドメイン変更時はここを更新） -->
@@ -67,6 +67,8 @@
   "knowsAbout": ["AI導入支援", "DXコンサルティング", "業務フロー改善", "AI研修・人材育成", "Web制作", "システム開発"]
 }
 </script>
+<!-- hCaptcha統合（Web3Forms経由）スパム対策 -->
+<script src="https://web3forms.com/1/api.js" async defer></script>
 </head>
 <body>
 
@@ -525,6 +527,9 @@
         <input type="checkbox" required>
         <span><a href="privacy.html" target="_blank" rel="noopener">プライバシーポリシー</a>に同意のうえ送信します。</span>
       </label>
+
+      <!-- hCaptchaチェックボックス（Web3Forms連携。data-captcha="true"必須） -->
+      <div class="h-captcha" data-captcha="true"></div>
 
       <button type="submit" class="btn btn-primary magnetic">送信する <span class="arrow">→</span></button>
       <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
