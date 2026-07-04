@@ -1,0 +1,76 @@
+<!--
+  コラム記事テンプレート運用手順:
+  1. このファイルを複製し、column/わかりやすい英語スラッグ.html にリネーム
+  2. ｛｛タイトル｝｝｛｛日付｝｝｛｛説明文｝｝｛｛スラッグ｝｝｛｛本文｝｝を書き換える（noindexメタは削除）
+  3. column/index.html の一覧に1項目追加し、sitemap.xml にURLを1行追加する
+-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+
+<title>｛｛タイトル｝｝｜ANOMコラム</title>
+<meta name="description" content="｛｛説明文｝｝">
+
+<!-- セキュリティ: コンテンツセキュリティポリシー（CSP）
+     このサイトが読み込んでよい外部サービスを限定し、改ざん・不正スクリプトを防ぐ。
+     外部サービスを追加する時は、ここに追記が必要（詳細は docs/運用マニュアル.md） -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://web3forms.com https://hcaptcha.com https://*.hcaptcha.com; style-src 'self' https://fonts.googleapis.com https://hcaptcha.com https://*.hcaptcha.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://imgs.hcaptcha.com; connect-src 'self' https://api.web3forms.com https://hcaptcha.com https://*.hcaptcha.com; form-action 'self' https://api.web3forms.com; frame-src https://newassets.hcaptcha.com https://*.hcaptcha.com; base-uri 'self'; object-src 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+
+<!-- 検索エンジン・SNS向け情報 -->
+<link rel="canonical" href="https://anom-ai.com/column/｛｛スラッグ｝｝.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="ANOM">
+<meta property="og:title" content="｛｛タイトル｝｝｜ANOMコラム">
+<meta property="og:description" content="｛｛説明文｝｝">
+<meta property="og:url" content="https://anom-ai.com/column/｛｛スラッグ｝｝.html">
+<meta property="og:image" content="https://anom-ai.com/assets/img/ogp.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F4F2EC">
+
+<!-- アイコン -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="../assets/img/favicon.png">
+<link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+
+<!-- フォント（本編index.htmlと同一） -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..600;1,9..144,400..500&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@500;600&display=swap" rel="stylesheet">
+
+<!-- スタイル -->
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="column-page">
+<nav class="nav scrolled column-nav" aria-label="メインナビゲーション">
+  <a class="nav-logo" href="../">ANOM</a>
+  <div class="nav-links">
+    <a href="./">コラム一覧</a>
+    <a href="../#contact" class="nav-cta">無料診断</a>
+  </div>
+</nav>
+<main class="column-main">
+  <article class="column-article">
+    <p class="sec-label">COLUMN ／ 現場の知見</p>
+    <h1 class="column-title">｛｛タイトル｝｝</h1>
+    <p class="column-meta">｛｛日付｝｝ ／ ANOM 菊地隆雅</p>
+
+    ｛｛本文｝｝
+
+    <div class="column-cta">
+      <p class="column-cta-t">この棚卸し、一緒にやります。</p>
+      <p class="column-cta-b">ANOMの無料診断は、この記事の内容をあなたの会社で実際にやる時間です。その場で「今日からできるゼロ円改善」を1〜3個お渡しします。</p>
+      <a class="btn btn-primary" href="../#contact">無料診断を受ける <span class="arrow">→</span></a>
+    </div>
+  </article>
+</main>
+<footer class="footer column-footer">
+  <p>© 2026 ANOM</p>
+  <p><a href="../">トップへ戻る</a> ／ <a href="../privacy.html">プライバシーポリシー</a></p>
+</footer>
+</body>
+</html>

@@ -5,10 +5,10 @@
      1. 環境判定（モーション低減 / ポインタ種別 / 画面幅）
      2. 慣性スクロール（Lenis）の初期化
      3. ナビゲーション（メニュー開閉・スクロールで白背景化）
-     4. 各機能の起動順の管理（フォント読込 → 粒子 → 演出 → フォーム）
+     4. 各機能の起動順の管理（演出 → フォーム。旧WebGL粒子はv6で停止）
    ■ 読み込み順（index.html の<script>の並び。変更しないこと）
-     vendor 4本 → config.js → particles.js → animations.js
-     → form.js → main.js（このファイルが最後）
+     vendor 3本（gsap / ScrollTrigger / lenis） → config.js
+     → animations.js → form.js → main.js（このファイルが最後）
 ========================================================= */
 window.ANOM = window.ANOM || {};
 
@@ -91,24 +91,18 @@ var booted = false;
 function boot(){
   if(booted) return; /* 二重起動の防止 */
   booted = true;
-  A.three = A.initParticles();  /* WebGL粒子（不可ならnull＝静的表示） */
+  /* v6（タイポ主役エディトリアル）ではヒーローの粒子canvasを常時非表示にしたため、
+     initParticles()は呼ばない（呼ぶと見えないWebGLシーンと7000粒子の生成が走り、
+     起動を無駄に遅らせるだけになる）。particles.jsのファイル自体は将来の
+     再検討用に残してある。 */
   A.initMotion();               /* スクロール演出 */
   A.initPointerFX();            /* カーソル演出 */
   A.initForm();                 /* お問い合わせフォーム */
   window.addEventListener("load", function(){ ScrollTrigger.refresh(); });
 }
 
-/* Interフォントの読込を待ってから起動する。
-   （粒子が「ANOM」の文字形を正しくサンプリングできるように）
-   読込が遅い場合も1.8秒で必ず起動する保険付き */
-if(document.fonts && document.fonts.load){
-  Promise.all([
-    document.fonts.load("800 235px Inter"),
-    document.fonts.load("700 40px 'Noto Sans JP'")
-  ]).then(boot).catch(boot);
-  setTimeout(boot, 1800);
-}else{
-  boot();
-}
+/* v6: 粒子のワードマーク・サンプリング用だったInter待ちは不要になったため撤去。
+   本文は 'display:swap' 済みのWebフォントなので、読込を待たず即起動する。 */
+boot();
 
 })(window.ANOM);

@@ -11,7 +11,8 @@
        ・文言の修正        → このファイル（index.html）
        ・見た目の調整      → assets/css/style.css
        ・フォーム設定など  → assets/js/config.js
-       ・演出の仕組み      → assets/js/（particles / animations / form / main）
+       ・演出の仕組み      → assets/js/（animations / form / main）
+         ※particles.js（旧WebGL粒子）はv6で読み込み停止。ファイルのみ温存
      ■ 公開URLを変更したら、このファイル内の「★URL」と
        sitemap.xml / robots.txt も合わせて更新すること
 ============================================================ -->
@@ -35,18 +36,22 @@
 <meta property="og:image" content="https://anom-ai.com/assets/img/ogp.png">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#121419">
+<meta name="theme-color" content="#F4F2EC">
 
 <!-- アイコン -->
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" href="assets/img/favicon.png">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
-<!-- フォント: Inter（英字）+ Noto Sans JP（日本語） -->
+<!-- フォント（v6 エディトリアル刷新）:
+     見出し=Zen Old Mincho（明朝）／欧文アクセント=Fraunces（イタリック）／本文=Zen Kaku Gothic New
+     ★重要: 日本語フォントは1ウェイト追加するごとにUnicodeサブセット分割で
+     数十本のリクエストが増える（Zen系は1ウェイトあたり約20〜30ファイル）。
+     CSSで実際に使っているウェイトだけを指定すること（増やす時はstyle.css内の
+     font-weight指定を確認してから）。旧v5のInter読込は粒子演出の廃止に伴い削除。 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- 使用しているウェイトだけ読み込んで軽量化（300/900は未使用） -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500..600;1,9..144,400..500&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@500;600&display=swap" rel="stylesheet">
 
 <!-- スタイル -->
 <link rel="stylesheet" href="assets/css/style.css">
@@ -81,6 +86,7 @@
   <a class="nav-logo" href="#top" data-scroll>ANOM</a>
   <div class="nav-links">
     <a href="#services" data-scroll>サービス</a>
+    <a href="column/">コラム</a>
     <a href="#faq" data-scroll>よくある質問</a>
     <a href="#company" data-scroll>会社概要</a>
     <a href="#contact" data-scroll>お問い合わせ</a>
@@ -92,27 +98,35 @@
 </nav>
 <div class="mobile-menu" id="mobileMenu">
   <a href="#services" data-scroll>サービス</a>
+  <a href="column/">コラム</a>
   <a href="#faq" data-scroll>よくある質問</a>
   <a href="#company" data-scroll>会社概要</a>
   <a href="#contact" data-scroll>お問い合わせ</a>
   <a href="#contact" class="nav-cta" data-scroll>無料診断</a>
 </div>
 
-<!-- ============ 1. ヒーロー（粒子の混沌→秩序） ============ -->
+<!-- ============ 1. ヒーロー（v6: タイポ主役・温白の紙） ============ -->
 <header class="hero" id="top">
-  <!-- シネマティック背景（漆黒に一筋の光）。粒子はこの上に描画される -->
-  <div class="hero-bg" aria-hidden="true"></div>
-  <canvas id="particle-canvas" aria-hidden="true"></canvas>
-  <!-- WebGLが使えない端末では、こちらの静的表示に自動で切り替わる -->
-  <div class="hero-fallback" id="heroFallback" hidden aria-hidden="true"><span>ANOM</span></div>
+  <!-- 質感レイヤー: ヒーロー専用の墨アニメーション（ANOMの棒人間キャラが、スクロールに合わせて
+       「ムダ」の塊を筆で削り落としていくスクラブ描画。scroll-video-scrubスキル適用。
+       スマホ・低減設定・JS無効はCSSの静止画＝振りかぶった開始フレーム） -->
+  <div class="hero-tex" aria-hidden="true"
+       data-seq="assets/img/seq/hero/hero" data-seq-count="61"
+       data-seq-scope=".hero" data-seq-start="top top" data-seq-end="bottom top">
+    <canvas class="seq-canvas"></canvas>
+  </div>
   <div class="hero-inner">
     <p class="hero-label reveal-hero">AKITA · DX &amp; AI PARTNER</p>
-    <h1 class="hero-copy" id="heroCopy">現場で感じるムダを、<br>現場の目線で削る。</h1>
-    <p class="hero-sub reveal-hero">AIの話をしに来たわけじゃないんです。自分で使ってみて「これは効く」と思えたものだけを、現場で一緒に立ち上げます。</p>
+    <!-- 「ムダ」の上の筆の一閃＝両端がすっと細くなるテーパー付きの塗りパス。
+         スクロールに合わせて左から右へ描かれ、語が薄くなる（＝ムダが削られていく）。
+         描画はclipPathの矩形幅で行う。制御は animations.js。JS無効・低減設定では線が引き切られた完成形で静止 -->
+    <h1 class="hero-copy" id="heroCopy">現場で感じる<span class="kezuru" id="kezuru">ムダ<svg class="kezuru-line" viewBox="0 0 100 50" preserveAspectRatio="none" aria-hidden="true" focusable="false"><defs><clipPath id="kezClip"><rect class="kezuru-clip" x="-2" y="-6" width="104" height="62"/></clipPath></defs><path class="kezuru-swipe" clip-path="url(#kezClip)" d="M0 34 C 22 31 44 29 64 26.8 C 80 25 92 23.4 100 21.6 C 93 26.6 78 29.4 60 31.6 C 40 33.8 18 35 0 34 Z"/></svg></span>を、<br>現場の目線で削る。</h1>
+    <p class="hero-sub reveal-hero">AIの話をしに来たわけじゃありません。自分も商売をやってきました。自分で試して効くと確かめたものだけを、現場で一緒に立ち上げます。</p>
     <div class="hero-ctas reveal-hero">
       <a href="#contact" class="btn btn-primary magnetic" data-scroll>無料診断を受ける <span class="arrow">→</span></a>
       <a href="#services" class="btn btn-ghost magnetic" data-scroll>サービスを見る</a>
     </div>
+    <p class="hero-note reveal-hero">無料診断では、その場で「ゼロ円改善」を1〜3個お渡しします。</p>
   </div>
   <p class="hero-tagline reveal-hero">AUTONOMOUS ＋ MINIMALISM</p>
   <div class="scroll-hint reveal-hero" aria-hidden="true">SCROLL<span class="bar"></span></div>
@@ -123,31 +137,44 @@
 
 <!-- ============ 2. About ============ -->
 <section class="section sheet sheet-first" id="about">
-  <div class="blob blob-1" aria-hidden="true"></div>
   <div class="wrap">
     <p class="sec-label reveal">01 / ABOUT</p>
-    <h2 class="sec-title split">自律と簡潔を、秋田の現場へ。</h2>
-    <p class="sec-lead reveal">ツールを入れて終わりにはしたくないんです。自分たちだけで回せるようになるまで、ちゃんと付き合います。自分も商売をやってきたから、現場のしんどさは身にしみて分かる。だから机の上の話だけはしたくない。関東で当たり前にできていることを、秋田でも当たり前に。</p>
+    <h2 class="sec-title split">派手なDXはやりません。</h2>
+    <p class="sec-lead reveal">ツールを入れて終わりのコンサルにはなりません。導入したものが現場で回り、社内の人だけで運用できるようになるまで付き合います。関東では当たり前になっていることを、秋田の会社でも当たり前にする。それがANOMの仕事です。</p>
     <div class="cards-3 reveal-group">
-      <div class="card tilt">
+      <div class="card">
         <p class="card-num">01</p>
         <h3 class="card-en">Autonomous</h3>
         <p class="card-jp">自律</p>
-        <p class="card-body">頼られっぱなしにはしません。自分たちで回せるようになったら、ちゃんと手を離します。</p>
+        <p class="card-body">ゴールはANOMがいなくても回る状態です。手順書と引き継ぎまで作って、自走できたら手を離します。</p>
       </div>
-      <div class="card tilt">
+      <div class="card">
         <p class="card-num">02</p>
         <h3 class="card-en">Minimalism</h3>
         <p class="card-jp">簡潔</p>
-        <p class="card-body">むやみに増やしません。まだ使い倒せていない道具が、きっとあるはずです。</p>
+        <p class="card-body">新しい契約を増やす前に、いま払っているのに使われていない機能から手を付けます。それだけで解決する課題が実際にあります。</p>
       </div>
-      <div class="card tilt">
+      <div class="card">
         <p class="card-num">03</p>
         <h3 class="card-en">On Site</h3>
         <p class="card-jp">現場主義</p>
-        <p class="card-body">丸投げにはしません。現場に足を運んで、隣で一緒に手を動かします。</p>
+        <p class="card-body">資料を送って終わりにはしません。秋田県内なら現場に伺い、実際の画面と書類を見ながら一緒に手を動かします。</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ============ 物語インタールード①: 乖離（差が開く） ============
+     コピーの前半と後半のあいだの「余白」がスクロールで開いていき、
+     "放っておくと差が広がる"を文字組そのもので語る幕間。
+     線・図形・素材は使わない（v6タイポ主役の原則）。制御は animations.js の setupInterlude。
+     CSSの標準状態＝開ききった完成形なので、JS無効・モーション低減でも意味が通る。
+     黒背景＝差が開く不安を明度でも語る（次の#convergenceで紙に戻る＝解決） -->
+<section class="interlude interlude-diverge" id="divergence">
+  <div class="wrap">
+    <p class="sec-label reveal">THE GAP ／ 開いていく差</p>
+    <p class="interlude-line il-a">放っておくと、</p>
+    <p class="interlude-line il-b">差は開く。</p>
   </div>
 </section>
 
@@ -155,23 +182,23 @@
 <section class="section sheet sheet-warm">
   <div class="wrap">
     <p class="sec-label reveal">WHY ANOM</p>
-    <h2 class="sec-title split">ANOMの、4つの約束。</h2>
+    <h2 class="sec-title split">ANOMの4つの約束。</h2>
     <div class="why-grid reveal-group">
       <div class="why-item">
         <span class="why-num">01</span>
-        <div><h3 class="why-h">経営を、外から見たことがない</h3><p class="why-p">自分でも商売をやって、人を雇って、資金繰りに頭を抱えてきました。その痛みを知識じゃなく身体で知っている人間が、すぐ隣にいます。</p></div>
+        <div><h3 class="why-h">自分も商売をやって、一度たたんでいます</h3><p class="why-p">人を雇う重さも資金繰りの不安も、店を閉める悔しさも実体験で知っています。だから机上の正論ではなく、その会社が続けられる提案をします。</p></div>
       </div>
       <div class="why-item">
         <span class="why-num">02</span>
-        <div><h3 class="why-h">建設も、不動産も、飲食も。</h3><p class="why-p">いまは県内の建設会社のDXを手伝っています。建設でも不動産でも飲食でも、現場のムダをAIで削るやり方は、業種が変わっても同じように効くんです。</p></div>
+        <div><h3 class="why-h">県内の建設会社の現場に入っています</h3><p class="why-p">電子契約の導入、書類仕事の整理、バックオフィスの一部自動化。経営者の隣で手を動かしています。ムダを削る手順は業種が違っても変わりません。それを現場で確かめながらやっています。</p></div>
       </div>
       <div class="why-item">
         <span class="why-num">03</span>
-        <div><h3 class="why-h">今あるものを、使い倒す</h3><p class="why-p">新しいものを買う前に、いま手元にある道具を見直しませんか。お金をかけずにできる改善が、意外と眠っているものです。</p></div>
+        <div><h3 class="why-h">最初の提案は、たいていゼロ円です</h3><p class="why-p">新しいツールを勧める前に、導入済みのツールで眠っている機能を洗い出します。無料診断では今日からできるゼロ円改善を、その場で1〜3個お渡ししています。</p></div>
       </div>
       <div class="why-item">
         <span class="why-num">04</span>
-        <div><h3 class="why-h">自走できたら、手を離す</h3><p class="why-p">丸投げで終わらせません。隣で一緒に手を動かして、自分たちだけで回せるようになったら、そこで卒業です。</p></div>
+        <div><h3 class="why-h">自走できたら、契約は終わりにします</h3><p class="why-p">隣で一緒に手を動かして、社内の人だけで回せるようになったら卒業です。依存させ続けるのはANOMの売上にはなっても、御社の力にはならないからです。</p></div>
       </div>
     </div>
   </div>
@@ -179,15 +206,15 @@
 
 <!-- ============ 4. UseCases（想定シナリオ） ============ -->
 <section class="section sheet" id="usecases">
-  <div class="blob blob-2" aria-hidden="true"></div>
   <div class="wrap">
     <p class="sec-label reveal">02 / USECASES</p>
-    <h2 class="sec-title split">こんな現場に、届けます。</h2>
-    <p class="sec-lead reveal">ここから先は、あくまで想定の例です。出てくる数字も実績ではありません。実際にどうなるかは、現状を見せてもらってから御社にあわせて見積もります。どこから手をつけるかも、業種や規模にあわせて一緒に探しましょう。</p>
+    <h2 class="sec-title split">こんな現場で効きます。</h2>
+    <p class="sec-lead reveal">ここから先は、あくまで想定の例です。出てくる数字も実績ではありません。どこから手をつけるかは、業種や規模にあわせて一緒に探しましょう。</p>
     <div class="bento reveal-group">
-      <div class="card tilt b1">
+      <div class="card b1">
         <p class="tag">CONSTRUCTION ／ 建設・土木</p>
-        <h3>書類と写真を、AIで軽く。</h3>
+        <span class="uc-term" aria-hidden="true">2〜3<em>ヶ月</em></span>
+        <h3>日報と写真整理を仕組みで減らす</h3>
         <dl class="uc-flow">
           <div class="uc-row"><dt>課題</dt><dd>日報・写真整理・書類づくりが現場の時間を奪っている</dd></div>
           <div class="uc-row"><dt>施策</dt><dd>OCR（文字の自動読み取り）と業務フロー自動化で事務を仕組み化</dd></div>
@@ -195,9 +222,10 @@
           <div class="uc-row"><dt>期間</dt><dd>診断〜導入 2〜3ヶ月</dd></div>
         </dl>
       </div>
-      <div class="card tilt b2">
+      <div class="card b2">
         <p class="tag">RETAIL &amp; FOOD ／ 小売・飲食</p>
-        <h3>売上データを、発注判断に。</h3>
+        <span class="uc-term" aria-hidden="true">2〜4<em>ヶ月</em></span>
+        <h3>発注の勘をデータで補う</h3>
         <dl class="uc-flow">
           <div class="uc-row"><dt>課題</dt><dd>発注がベテランの勘頼みで、廃棄も欠品も読めない</dd></div>
           <div class="uc-row"><dt>施策</dt><dd>売上データの可視化とAIによる発注提案</dd></div>
@@ -205,9 +233,10 @@
           <div class="uc-row"><dt>期間</dt><dd>診断〜導入 2〜4ヶ月</dd></div>
         </dl>
       </div>
-      <div class="card tilt b3">
+      <div class="card b3">
         <p class="tag">MANUFACTURING ／ 製造</p>
-        <h3>熟練の目を、AIで補完する。</h3>
+        <span class="uc-term" aria-hidden="true">1〜3<em>ヶ月</em></span>
+        <h3>検査の目を若手に引き継ぐ</h3>
         <dl class="uc-flow">
           <div class="uc-row"><dt>課題</dt><dd>検査・判断が熟練者に集中し、技能継承が進まない</dd></div>
           <div class="uc-row"><dt>施策</dt><dd>画像AIによる検査補助と、社内ナレッジ検索の整備</dd></div>
@@ -215,9 +244,10 @@
           <div class="uc-row"><dt>期間</dt><dd>試験導入 1〜3ヶ月 → 効果を見て本導入</dd></div>
         </dl>
       </div>
-      <div class="card tilt b4">
+      <div class="card b4">
         <p class="tag">SERVICES ／ サービス・士業</p>
-        <h3>問い合わせを、AIと分業する。</h3>
+        <span class="uc-term" aria-hidden="true">1〜2<em>ヶ月</em></span>
+        <h3>問い合わせの一次対応を自動にする</h3>
         <dl class="uc-flow">
           <div class="uc-row"><dt>課題</dt><dd>問い合わせ対応と定型文書づくりに時間を取られる</dd></div>
           <div class="uc-row"><dt>施策</dt><dd>AIによる一次対応と、文書下書きの自動化</dd></div>
@@ -226,7 +256,7 @@
         </dl>
       </div>
     </div>
-    <p class="next-step reveal">近い悩み、ありませんでしたか。どこから手をつけるか、ご一緒に。<a href="#contact" data-scroll>無料診断へ <span class="arrow">→</span></a></p>
+    <p class="next-step reveal">近い悩みがあれば、まず状況を聞かせてください。<a href="#contact" data-scroll>無料診断へ <span class="arrow">→</span></a></p>
   </div>
 </section>
 
@@ -235,73 +265,123 @@
   <div class="wrap">
     <p class="sec-label reveal">03 / SERVICES</p>
     <h2 class="sec-title split">ANOMにできること。</h2>
-    <p class="sec-lead reveal">はじめの一歩は、無料の棚卸しから。そこから先の支援は、大きく3つあります。軸になるのはAI・DXのコンサルティング。そこに人を育てる研修と、実行を形にするWeb制作・開発が続きます。戦略づくりから現場への定着まで、まとめてお任せいただけます。</p>
+    <p class="sec-lead reveal">支援は大きく3つです。入口はどれも無料の棚卸しから始まり、戦略づくりから現場への定着までまとめて任せられます。</p>
 
     <!-- 無料診断（入口）: いきなり大型契約でなく「まず無料で診る」を最上段に -->
-    <div class="svc-main reveal">
-      <span class="svc-badge">FREE ／ 無料診断</span>
-      <h3 class="svc-main-title">眠っている道具の棚卸し</h3>
-      <p class="svc-main-lead">新しい道具を買う前に、一度だけ棚卸しさせてください。すでにお金を払っているのに使いこなせていない道具を一緒に洗い出して、今日からゼロ円でできる改善をその場でお見せします。かかる時間は30〜45分ほど。訪問でもオンラインでも大丈夫です。売り込みは一切しないので、安心してください。秋田県内なら、業種は問いません。</p>
-      <p class="svc-fit-cap">その場で見る4つ</p>
-      <ul class="svc-fit">
-        <li>いま入っている道具の一覧（会計・勤怠・グループウェア・Excel運用など）</li>
-        <li>そのうち、使われていない機能</li>
-        <li>まだ紙でやっている作業</li>
-        <li>人・紙・お金、どこに一番ムダが溜まっているか</li>
-      </ul>
-      <div class="svc-foot">
-        <p><span class="svc-foot-k">持ち帰り</span>その場でゼロ円改善を1〜3個。後日、A4ペラ1枚の棚卸しメモをお渡しします。</p>
-        <p><span class="svc-foot-k">次の一歩</span>まず自分たちで試す → うまくいけばOK → もっと手を入れたい所だけ、必要ならご一緒に。</p>
+    <!-- data-svc: スクロール連動演出の合図（カード出現・背景グロー・メディア。仕組みは animations.js） -->
+    <div class="svc-main" data-svc="diagnosis">
+      <div class="svc-main-grid">
+        <div class="svc-main-body">
+          <span class="svc-badge">FREE ／ 無料診断</span>
+          <h3 class="svc-main-title">眠っている道具の棚卸し</h3>
+          <p class="svc-main-lead">新しい道具を買う前に、一度だけ棚卸しさせてください。すでに契約しているのに使えていないツールを一緒に洗い出して、今日からできるゼロ円改善をその場でお見せします。所要は30〜45分、訪問でもオンラインでも可能です。売り込みはしません。秋田県内なら業種は問いません。</p>
+          <p class="svc-fit-cap">その場で見る4つ</p>
+          <ul class="svc-fit">
+            <li>いま入っている道具の一覧（会計・勤怠・グループウェア・Excel運用など）</li>
+            <li>そのうち、使われていない機能</li>
+            <li>まだ紙でやっている作業</li>
+            <li>人・紙・お金、どこに一番ムダが溜まっているか</li>
+          </ul>
+          <div class="svc-foot">
+            <p><span class="svc-foot-k">持ち帰り</span>その場でゼロ円改善を1〜3個。後日、A4ペラ1枚の棚卸しメモをお渡しします。</p>
+            <p><span class="svc-foot-k">次の一歩</span>まず自分たちで試す → うまくいけばOK → もっと手を入れたい所だけ、必要ならご一緒に。</p>
+          </div>
+          <a href="#contact" class="btn btn-primary magnetic" data-scroll>無料診断を受ける <span class="arrow">→</span></a>
+        </div>
+        <!-- 対応メディア: 無料診断のヴィネット（印象を運ぶミニシーン）。
+             お客様がPCの前で困っている（頭上にモヤモヤ・床に散らばったアプリ）→ 左からANOMが歩いてきて
+             筆で指す → モヤモヤが消え、アプリが整列し、姿勢が伸びる。吹き出しは心の声→ANOMの返答→安心の声。
+             演出は animations.js の setupVignettes（背景の物語はsetupSeqScrubのスクラブ） -->
+        <figure class="svc-media svc-vin" aria-label="無料診断のイメージ。道具をうまく使えず困っているお客様のもとへANOMのキャラクターが来て、ゼロ円でできる改善を見つける">
+          <div class="vin vin-tools">
+            <div class="seq" data-seq="assets/img/seq/shindan/shindan" data-seq-count="61" data-seq-scope=".svc-media">
+              <img class="seq-fallback" src="assets/img/seq/shindan/shindan-061.webp" alt="" aria-hidden="true">
+              <canvas class="seq-canvas" aria-hidden="true"></canvas>
+            </div>
+            <p class="vt-bubble b1" data-at="76">毎月払ってるのに、<br>使ってない</p>
+            <p class="vt-bubble b3 ans" data-at="62">それ、ゼロ円で<br>できます</p>
+            <p class="vt-bubble b2" data-at="48">この機能で<br>足りてたんだ</p>
+            <p class="vin-cap">眠っている道具の棚卸し</p>
+          </div>
+        </figure>
       </div>
-      <a href="#contact" class="btn btn-primary magnetic" data-scroll>無料診断を受ける <span class="arrow">→</span></a>
     </div>
 
     <!-- 柱1: 導入・伴走（主軸・企業向け） -->
-    <div class="svc-main reveal">
-      <span class="svc-badge">PILLAR 01 ／ 主軸サービス</span>
-      <h3 class="svc-main-title">導入・伴走 — AI・DXコンサルティング</h3>
-      <p class="svc-main-lead">課題の整理から導入、定着まで。経営と現場の両方に並走する、いちばんの主力サービスです。関わり方は2つあります。そばで並走し続ける「月額顧問」と、ゴールを決めて取り組む「プロジェクト型」。気になるほうを選んでください。</p>
-      <p class="svc-fit-cap">こんな方へ</p>
-      <ul class="svc-fit">
-        <li>何から手を付けるべきか、整理したい</li>
-        <li>ツールは入れたが、活用が進んでいない</li>
-      </ul>
-      <div class="svc-cols">
-        <div class="svc-col">
-          <p class="svc-col-tag">01 ／ ADVISORY</p>
-          <h4 class="svc-col-h">月額顧問</h4>
-          <p class="svc-col-c">経営と現場の、外付けの頭脳。</p>
-          <ul class="svc-list">
-            <li>経営・事業判断へのAI／DX相談</li>
-            <li>ツール選定の中立アドバイス</li>
-            <li>月次の振り返りと次アクション設計</li>
-            <li>導入後の継続サポート</li>
+    <div class="svc-main" data-svc="consult">
+      <div class="svc-main-grid">
+        <div class="svc-main-body">
+          <span class="svc-badge">PILLAR 01 ／ 主軸サービス</span>
+          <h3 class="svc-main-title">導入・伴走 — AI・DXコンサルティング</h3>
+          <p class="svc-main-lead">課題の整理から導入、定着まで。経営と現場の両方に並走する、いちばんの主力サービスです。関わり方は2つあります。そばで並走し続ける「月額顧問」と、ゴールを決めて取り組む「プロジェクト型」。気になるほうを選んでください。</p>
+          <p class="svc-fit-cap">こんな方へ</p>
+          <ul class="svc-fit">
+            <li>何から手を付けるべきか、整理したい</li>
+            <li>ツールは入れたが、活用が進んでいない</li>
           </ul>
+          <div class="svc-cols">
+            <div class="svc-col">
+              <p class="svc-col-tag">01 ／ ADVISORY</p>
+              <h4 class="svc-col-h">月額顧問</h4>
+              <p class="svc-col-c">経営と現場の、外付けの頭脳。</p>
+              <ul class="svc-list">
+                <li>経営・事業判断へのAI／DX相談</li>
+                <li>ツール選定の中立アドバイス</li>
+                <li>月次の振り返りと次アクション設計</li>
+                <li>導入後の継続サポート</li>
+              </ul>
+            </div>
+            <div class="svc-col">
+              <p class="svc-col-tag">02 ／ PROJECT</p>
+              <h4 class="svc-col-h">プロジェクト型</h4>
+              <p class="svc-col-c">課題ごとに、期間と成果を決めて。</p>
+              <ul class="svc-list">
+                <li>現状診断（DX・AI準備度調査）</li>
+                <li>業務フロー改善設計</li>
+                <li>AIツール導入支援（設定・研修）</li>
+                <li>導入後の定着サポート</li>
+              </ul>
+            </div>
+          </div>
+          <div class="svc-foot">
+            <p><span class="svc-foot-k">成果イメージ</span>事務作業の削減と、自社で回せる運用体制（※想定）</p>
+            <p><span class="svc-foot-k">進め方</span>無料診断 → 現状診断 → 設計 → 導入 → 定着</p>
+          </div>
         </div>
-        <div class="svc-col">
-          <p class="svc-col-tag">02 ／ PROJECT</p>
-          <h4 class="svc-col-h">プロジェクト型</h4>
-          <p class="svc-col-c">課題ごとに、期間と成果を決めて。</p>
-          <ul class="svc-list">
-            <li>現状診断（DX・AI準備度調査）</li>
-            <li>業務フロー改善設計</li>
-            <li>AIツール導入支援（設定・研修）</li>
-            <li>導入後の定着サポート</li>
-          </ul>
-        </div>
-      </div>
-      <div class="svc-foot">
-        <p><span class="svc-foot-k">成果イメージ</span>事務作業の削減と、自社で回せる運用体制（※想定）</p>
-        <p><span class="svc-foot-k">進め方</span>無料診断 → 現状診断 → 設計 → 導入 → 定着</p>
+        <!-- 対応メディア: 導入・伴走のヴィネット。画面下に2人が並んで立ち、上の絡まった結び目がほどけて
+             1本の横線として2人の頭上に落ち着く。
+             演出は animations.js の setupVignettes（背景の物語はsetupSeqScrubのスクラブ） -->
+        <figure class="svc-media svc-vin" aria-label="導入・伴走のイメージ。現場でANOMのキャラクターがお客様と並んで立ち、絡まった業務の線がほどけて一本の流れに整う">
+          <div class="vin vin-line">
+            <div class="seq" data-seq="assets/img/seq/line/line" data-seq-count="61" data-seq-scope=".svc-media">
+              <img class="seq-fallback" src="assets/img/seq/line/line-061.webp" alt="" aria-hidden="true">
+              <canvas class="seq-canvas" aria-hidden="true"></canvas>
+            </div>
+            <p class="vl-k k1">導入前</p>
+            <p class="vl-k k2" data-at="46">導入後</p>
+          </div>
+        </figure>
       </div>
     </div>
 
     <!-- 柱2・柱3: 育てる ／ つくる・支える -->
-    <div class="svc-duo reveal-group">
-      <div class="svc tilt">
+    <div class="svc-duo">
+      <div class="svc" data-svc="train">
+        <!-- 対応メディア: 育てる（研修）のヴィネット。ANOMが先生のように筆で示し、お客様が猛然とタイピング、
+             チェック付き書類の山が右側に積み上がる。
+             演出は animations.js の setupVignettes（背景の物語はsetupSeqScrubのスクラブ） -->
+        <figure class="svc-media svc-vin" aria-label="研修のイメージ。ANOMのキャラクターがAIの使い方を伝え、お客様の仕事がみるみる片づいていく">
+          <div class="vin vin-grow">
+            <div class="seq" data-seq="assets/img/seq/grow/grow" data-seq-count="61" data-seq-scope=".svc-media">
+              <img class="seq-fallback" src="assets/img/seq/grow/grow-061.webp" alt="" aria-hidden="true">
+              <canvas class="seq-canvas" aria-hidden="true"></canvas>
+            </div>
+            <p class="vin-cap">仕事が、みるみる片づいていく</p>
+          </div>
+        </figure>
         <span class="svc-badge">PILLAR 02</span>
         <h3 class="svc-head">育てる — 研修・人材育成</h3>
-        <p class="svc-body">道具より先に、人を整えます。現場が翌日から使える実践型の研修で、AIを組織に根づかせていきます。</p>
+        <p class="svc-body">研修の題材は御社の実際の業務です。翌日からそのまま使える形にして渡すので、学んだことが現場に残ります。</p>
         <p class="svc-fit-cap">こんな方へ</p>
         <ul class="svc-fit">
           <li>社員がAIを使える状態にしたい</li>
@@ -316,10 +396,22 @@
           <p><span class="svc-foot-k">進め方</span>ヒアリング → プログラム設計 → 実施 → 定着フォロー</p>
         </div>
       </div>
-      <div class="svc tilt">
+      <div class="svc" data-svc="build">
+        <!-- 対応メディア: つくる・支える（制作）のヴィネット。ANOMが淡い下描きのブラウザ窓を筆で描き上げていく。
+             演出は animations.js の setupVignettes（背景の物語はsetupSeqScrubのスクラブ） -->
+        <figure class="svc-media svc-vin" aria-label="制作のイメージ。ANOMのキャラクターが筆で、いまご覧のこのサイトを描き上げていく">
+          <div class="vin vin-build">
+            <div class="seq" data-seq="assets/img/seq/build/build" data-seq-count="61" data-seq-scope=".svc-media">
+              <img class="seq-fallback" src="assets/img/seq/build/build-061.webp" alt="" aria-hidden="true">
+              <canvas class="seq-canvas" aria-hidden="true"></canvas>
+            </div>
+            <p class="vb-real" data-at="42">現場で感じるムダを、<br>現場の目線で削る。<span class="vb-caret" aria-hidden="true"></span></p>
+            <p class="vin-cap">いまご覧のサイトも、この手で</p>
+          </div>
+        </figure>
         <span class="svc-badge">PILLAR 03</span>
         <h3 class="svc-head">つくる・支える — Web制作・保守・開発</h3>
-        <p class="svc-body">集客と信頼の入口をつくります。そして、作って終わりにはしません。日々の運用まで、面倒ごとはまとめて引き受けます。</p>
+        <p class="svc-body">サイトの制作から公開後の更新・保守まで一括で引き受けます。いまご覧のこのサイトも、ANOMが設計から実装まで自分の手で作ったものです。</p>
         <p class="svc-fit-cap">こんな方へ</p>
         <ul class="svc-fit">
           <li>サイトが古い、または持っていない</li>
@@ -343,9 +435,10 @@
       <p class="co-h">FLOW ／ 支援の流れ</p>
       <ol class="flow-steps">
         <li class="flow-step">
+          <span class="flow-free">ここまで無料</span>
           <span class="flow-num">01</span>
           <b>無料診断</b>
-          <p>現状と困りごとを伺います（オンライン30〜60分）</p>
+          <p>現状と困りごとを伺います（訪問またはオンライン・30〜45分）</p>
         </li>
         <li class="flow-step">
           <span class="flow-num">02</span>
@@ -376,11 +469,11 @@
       <div class="pricing-grid">
         <div class="price-item">
           <h4>月額顧問</h4>
-          <p>月額制です。関与の深さ（相談中心から実務の並走まで）で段階を分けているので、小さく始められます。</p>
+          <p>月額制です。関与の深さ（相談中心から実務の並走まで）で段階を分けているので、小さく始められます。目安は月5万円からです。内容と訪問頻度に合わせて決めます。</p>
         </div>
         <div class="price-item">
           <h4>プロジェクト型</h4>
-          <p>範囲と期間、成果物を決めて、個別にお見積もりします。現状診断だけの単発のご依頼も大丈夫です。</p>
+          <p>範囲と期間、成果物を決めて、個別にお見積もりします。現状診断だけの単発のご依頼も大丈夫です。Webサイト制作は18万円から。研修や単発の改善は、内容を伺ってお見積りします。</p>
         </div>
         <div class="price-item">
           <h4>共通の約束</h4>
@@ -390,7 +483,18 @@
       <p class="pricing-note">具体的な金額は、無料診断で状況を伺ってからお出しします。</p>
     </div>
 
-    <p class="next-step reveal">まずは、現状の整理から始めませんか。<a href="#contact" data-scroll>無料診断を受ける <span class="arrow">→</span></a></p>
+    <p class="next-step reveal">まずは現状の整理から始めませんか。<a href="#contact" data-scroll>無料診断を受ける <span class="arrow">→</span></a></p>
+  </div>
+</section>
+
+<!-- ============ 物語インタールード②: 合流（差を埋める） ============
+     ①で開いた「間」が閉じ、離れていた語がスクロールで一行に揃う。
+     ANOMの介入で"差が埋まる"を、文字の間合いだけで語る収束点。
+     直前のServices（支援の中身）を受けての解決＝合流。 -->
+<section class="interlude interlude-merge" id="convergence">
+  <div class="wrap">
+    <p class="sec-label reveal">CLOSE THE GAP ／ ANOMの役割</p>
+    <p class="interlude-line il-one"><span class="frag frag-a">その差を、</span><span class="frag frag-b">埋める。</span></p>
   </div>
 </section>
 
@@ -399,19 +503,19 @@
 <section class="section personal" id="personal">
   <div class="wrap">
     <p class="sec-label reveal">FOR INDIVIDUALS ／ 個人の方へ</p>
-    <h2 class="sec-title split">個人の方も、歓迎します。</h2>
-    <p class="sec-lead reveal">ANOMがお手伝いするのは、企業だけではありません。学びたい方にも、自分の発信を持ちたい方にも、同じ熱量で並走します。</p>
+    <h2 class="sec-title split">個人の方も歓迎します。</h2>
+    <p class="sec-lead reveal">企業だけでなく個人も対象です。AIを学びたい方の講座も、自分のサイトを持ちたい方の制作も、1人から受けられます。</p>
     <div class="personal-grid reveal-group">
-      <div class="p-card tilt">
+      <div class="p-card">
         <p class="p-tag">LEARN ／ 講座・研修の受講</p>
         <h3>AI講座の受講</h3>
-        <p class="p-body">「AIを仕事で使えるようになりたい」に、基礎から実務までお応えします。1人から、オンラインで受けられます。</p>
+        <p class="p-body">仕事でAIを使えるようになるまで、基礎から実務まで教えます。1人からオンラインで受講できます。</p>
         <a href="#contact" class="btn btn-ghost magnetic" data-scroll>講座・受講を相談 <span class="arrow">→</span></a>
       </div>
-      <div class="p-card tilt">
+      <div class="p-card">
         <p class="p-tag">CREATE ／ 個人サイト制作</p>
         <h3>個人サイト制作</h3>
-        <p class="p-body">ポートフォリオ、屋号サイト、活動紹介。あなたの発信の入口を、設計から公開まで一緒に形にします。</p>
+        <p class="p-body">ポートフォリオや屋号サイトを、設計から公開まで一緒に作ります。公開後の更新もそのまま相談できます。</p>
         <a href="#contact" class="btn btn-ghost magnetic" data-scroll>個人サイトを相談 <span class="arrow">→</span></a>
       </div>
     </div>
@@ -431,7 +535,7 @@
       <span class="line"><span>このサイトも、</span></span>
       <span class="line"><span>ANOMが制作しています。</span></span>
     </h2>
-    <p class="band-sub reveal">いま体験していただいているこの感じが、そのまま制作物のサンプルです。<br>同じ熱量で、御社の「入口」をつくります。</p>
+    <p class="band-sub reveal">デザインも文章も仕組みも、ANOMが自分の手で作っています。<br>同じやり方で、御社の入口もつくれます。</p>
     <a href="#contact" class="btn magnetic reveal" data-scroll>Web制作を相談する <span class="arrow">→</span></a>
   </div>
 </section>
@@ -440,7 +544,7 @@
 <section class="section sheet" id="faq">
   <div class="wrap">
     <p class="sec-label reveal">04 / FAQ</p>
-    <h2 class="sec-title split">疑問に、お答えします。</h2>
+    <h2 class="sec-title split">よくある質問</h2>
     <p class="sec-lead reveal">ここに載っていない疑問も、気軽に聞いてください。初回の診断は無料です。</p>
     <div class="faq-list reveal-group">
       <details class="faq-item">
@@ -449,11 +553,11 @@
       </details>
       <details class="faq-item">
         <summary><span class="q">Q2</span>費用はどのくらいかかりますか？</summary>
-        <p class="faq-a">規模や内容によって変わります。まずは無料診断で状況を伺って、ざっくりした目安をお出しします。月額顧問もプロジェクト単発も、どちらも小さく始められます。</p>
+        <p class="faq-a">顧問は月5万円から、Webサイト制作は18万円からが目安です。プロジェクトの内容で変わるので、無料診断のあとに正式なお見積りを出します。先に合意していない費用をあとから足すことはありません。</p>
       </details>
       <details class="faq-item">
         <summary><span class="q">Q3</span>秋田県外でも対応できますか？</summary>
-        <p class="faq-a">はい、全国対応しています。基本はリモート中心ですが、必要なら現地にも伺います。秋田と関東の距離を埋めるために、ANOMは動きます。</p>
+        <p class="faq-a">はい、全国に対応しています。基本はリモートで、必要があれば現地にも伺います。</p>
       </details>
       <details class="faq-item">
         <summary><span class="q">Q4</span>どのくらいの期間で成果が出ますか？</summary>
@@ -466,6 +570,14 @@
       <details class="faq-item">
         <summary><span class="q">Q6</span>社内の人間だけで運用できるようになりますか？</summary>
         <p class="faq-a">自社で回せるようにするお手伝いは、いちばん大事にしているメニューのひとつです。導入したあとも自分たちで回せるよう、研修やドキュメント整備、技術の引き継ぎまで一緒に進めます。そうやって自走できるようになったら、ちゃんと手を離します。頼られっぱなしにはしません。</p>
+      </details>
+      <details class="faq-item">
+        <summary><span class="q">Q7</span>追加費用があとから出ることはありませんか。</summary>
+        <p class="faq-a">先に合意していない費用は、あとから請求しません。作業の範囲が変わるときは、必ず金額を先に提示して、ご了承いただいてから進めます。</p>
+      </details>
+      <details class="faq-item">
+        <summary><span class="q">Q8</span>相談したら、契約しないといけませんか。</summary>
+        <p class="faq-a">いいえ。無料診断とゼロ円改善のお渡しだけで終わって構いません。合うかどうかを確かめてから決めてください。</p>
       </details>
     </div>
     <p class="next-step reveal">すっきりしない疑問は、直接聞いてしまうのが早いです。<a href="#contact" data-scroll>無料診断へ <span class="arrow">→</span></a></p>
@@ -480,9 +592,9 @@
     <div class="company-grid">
       <div class="reveal">
         <p class="co-h">PROFILE ／ 代表挨拶</p>
-        <p class="profile-msg">机の上だけでは、<br>語れなかった。</p>
+        <p class="profile-msg">一度、自分の店を<br>たたんだ人間です。</p>
         <p class="profile-body">AIの話をしに来たわけじゃありません。自分も現場に立って、自分の店を持っていました。人を雇って、シフトを組んで、お金の心配をして——そして一度、その店をたたんでいます。だから机の上だけで語るコンサルにはなれませんでした。業種は違っても、現場のしんどさはたぶん同じだと思います。</p>
-        <p class="profile-body">いまは県内の建設会社のDXも手伝っています。電子契約を入れたり、散らかった業務を整理したり。そうやって現場にいると、「ムダを削る」という考え方は業種が変わっても効くんだな、と実感します。</p>
+        <p class="profile-body">県内の建設会社のDXにも伴走しています。電子契約を入れたり、散らかった業務を整理したり、バックオフィスの仕事を一部自動化したり。現場に通うほど、「ムダを削る」という考え方は業種が変わっても効くと実感します。</p>
         <p class="profile-body">やることは、いたってシンプルです。まずは今あるものを使い倒す。丸投げはせず、隣に座って一緒に手を動かす。そして自分たちだけで回せるようになったら、手を離す。ずっと頼られ続けるのは、自分の仕事じゃないと思っているので。</p>
         <p class="profile-name">代表<b>菊地 隆雅</b></p>
       </div>
@@ -504,11 +616,12 @@
 
 <!-- ============ 8. お問い合わせ（フォーム） ============ -->
 <section class="contact" id="contact">
-  <div class="contact-glow" aria-hidden="true"></div>
   <div class="wrap">
     <p class="sec-label reveal">06 / CONTACT</p>
     <h2 class="contact-title split">眠っている道具を、<br>見せてください。</h2>
-    <p class="contact-sub reveal">初回の診断は無料です。新しい何かを買う前に、まずは“使わないまま眠っている道具”を見せてください。その場で、お金をかけずにできる改善を一緒に探します。売り込みはしないので、どうか気軽に。<br>「何から始めればいいか分からない」——そんな入口でも大丈夫です。会社のことでも、個人の講座やサイトのことでも、ここからお気軽にどうぞ。</p>
+    <p class="contact-sub reveal">初回の診断は無料です。新しい何かを買う前に、まずは“使わないまま眠っている道具”を見せてください。<br>「何から始めればいいか分からない」——そんな入口でも大丈夫です。会社のことでも、個人の講座やサイトのことでも、ここからお気軽にどうぞ。</p>
+
+    <p class="contact-alt reveal">フォームが苦手な方は、メールでどうぞ — <a href="mailto:info&#64;anom-ai.com">info@anom-ai.com</a><br>フォームもメールも、返信は代表本人からお送りします。</p>
 
     <!-- お問い合わせフォーム（送信の仕組みは assets/js/form.js）-->
     <form id="contactForm" class="form-card reveal" action="https://api.web3forms.com/submit" method="POST">
@@ -555,8 +668,6 @@
       <button type="submit" class="btn btn-primary magnetic">送信する <span class="arrow">→</span></button>
       <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
     </form>
-
-    <p class="contact-alt reveal">フォームが使えない場合は <a href="mailto:info@anom-ai.com">info@anom-ai.com</a> へ直接ご連絡ください。</p>
   </div>
 </section>
 
@@ -566,6 +677,7 @@
 <footer class="footer">
   <span class="f-logo">ANOM</span>
   <nav class="f-links" aria-label="フッターナビゲーション">
+    <a href="column/">コラム</a>
     <a href="privacy.html">プライバシーポリシー</a>
     <a href="#top" data-scroll>ページの先頭へ</a>
   </nav>
@@ -574,13 +686,13 @@
 
 <!-- ============ スクリプト（この順番を変えないこと） ============
      vendor: サイトに同梱した外部ライブラリ（バージョン固定）
-     その後に自作スクリプト。main.js が最後（起動役）。 -->
-<script src="assets/vendor/three.min.js" defer></script>
+     その後に自作スクリプト。main.js が最後（起動役）。
+     ※v6: three.min.js（約600KB）と particles.js（旧WebGL粒子）は読み込み停止。
+       ファイルは将来の再検討用に assets/ 内へ温存している。 -->
 <script src="assets/vendor/gsap.min.js" defer></script>
 <script src="assets/vendor/ScrollTrigger.min.js" defer></script>
 <script src="assets/vendor/lenis.min.js" defer></script>
 <script src="assets/js/config.js" defer></script>
-<script src="assets/js/particles.js" defer></script>
 <script src="assets/js/animations.js" defer></script>
 <script src="assets/js/form.js" defer></script>
 <script src="assets/js/main.js" defer></script>

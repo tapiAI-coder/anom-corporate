@@ -39,43 +39,49 @@ anom-corporate/
 │   ├── js/
 │   │   ├── config.js   ← 運用設定（Web3Formsキー・メールアドレス）★運用で触るのは原則ここだけ
 │   │   ├── main.js     ← 起動・ナビ・スクロール制御
-│   │   ├── particles.js← WebGL粒子（ヒーロー演出）
+│   │   ├── particles.js← 旧WebGL粒子（v6で読み込み停止・ファイル温存）
 │   │   ├── animations.js← GSAPスクロール演出・カーソル演出
 │   │   └── form.js     ← フォーム送信処理
-│   ├── vendor/         ← 同梱ライブラリ（Three.js r128 / GSAP 3.12.5 / ScrollTrigger 3.12.5 / Lenis 1.1.14）
-│   └── img/            ← favicon / apple-touch-icon / ogp / hero-bg.webp（ヒーロー背景）
+│   ├── vendor/         ← 同梱ライブラリ（GSAP 3.12.5 / ScrollTrigger 3.12.5 / Lenis 1.1.14 ※Three.js r128は読込停止・温存）
+│   ├── img/            ← favicon / apple-touch-icon / ogp / hero-tex.webp（静止フォールバック）/ seq/（スクラブ連番: hero・shindan・line・grow・build 各61枚）※svc-*.webp等は未参照の温存分
+│   └── video/          ← 原盤動画（hero-tex-loop.mp4・svc-*.mp4。未参照・スクラブ再分割用に温存）
 └── docs/               ← 本番化計画.md / 運用マニュアル.md
 ```
 
 **★URL を含むファイル**（ドメイン変更時に一括更新）: index.html（canonical / og:url / og:image / JSON-LD）、robots.txt、sitemap.xml
 
-## 3. デザインシステム（v5・折衷ダーク 2026-06改修）
+## 3. デザインシステム（v6・タイポ主役エディトリアル 2026-07改修）
 
 | トークン | 値 | 用途 |
 |---|---|---|
-| `--bg` | `#121419` | サイト全体の基調（オフブラック。純黒は使わない） |
-| `--warm` | `#F7F6F1` | 島カードの背景（温白） |
-| `--ink` | `#16243E` | 島カード内の文字色（濃紺）／個人向けレーンの帯背景 |
-| `--muted` | `#5A6275` | 島カード内の弱い文字 |
-| `--accent` | `#4D5DFF` | 差し色（島カード内・ボタン） |
-| `--accent-soft` | `#8F9BFF` | ダーク面用の明るいアクセント（ラベル・リンク） |
-| `--txt-dark` / `--txt-dark-sub` | `#EDEFF4` / 72% | ダーク面の見出し／本文 |
-| `--line` / `--line-dark` | ink12% / 白10% | 島内罫線／ダーク面罫線 |
-| `--dark` | `#0B1322` | 旧深紺（名残り。基調は--bgに移行済み） |
+| `--paper` | `#F4F2EC` | 地の色（温白の紙。サイト全体の基調） |
+| `--paper-2` | `#ECE9E0` | 一段沈めた紙（メディア下地・フォーム背景・個人レーン） |
+| `--ink` | `#16130E` | 主役の文字色（温かい黒＝インク） |
+| `--ink-soft` / `--soft` | `#4A443B` / `#6C665C` | 補助見出し／本文・補足 |
+| `--hair` / `--hair-2` | ink14% / ink28% | 罫線／強い罫線・ホバー |
+| `--black` / `--on-black` | `#100F0C` / `#EFEBE2` | 効かせどころの黒面（自己言及バンド）とその文字 |
+| `--accent` | `#3D39B8` | 抑えた藍（フォーム状態などごく僅かに） |
 
-- **折衷ダークの原則**: 顔（ナビ・ヒーロー・繋ぎ・CTA）は黒基調、読ませる本文は温白/白の「島カード」に載せる。ダーク面に直接置く文字は --txt-dark 系を使う
-- セクション構成: 黒の海に白い島（About/UseCases/Servicesのカード、WHY/FLOW/FAQ/会社概要のパネル）＋ ink帯（個人向けレーン）＋ アクセント帯（自己言及バンド）
+- **v6の原則**: タイポグラフィ主役。カード面・グラデ・グロー・光の装飾を排し、明朝の大見出し＋罫線（hairline）＋大胆な余白で構成する。参照思想: Vercel（余白と抑制）／Obys・Locomotive（タイポと間）
+- 書体: Zen Old Mincho（見出し）+ Zen Kaku Gothic New（本文）+ Fraunces italic（欧文アクセント）、Google Fonts
+- **フォント追加時の鉄則**: 日本語Webフォントは1ウェイト増やすごとにUnicodeサブセット分割で数十ファイルのリクエストが増える（2026-07に500超リクエスト事故→使用ウェイトのみに絞って解決済み）。CSSで実際に使うウェイトだけ読み込むこと
 - サービスは3つの柱: 導入・伴走（主軸）／育てる／つくる・支える。6個並列にしない
-- フォント: Inter（英字）+ Noto Sans JP（日本語）、Google Fonts
-- 旧v4（白基調・交互シート）は git 履歴参照。旧v3（Astro）はarchiveブランチ参照
+- 旧v5（折衷ダーク・インディゴ）/ v4（白基調）は git 履歴参照。旧v3（Astro）はarchiveブランチ参照
 
-## 4. 演出アーキテクチャ
+## 4. 演出アーキテクチャ（v6）
 
-- **粒子（particles.js）**: 混沌→秩序で「ANOM」形成。環境適応（モバイル粒子減・WebGL不可で静的フォールバック・reduced-motionで静止画・タブ非表示/ヒーロー外で描画停止）
-- **スクロール（animations.js）**: Lenis慣性 + GSAP ScrollTrigger。ヒーローpinのトンネル演出は1回だけ（**PCのみ**。モバイルはアドレスバー伸縮でスクロールがガタつくためpinせず軽いフェードに切替。再追加しないこと。`ScrollTrigger.config({ignoreMobileResize:true})`＋particles.jsのリサイズ再計算を横幅変化時のみに限定して安定化）
-- **ヒーロー背景（hero-bg.webp）**: 漆黒＋一筋の光のシネマ静止画を粒子キャンバスの下（CSS `.hero-bg`、z-index:0）に敷く。上下グラデで可読性確保。粒子アニメ本体は不可侵
-- **HTML側のクラスが演出の合図**: `.reveal` `.reveal-group` `.split` `.magnetic` `.tilt`（詳細はanimations.js冒頭コメント）
-- セクション追加時はこれらのクラスを付けるだけで演出が適用される
+- **原則**: Restraint beats spectacle（抑制が見せ場に勝る）。意味を運ぶ動きだけを、控えめに実装する
+- **駆動**: Lenis慣性 + GSAP ScrollTrigger（出現・scrub系）+ Intersection Observer（動画の省電力再生）。生のscrollイベント監視はしない。`ScrollTrigger.config({ignoreMobileResize:true})` 維持
+- **ヒーロー**: タイポ主役（温白の紙に明朝の大見出し）。スクロールで静かに退場（**ピンなし**。モバイルのアドレスバー伸縮対策としてpinは今後も使わない。退場フェードは削り演出が読めるよう18%地点から開始）
+- **ヒーローの削り演出（`.kezuru`）**: メインコピーの「ムダ」をスクロールで削る。語を包むspanに**筆の一閃**（両端がテーパーする塗りパス1本）を重ね、clipPathの矩形幅をscrubで広げて左→右に描く。引き終わると語がopacity .3へ薄まる。**CSS標準状態＝線が引き切られた完成形**（JS無効・低減設定でも意味が通る）。文字分割splitCharsは入れ子要素の中まで分割する（br/svgは除外）
+- **物語インタールード（`.interlude`）**: 「乖離→合流」をコピーの前半/後半の"間合い"だけで表現。①`#divergence`＝2語が**ほぼ密着した塊から**上下左右に離れていく（移動量は2語間の実余白をJSで実測、invalidateOnRefreshで再計測） ②`#convergence`＝上下に割れた語が一行に揃う。**CSSの標準状態が完成形**なので、JS無効・reduced-motionでも意味が通る（制御: animations.js `setupInterlude`）。乖離セクションのみ黒背景（--black×--on-black）＝問題は闇・解決は紙、の明暗でも物語る
+- **サービス連動**: 4ブロック（`data-svc`）のカード出現＋メディア枠 `.svc-media`（額装した窓。大カード=4:5・柱2/3=16:10）。動画は手前600pxで読込・画面内のみ再生・タブ非表示で停止。素材 `assets/img/svc-*.webp`・`assets/video/svc-*.mp4` が未配置でも下地（--paper-2）表示で壊れない
+- **ヴィネット方式のメディア（2026-07-05にキャラクター版へ進化）**: 4枠の背景は**墨の棒人間キャラによる物語動画のスクロールスクラブ**（`assets/img/seq/{shindan,line,grow,build}/`各61枚。診断=PCの前で困るお客様のもとへANOMが来て道具が整う／柱1=現場で二人が見上げる絡まりがほどけて1本に／柱2=ANOMが伝授しお客様が猛タイピング・書類の山が積み上がる／柱3=ANOMが筆でこのサイトの窓を描き上げる）。キャラ設計図は`../ブランドアセット/ANOMキャラクター設計図.webp`（ANOM=塗りつぶし頭＋大筆／お客様=輪郭頭。新素材は必ずこれをnano_banana_proの参照画像にして生成）。その上にDOMオーバーレイ（診断の吹き出し3つ＝物語順b1→b3ans→b2の`[data-at]`ポップ／柱1ラベル`.vl-k`／柱3の実物コピー`.vb-real`）。フォールバック=各シーケンス最終コマ。制御は `setupSeqScrub`＋`setupVignettes`。**CSS標準状態＝完成したシーン**。UseCases4カードには期間の大数字 `.uc-term`
+- **カーソルの奥行き（cursor-depth-3dスキル適用）**: ヒーローは多層視差（背景の墨=-10、小さなラベル類=+5〜9。見出しと本文は動かさない＝可読性の鉄則）、サービス4枠は最大±2.5度のカーソルチルト。精密ポインタのみ（タッチ・低減設定は無効。実装は initPointerFX 末尾）
+- **ヒーロー質感 `.hero-tex`**: **キャラクター版スクロールスクラブ**＝ANOMの棒人間キャラが「ムダ」の墨の塊を筆で削り落としていく物語（`assets/img/seq/hero/`61枚をcanvasへコマ送り。scroll-video-scrubスキル適用、エンジンは animations.js `setupSeqScrub`・合図は`data-seq`属性）。multiply合成・opacity .46・yPercent 7の薄いパララックス併用。スマホ・低減設定・JS無効は`assets/img/hero-tex.webp`＝振りかぶった開始フレームの静止画（bg位置72% 28%）
+- **支援の流れ `.flow-steps`**: 1本の線が5結節点を通って満ちる道のりレール（CSS変数 `--flow-p` をsetupFlowRailがscrubで駆動。スマホは縦レール、低減設定は満ちた完成形で静止）。STEP01に「ここまで無料」タグ
+- **HTML側の合図**: `.reveal` `.reveal-group` `.split` `.magnetic` `data-svc` `.interlude`（詳細はanimations.js冒頭コメント）。セクション追加時はこれらを付けるだけで演出が適用される
+- **廃止済み（v6・再追加しない）**: WebGL粒子（three.min.js / particles.jsは読み込み停止・ファイル温存）、ヒーローpinトンネル、背景ブロブ、サービス連動グロー、カード3Dチルト、2本線SVGインタールード
 
 ## 5. お問い合わせフォーム
 
