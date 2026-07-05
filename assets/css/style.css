@@ -148,7 +148,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   font-family:var(--mincho);font-weight:600;
   font-size:clamp(38px,8vw,116px);line-height:1.08;letter-spacing:-.012em;color:var(--ink);
 }
-.hero-copy .ch{display:inline-block;} /* will-changeはイントロ演出中だけJSが付け外しする（常時だと合成レイヤーが残り続け重くなる） */
+.hero-copy .ch{display:inline-block;will-change:transform,filter,opacity;}
 /* 「ムダ」の削り演出: 語を包む枠と、その上に重なる筆の一閃（テーパー付き塗りパス）。
    標準状態＝線が引き切られた完成形（JS無効・低減設定でも意味が通る）。
    スクロール連動の描画と語の減光は animations.js が担当 */
@@ -439,7 +439,6 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 .band{position:relative;background:var(--black);color:var(--on-black);padding:clamp(100px,15vw,180px) var(--pad-x);overflow:hidden;}
 .band-marquee{position:absolute;inset:0;display:flex;align-items:center;overflow:hidden;pointer-events:none;}
 .band-track{display:flex;white-space:nowrap;will-change:transform;animation:marq 32s linear infinite;}
-.band-track.is-paused{animation-play-state:paused;} /* 画面から離れている間は無限アニメを止める（常時稼働だと合成負荷が積み上がる） */
 .band-seg{font-family:var(--mincho);font-size:clamp(56px,10vw,130px);font-weight:500;letter-spacing:.02em;color:rgba(239,235,226,.05);padding-right:60px;}
 @keyframes marq{to{transform:translateX(-50%);}}
 .band-inner{position:relative;z-index:2;max-width:var(--wrap);margin:0 auto;text-align:center;}
@@ -572,10 +571,6 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
   .company-grid{grid-template-columns:1fr;}
   .co-row{grid-template-columns:100px 1fr;}
   .scroll-hint{display:none;}
-  /* nav.scrolledのbackdrop-filterはfixed要素の下を常時再合成させるため
-     スマホのスクロール性能を大きく削る（既知の代表的な原因）。
-     モバイルではぼかしをやめ、ほぼ不透明の地色に差し替えて同等の見え方を保つ */
-  .nav.scrolled{background:rgba(244,242,236,.96);backdrop-filter:none;-webkit-backdrop-filter:none;}
 }
 
 /* ============ 16. モーション低減 ============ */

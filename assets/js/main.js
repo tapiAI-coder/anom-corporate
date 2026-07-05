@@ -19,10 +19,6 @@ window.ANOM = window.ANOM || {};
 A.REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches; /* 視覚効果を減らす設定 */
 A.FINE    = window.matchMedia("(pointer: fine)").matches;                  /* マウス等の精密ポインタ */
 A.MOBILE  = window.innerWidth < 768;
-/* タッチ主体の端末か（スマホ・タブレット・Instagram/LINE等のアプリ内ブラウザ＝WebView）。
-   これらは端末側のネイティブスクロールとツールバー伸縮が独特で、慣性スクロールや
-   毎フレームのスクロール連動演出と競合してガタつく。該当端末はネイティブ挙動に任せる。 */
-A.TOUCH   = window.matchMedia("(hover: none), (pointer: coarse)").matches;
 A.heroVisible = true;                  /* ヒーローが画面内にあるか（粒子の省電力用） */
 A.pageVisible = !document.hidden;      /* タブが表示中か */
 
@@ -36,14 +32,9 @@ gsap.registerPlugin(ScrollTrigger);
    スクロール中のガタつきを防ぐ。横幅の変化（回転など）では従来どおり再計算する */
 ScrollTrigger.config({ ignoreMobileResize:true });
 
-/* ---- 慣性スクロール（Lenis）。マウス操作のPCだけで使う ----
-   モーション低減設定・タッチ端末（スマホ／アプリ内ブラウザ）では使わない。
-   Lenisは毎フレームRAFでスクロールを駆動しScrollTriggerを更新するため、
-   WebView（Instagram/LINE等）のネイティブスクロール＋ツールバー伸縮と競合し、
-   「下→上に戻るとガタつく」原因になる。タッチ端末はネイティブスクロールに任せ、
-   GSAPのlagSmoothing（フレーム落ちの平滑化）も既定のまま残して安定させる。 */
+/* ---- 慣性スクロール（Lenis）。モーション低減設定の人には使わない ---- */
 A.lenis = null;
-if(!A.REDUCED && !A.TOUCH && typeof Lenis !== "undefined"){
+if(!A.REDUCED && typeof Lenis !== "undefined"){
   A.lenis = new Lenis({ duration:1.15, smoothWheel:true });
   A.lenis.on("scroll", ScrollTrigger.update);
   gsap.ticker.add(function(t){ A.lenis.raf(t*1000); });
@@ -108,13 +99,6 @@ function boot(){
   A.initPointerFX();            /* カーソル演出 */
   A.initForm();                 /* お問い合わせフォーム */
   window.addEventListener("load", function(){ ScrollTrigger.refresh(); });
-  /* 日本語Webフォントは読込を待たず先に表示している（display:swap）ため、
-     回線が遅い環境ではページのload完了後にフォントが差し替わり、行の高さや
-     文字幅が変わって各演出の発火位置がずれることがある（スクロール中の
-     ガタつき・位置ズレの一因）。フォント確定後にもう一度測り直して合わせる */
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(function(){ ScrollTrigger.refresh(); });
-  }
 }
 
 /* v6: 粒子のワードマーク・サンプリング用だったInter待ちは不要になったため撤去。
