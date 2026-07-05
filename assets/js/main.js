@@ -15,6 +15,23 @@ window.ANOM = window.ANOM || {};
 (function(A){
 "use strict";
 
+/* ---- ビューポート高さの固定（アプリ内ブラウザのガタつき対策） ----
+   iOS Safari/Chromeは vh を固定するのでスクロールしても余白は動かないが、
+   Instagram/LINE等のアプリ内ブラウザ（WebView）はツールバーの出し入れで
+   表示領域が変わり vh が再計算される→縦余白を使う全セクションが一斉にずれ、
+   「ページ全体がどこでもガタつく」。対策として、縦方向の余白はCSSで vh の代わりに
+   この --vhpx（＝読み込み時の画面高さの1%）を使う。**高さだけの変化（ツールバー
+   伸縮）では更新せず、幅が変わった時（画面回転）だけ測り直す**のが肝。 */
+function lockViewportHeight(){
+  document.documentElement.style.setProperty("--vhpx", (window.innerHeight * 0.01) + "px");
+}
+lockViewportHeight();
+var vhLastWidth = window.innerWidth;
+window.addEventListener("resize", function(){
+  /* 幅が変わった時（回転など）だけ測り直す。高さだけの変化は無視＝ツールバー伸縮で動かさない */
+  if(window.innerWidth !== vhLastWidth){ vhLastWidth = window.innerWidth; lockViewportHeight(); }
+});
+
 /* ---- 環境判定 ---- */
 A.REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches; /* 視覚効果を減らす設定 */
 A.FINE    = window.matchMedia("(pointer: fine)").matches;                  /* マウス等の精密ポインタ */
