@@ -80,41 +80,47 @@ A.initMotion = function(){
   gsap.set(".reveal-hero", { opacity:0, y:20 });
   gsap.to(heroChars, {
     opacity:1, y:0, filter:"blur(0px)",
-    duration:.9, ease:"power3.out", stagger:.035, delay:.35
+    duration:.9, ease:"power3.out", stagger:.035, delay:.35,
+    /* will-changeはこの一瞬の演出中だけ付ける。付けっぱなしにすると1文字ごとに
+       合成レイヤーが残り続け、後々のスクロール全体を重くする（モバイルの描画不安定の一因） */
+    onStart:function(){ gsap.set(heroChars, { willChange:"transform,filter,opacity" }); },
+    onComplete:function(){ gsap.set(heroChars, { willChange:"auto" }); }
   });
   gsap.to(".reveal-hero", { opacity:1, y:0, duration:1, ease:"power3.out", stagger:.12, delay:1.05 });
 
-  /* --- ヒーローの削り演出: スクロールで「ムダ」に筆の一閃が引かれ、語が薄くなる ---
-     メインコピー「現場で感じるムダを、現場の目線で削る。」を、読んだ直後に体験させる。
-     scrub＝スクロール量に同期（戻れば線も消える）。描画はclipPathの矩形幅で行う
-     （筆で一気に消したような、両端がすっと細くなるテーパー付きの塗りパス1本） */
-  var kez = document.getElementById("kezuru");
-  if(kez){
-    var kezClip = kez.querySelector(".kezuru-clip");
-    var kezChars = kez.querySelectorAll(".ch");
-    gsap.set(kezClip, { attr:{ width:0 } }); /* 初期状態は線なし */
-    var kezTl = gsap.timeline({
-      scrollTrigger:{ trigger:".hero", start:"top top", end:"+=24%", scrub:.6 }
+  /* --- ヒーローのスクロール連動演出（削り演出・退場フェード・質感パララックス）---
+     いずれもスクロール量に毎フレーム同期して変形/減光する。スマホやアプリ内ブラウザ
+     （Instagram/LINE等のWebView）ではツールバー伸縮と重なってガタつきの主因になるため、
+     タッチ端末では実行しない。削り線はCSS標準状態＝引き切られた完成形（rect width=104）で
+     静止し、ヒーローはネイティブスクロールで自然に流れて退場する（意味は保たれる）。 */
+  if(!A.TOUCH){
+    /* 削り演出: 「ムダ」に筆の一閃が引かれ、語が薄くなる（clipPathの矩形幅で描画） */
+    var kez = document.getElementById("kezuru");
+    if(kez){
+      var kezClip = kez.querySelector(".kezuru-clip");
+      var kezChars = kez.querySelectorAll(".ch");
+      gsap.set(kezClip, { attr:{ width:0 } }); /* 初期状態は線なし */
+      var kezTl = gsap.timeline({
+        scrollTrigger:{ trigger:".hero", start:"top top", end:"+=24%", scrub:.6 }
+      });
+      kezTl.to(kezClip, { attr:{ width:104 }, duration:.7, ease:"none" }, 0); /* 一閃が左から右へ */
+      kezTl.to(kezChars, { opacity:.3, duration:.35, ease:"none" }, .5);     /* 削られた語は薄く残る */
+    }
+    /* ヒーローはスクロールで静かに退場（削り演出が読み切れるよう18%地点から） */
+    gsap.to(".hero-inner", {
+      y:-50, opacity:0, ease:"none",
+      scrollTrigger:{ trigger:".hero", start:"18% top", end:"bottom 40%", scrub:.5 }
     });
-    kezTl.to(kezClip, { attr:{ width:104 }, duration:.7, ease:"none" }, 0); /* 一閃が左から右へ */
-    kezTl.to(kezChars, { opacity:.3, duration:.35, ease:"none" }, .5);     /* 削られた語は薄く残る */
+    gsap.to(".hero-tagline, .scroll-hint", {
+      opacity:0, ease:"none",
+      scrollTrigger:{ trigger:".hero", start:"top top", end:"bottom 72%", scrub:.5 }
+    });
+    /* 質感レイヤーはわずかに遅れて流れる（紙の上を本文が滑る奥行き） */
+    gsap.to(".hero-tex", {
+      yPercent:7, ease:"none",
+      scrollTrigger:{ trigger:".hero", start:"top top", end:"bottom top", scrub:.6 }
+    });
   }
-
-  /* --- ヒーローはスクロールで静かに退場（ピンなし＝安定・タイポ主役）。
-         削り演出が読み切れるよう、退場のフェードは少し遅れて始める --- */
-  gsap.to(".hero-inner", {
-    y:-50, opacity:0, ease:"none",
-    scrollTrigger:{ trigger:".hero", start:"18% top", end:"bottom 40%", scrub:.5 }
-  });
-  gsap.to(".hero-tagline, .scroll-hint", {
-    opacity:0, ease:"none",
-    scrollTrigger:{ trigger:".hero", start:"top top", end:"bottom 72%", scrub:.5 }
-  });
-  /* 質感レイヤーはわずかに遅れて流れる（紙の上を本文が滑る奥行き） */
-  gsap.to(".hero-tex", {
-    yPercent:7, ease:"none",
-    scrollTrigger:{ trigger:".hero", start:"top top", end:"bottom top", scrub:.6 }
-  });
 
   /* --- 見出し（.split）の1文字ずつ出現 --- */
   document.querySelectorAll(".split").forEach(function(h){
@@ -160,6 +166,17 @@ A.initMotion = function(){
     yPercent:110, duration:1.1, ease:"power4.out", stagger:.14,
     scrollTrigger:{ trigger:".band", start:"top 75%" }
   });
+
+  /* --- 自己言及バンドの背景マーキー: 画面から遠い間はCSSの無限アニメを止める ---
+     常時animation:infiniteで回り続けると、ページのどこをスクロール中でも
+     合成の負荷になり続ける。画面から十分離れたら一時停止し、近づいたら再開する */
+  var bandTrack = document.querySelector(".band-track");
+  if(bandTrack && "IntersectionObserver" in window){
+    var bandIO = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ bandTrack.classList.toggle("is-paused", !en.isIntersecting); });
+    }, { rootMargin:"600px 0px" });
+    bandIO.observe(bandTrack);
+  }
 
   /* v6: 背景ブロブは廃止（パララックスも削除） */
 };
@@ -289,7 +306,9 @@ function setupVignettes(){
    ・未読込のコマは「読めている直近のコマ」で代用（歯抜けでも破綻しない）
    ・描画はobject-fit:cover相当＋devicePixelRatio対応（上限2） */
 function setupSeqScrub(){
-  if(A.REDUCED || A.MOBILE) return;
+  /* タッチ端末（スマホ・タブレット・アプリ内ブラウザ）は連番スクラブを行わず、
+     静止フォールバック画像を表示（61枚読込＋毎フレームcanvas描画はWebViewで重くガタつく） */
+  if(A.REDUCED || A.MOBILE || A.TOUCH) return;
   document.querySelectorAll("[data-seq]").forEach(function(root){
     var base  = root.getAttribute("data-seq");
     var count = parseInt(root.getAttribute("data-seq-count"), 10);
@@ -361,6 +380,9 @@ function setupSeqScrub(){
    JS無効時・モーション低減時（initMotion冒頭でreturn済み）でも意味が正しく伝わる。
    yPercent＝行の高さ基準の移動量なので、画面サイズが変わっても間合いが崩れない。 */
 function setupInterlude(){
+  /* タッチ端末（スマホ・アプリ内ブラウザ）はCSS標準状態＝完成形（乖離＝開いた状態／合流＝一行に揃った状態）で
+     静止させ、スクロール毎の再計算をなくす（WebViewでのガタつき対策。意味はCSSだけで通る） */
+  if(A.TOUCH) return;
   /* ①乖離: 2つの語句が「ほぼ密着した1つの塊」から、スクロールで上下左右に離れていく。
      移動量は2語の間の実際の余白（CSSのmargin）を測って決めるので、
      開始時はほんの数pxの隙間＝寄り添った状態から、開き切った完成形（CSS標準状態）まで動く。
@@ -394,6 +416,8 @@ function setupInterlude(){
 function setupFlowRail(){
   var rail = document.querySelector(".flow-steps");
   if(!rail) return;
+  /* タッチ端末は満ちた完成形（--flow-p:1）で静止し、スクロール毎のscrub計算を避ける（WebViewのガタつき対策） */
+  if(A.TOUCH){ rail.style.setProperty("--flow-p", 1); return; }
   rail.style.setProperty("--flow-p", 0); /* 開始値を明示（CSS変数の初期値をGSAPが読めるように） */
   gsap.to(rail, {
     "--flow-p": 1, ease:"none",
