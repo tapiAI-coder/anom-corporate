@@ -124,7 +124,7 @@ body.js-fine .cursor-dot,body.js-fine .cursor-ring{display:block;}
 
 /* ============ 4. ヒーロー（タイポ主役・温白） ============ */
 .hero{
-  position:relative;min-height:100svh;background:var(--paper);color:var(--ink);
+  position:relative;min-height:calc(var(--vhpx,1vh) * 100);background:var(--paper);color:var(--ink);
   display:flex;flex-direction:column;justify-content:flex-end;
   padding:0 var(--pad-x) clamp(56px,calc(var(--vhpx,1vh) * 9),110px);overflow:hidden;
 }
