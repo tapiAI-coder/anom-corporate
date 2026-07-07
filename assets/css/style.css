@@ -38,7 +38,7 @@
   --wrap:1220px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:auto;-webkit-text-size-adjust:100%;}
+html{scroll-behavior:auto;-webkit-text-size-adjust:100%;overflow-anchor:none;} /* Chrome系のスクロール位置自動補正を無効化＝アプリ内ブラウザの微小ジャンプ対策（このサイトは静的で動的挿入がないため副作用なし） */
 body{
   font-family:var(--gothic);
   background:var(--paper);color:var(--ink);
