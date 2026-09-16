@@ -47,6 +47,13 @@ A.initForm = function(){
       return;
     }
 
+    /* --- hCaptcha未完了の間は送信しない（未読込・期限切れも同じ扱い） --- */
+    var captcha = form.querySelector('[name="h-captcha-response"]');
+    if(!captcha || !captcha.value.trim()){
+      show("ng", "送信前に、確認用チェック（私は人間です）を完了してください。表示されない場合は " + (cfg.CONTACT_EMAIL || "メール") + " 宛にご連絡ください。");
+      return;
+    }
+
     /* --- 送信データの組み立て --- */
     var data = new FormData(form);
     data.append("access_key", cfg.FORM_ACCESS_KEY);
@@ -68,6 +75,7 @@ A.initForm = function(){
     .then(function(json){
       if(json.success){
         form.reset();
+        if(window.hcaptcha){ window.hcaptcha.reset(); } /* 次の送信に備えてチェックを戻す */
         show("ok", "送信しました。内容を確認のうえ、2営業日以内にご返信します。");
       }else{
         show("ng", "送信に失敗しました。お手数ですが " + (cfg.CONTACT_EMAIL || "メール") + " 宛に直接ご連絡ください。");
